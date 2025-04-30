@@ -81,6 +81,27 @@ AddOn.PGVHexColors = {
     Warrior = "C69B6D"
 }
 
+AddOn.GearSlots = {
+    CharacterHeadSlot,
+    CharacterNeckSlot,
+    CharacterShoulderSlot,
+    CharacterBackSlot,
+    CharacterChestSlot,
+    CharacterShirtSlot,
+    CharacterTabardSlot,
+    CharacterWristSlot,
+    CharacterHandsSlot,
+    CharacterWaistSlot,
+    CharacterLegsSlot,
+    CharacterFeetSlot,
+    CharacterFinger0Slot,
+    CharacterFinger1Slot,
+    CharacterTrinket0Slot,
+    CharacterTrinket1Slot,
+    CharacterMainHandSlot,
+    CharacterSecondaryHandSlot
+}
+
 AddOn.PGVExpansionInfo = {
     TheWarWithin = {
         SocketableSlots = {
