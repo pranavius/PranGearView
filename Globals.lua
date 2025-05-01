@@ -32,6 +32,7 @@ AddOn.EnchantTextReplace = {
     { original = "Crystalline", replacement = "Crys" },
     { original = "Radiance", replacement = "Rad" },
     { original = "Radiant", replacement = "Rad" },
+    { original = "Power", replacement = "Pwr" },
     { original = "Oathsworn", replacement = "Oath" },
     { original = "Oathsworn's", replacement = "Oath" },
     { original = "Tenacity", replacement = "Ten" },
@@ -110,7 +111,13 @@ AddOn.PGVExpansionInfo = {
             CharacterFinger0Slot,
             CharacterFinger1Slot
         },
+        AuxSocketableSlots = {
+            CharacterHeadSlot,
+            CharacterWristSlot,
+            CharacterWaistSlot
+        },
         MaxSocketsPerItem = 2,
+        MaxAuxSocketsPerItem = 1,
         MaxEmbellishments = 2,
         EnchantableSlots = {
             CharacterBackSlot,

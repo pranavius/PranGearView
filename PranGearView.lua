@@ -212,6 +212,45 @@ local Options = {
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
                     disabled = function() return not AddOn.db.profile.showGems end
+                },
+                spacer = {
+                    type = "description",
+                    name = " ",
+                    order = 2
+                },
+                showMissingGems = {
+                    type = "toggle",
+                    name = L["Missing Gems Indicator"],
+                    desc = L["missing_gems_desc"],
+                    order = 2.1,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    disabled = function() return not AddOn.db.profile.showGems end
+                },
+                missingGemsMaxLevelOnly = {
+                    type = "toggle",
+                    name = L["Only Show Missing Gems for Max Level"],
+                    desc = L["missing_gems_max_lvl_desc"],
+                    width = "double",
+                    order = 2.2,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    disabled = function() return not AddOn.db.profile.showGems or (AddOn.db.profile.showGems and not AddOn.db.profile.showMissingGems) end
+                },
+                spacerTwo = {
+                    type = "description",
+                    name = " ",
+                    order = 2.3
+                },
+                missingGemsDesc = {
+                    type = "description",
+                    name = PGV_ColorText(L["add_socket_desc"], "Info"),
+                    order = 2.4
+                },
+                emptySocketDesc = {
+                    type = "description",
+                    name = PGV_ColorText(L["empty_socket_desc"], "Info"),
+                    order = 2.5
                 }
             }
         },
@@ -239,7 +278,7 @@ local Options = {
                 },
                 showMissingEnchants = {
                     type = "toggle",
-                    name = L["Missing Enchant Message"],
+                    name = L["Missing Enchant Indicator"],
                     desc = L["missing_ench_desc"],
                     order = 2.1,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
@@ -423,6 +462,8 @@ local Defaults = {
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.PGVHexColors.Priest,
         gemScale = 1,
+        showMissingGems = true,
+        missingGemsMaxLevelOnly = true,
         enchScale = 1,
         durabilityScale = 1,
         useCustomColorForEnchants = false,
@@ -602,7 +643,7 @@ function AddOn:UpdateEquippedGearInfo()
             end
             slot.PGVItemLevel:SetTextScale(iLvlTextScale)
 
-            self:GetItemLevelBySlot(slot, true)
+            self:GetItemLevelBySlot(slot)
             self:SetItemLevelPositionBySlot(slot)
         end
 
@@ -653,49 +694,45 @@ function AddOn:UpdateEquippedGearInfo()
 end
 
 ------------ Information Functions ------------
-function AddOn:GetItemLevelBySlot(slot, retry)
-    if retry then
-        local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
-        if hasItem then
-            if self.db.profile.showiLvl then
-                local ilvl = item:GetCurrentItemLevel()
-                if ilvl > 0 then -- positive value indicates item info has loaded
-                    local iLvlText = ilvl
-                    if self.db.profile.showUpgradeTrack then
-                        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
-                        if tooltip and tooltip.lines then
-                            for _, ttdata in pairs(tooltip.lines) do
-                                -- Tooltip data type 42 is upgrade track
-                                if ttdata and ttdata.type and ttdata.type == 42 then
-                                    local upgradeText = ttdata.leftText
-                                    for _, repl in pairs(AddOn.UpgradeTextReplace) do
-                                        upgradeText = upgradeText:gsub(repl.original, repl.replacement)
-                                    end
-                                    PGV_DebugPrint("Upgrade track for item", PGV_ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
-                                    iLvlText = iLvlText.." ("..upgradeText..")"
-                                end
+function AddOn:GetItemLevelBySlot(slot)
+    local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
+    if hasItem then
+        local ilvl = item:GetCurrentItemLevel()
+        if ilvl > 0 then -- positive value indicates item info has loaded
+            local iLvlText = ilvl
+            if self.db.profile.showUpgradeTrack then
+                local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+                if tooltip and tooltip.lines then
+                    for _, ttdata in pairs(tooltip.lines) do
+                        -- Tooltip data type 42 is upgrade track
+                        if ttdata and ttdata.type and ttdata.type == 42 then
+                            local upgradeText = ttdata.leftText
+                            for _, repl in pairs(AddOn.UpgradeTextReplace) do
+                                upgradeText = upgradeText:gsub(repl.original, repl.replacement)
                             end
+                            PGV_DebugPrint("Upgrade track for item", PGV_ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
+                            iLvlText = iLvlText.." ("..upgradeText..")"
                         end
                     end
-
-                    if self.db.profile.useQualityColorForILvl then
-                        local _, _, _, qualityHex = GetItemQualityColor(item:GetItemQuality())
-                        iLvlText = "|c"..qualityHex..iLvlText.."|r"
-                    elseif self.db.profile.useClassColorForILvl then
-                        local _, classFile = UnitClass("player")
-                        local _, _, _, classHex = GetClassColor(classFile)
-                        iLvlText = "|c"..classHex..iLvlText.."|r"
-                    elseif self.db.profile.useCustomColorForILvl then
-                        iLvlText = PGV_ColorText(iLvlText, self.db.profile.iLvlCustomColor)
-                    end
-    
-                    PGV_DebugPrint("Item Level text for slot", PGV_ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
-                    slot.PGVItemLevel:SetFormattedText(iLvlText)
-                else
-                    PGV_DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", PGV_ColorText(slot:GetID(), "Heirloom"))
-                    C_Timer.After(0.5, function() self:GetItemLevelBySlot(slot, true) end)
                 end
             end
+
+            if self.db.profile.useQualityColorForILvl then
+                local _, _, _, qualityHex = GetItemQualityColor(item:GetItemQuality())
+                iLvlText = "|c"..qualityHex..iLvlText.."|r"
+            elseif self.db.profile.useClassColorForILvl then
+                local _, classFile = UnitClass("player")
+                local _, _, _, classHex = GetClassColor(classFile)
+                iLvlText = "|c"..classHex..iLvlText.."|r"
+            elseif self.db.profile.useCustomColorForILvl then
+                iLvlText = PGV_ColorText(iLvlText, self.db.profile.iLvlCustomColor)
+            end
+
+            PGV_DebugPrint("Item Level text for slot", PGV_ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
+            slot.PGVItemLevel:SetFormattedText(iLvlText)
+        else
+            PGV_DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", PGV_ColorText(slot:GetID(), "Heirloom"))
+            C_Timer.After(0.5, function() self:GetItemLevelBySlot(slot) end)
         end
     end
 end
@@ -703,20 +740,36 @@ end
 function AddOn:GetGemsBySlot(slot)
     local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
     if hasItem then
+        local existingSocketCount = 0
         local gemText = ""
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 -- Tooltip data type 3 is gem
                 if ttdata and ttdata.type and ttdata.type == 3 then
-                    local icon = ttdata.gemIcon
-                    if icon then
+                    -- Socketed item will have gemIcon variable
+                    if ttdata.gemIcon then
+                        local icon = ttdata.gemIcon
                         gemText = slot.IsLeftSide and gemText.." |T"..icon..":15:15|t" or "|T"..icon..":15:15|t "..gemText
+                    else -- This indicates that there is an empty socket on the item
+                        gemText = slot.IsLeftSide and gemText.." |T458977:15:15|t" or "|T458977:15:15|t "..gemText
                     end
+                    existingSocketCount = existingSocketCount + 1
                 end
             end
-            slot.PGVGems:SetFormattedText(gemText)
         end
+
+        -- Indicates slots that can have sockets added to them
+        if self.db.profile.showMissingGems and AddOn.PGV_IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
+            local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
+            if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
+                for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
+                    PGV_DebugPrint("Slot", PGV_ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
+                    gemText = slot.IsLeftSide and gemText.." |A:Socket-Prismatic-Closed:15:15|a" or "|A:Socket-Prismatic-Closed:15:15|a "..gemText
+                end
+            end
+        end
+        slot.PGVGems:SetFormattedText(gemText)
     end
 end
 
@@ -760,7 +813,11 @@ function AddOn:GetEnchantmentBySlot(slot)
         if not isEnchanted and AddOn.PGV_IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
-                slot.PGVEnchant:SetFormattedText(PGV_ColorText(L["no_enchant_text"], "DeathKnight"))
+                if self.db.profile.collapseEnchants then
+                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t")
+                else
+                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t "..PGV_ColorText(L["Enchant"], "Druid"))
+                end
                 slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
             end
         end
@@ -816,7 +873,12 @@ function AddOn:ShowEmbellishmentBySlot(slot)
                         slot.PGVEmbellishmentTexture = slot:CreateTexture("PGVEmbellishmentTexture"..slot:GetID(), "OVERLAY")
                     end
                     slot.PGVEmbellishmentTexture:SetSize(20, 20)
-                    slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
+                    slot.PGVEmbellishmentTexture:ClearAllPoints()
+                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
+                        slot.PGVEmbellishmentTexture:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, -5)
+                    else
+                        slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
+                    end
                     slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
                     slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
                     PGV_DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
@@ -866,21 +928,21 @@ function AddOn:PGV_SetEnchantPositionBySlot(slot)
 
     local isSocketableSlot = AddOn.PGV_IsSocketableSlot(slot)
     local isEnchantableSlot = AddOn.PGV_IsEnchantableSlot(slot)
-    local iLvlVisbleOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem
-    local iLvlVisibleInDefaultLocation = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem
+    local iLvlVisbleOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel
+    local iLvlVisibleInDefaultLocation = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel
     local defaultYOffset = (iLvlVisbleOnItem or (not iLvlVisibleInDefaultLocation and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
 
-    if self.db.profile.collapseEnchants and slot.IsLeftSide == nil and slot.PGVEnchant:GetText() ~= PGV_ColorText(L["no_enchant_text"], "DeathKnight") then
+    if self.db.profile.collapseEnchants and slot.IsLeftSide == nil then
         -- Update positioning for main and off-hand slot enchants when collapsed
         PGV_DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, defaultYOffset)
-    elseif slot.PGVItemLevel:GetText() ~= "" and iLvlVisibleInDefaultLocation and slot.IsLeftSide ~= nil and isEnchantableSlot then
+    elseif iLvlVisibleInDefaultLocation and slot.PGVItemLevel:GetText() ~= "" and slot.IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both item level and enchants visible
         PGV_DebugPrint("ilvl and enchant visible")
         slot.PGVItemLevel:ClearAllPoints()
         slot.PGVItemLevel:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
         slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
-    elseif (not self.db.profile.showiLvl or iLvlVisbleOnItem) and slot.PGVGems:GetText() ~= "" and self.db.profile.showGems and slot.IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
+    elseif (not self.db.profile.showiLvl or iLvlVisbleOnItem) and slot.PGVGems and slot.PGVGems:GetText() ~= "" and self.db.profile.showGems and slot.IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
         -- Adjust positioning for slots that have both gems and enchants visible
         slot.PGVGems:ClearAllPoints()
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)

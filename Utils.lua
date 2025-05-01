@@ -49,6 +49,20 @@ function AddOn.PGV_IsSocketableSlot(slot)
     return false
 end
 
+function AddOn.IsAuxSocketableSlot(slot)
+    if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
+        for _, gearSlot in ipairs(AddOn.CurrentExpac.AuxSocketableSlots) do
+            if slot == gearSlot then
+                PGV_DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable (aux)")
+                return true
+            end
+        end
+    else
+        PGV_DebugPrint("|cFFff3300AuxSocketableSlots not found in expansion info table|r")
+    end
+    return false
+end
+
 function AddOn.PGV_IsEnchantableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.EnchantableSlots) do
