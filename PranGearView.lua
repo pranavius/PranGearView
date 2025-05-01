@@ -81,8 +81,8 @@ local Options = {
                 },
                 showUpgradeTrack = {
                     type = "toggle",
-                    name = "Show Upgrade Track",
-                    desc = "Display the item's upgrade track and progress next to the item level",
+                    name = L["Show Upgrade Track"],
+                    desc = L["upgrade_track_desc"],
                     order = 2.1,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -237,12 +237,36 @@ local Options = {
                     name = " ",
                     order = 2
                 },
+                showMissingEnchants = {
+                    type = "toggle",
+                    name = L["Missing Enchant Message"],
+                    desc = L["missing_ench_desc"],
+                    order = 2.1,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    disabled = function() return not AddOn.db.profile.showEnchants end
+                },
+                missingEnchantsMaxLevelOnly = {
+                    type = "toggle",
+                    name = L["Only Show Missing Enchants for Max Level"],
+                    desc = L["missing_ench_max_lvl_desc"],
+                    width = "double",
+                    order = 2.2,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
+                },
+                spacerTwo = {
+                    type = "description",
+                    name = " ",
+                    order = 2.3
+                },
                 enchTextColorOptionsDesc = {
                     type = "description",
                     name = L["ench_color_opts_desc"],
                     order = 3
                 },
-                spacerTwo = {
+                spacerThree = {
                     type = "description",
                     name = " ",
                     order = 4
@@ -403,6 +427,8 @@ local Defaults = {
         durabilityScale = 1,
         useCustomColorForEnchants = false,
         enchCustomColor = AddOn.PGVHexColors.Uncommon,
+        showMissingEnchants = true,
+        missingEnchantsMaxLevelOnly = true,
         iLvlOnItem = false,
         showEmbellishments = true,
         hideShirtTabardInfo = false,
@@ -697,6 +723,8 @@ end
 function AddOn:GetEnchantmentBySlot(slot)
     local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
     if hasItem then
+        local isEnchanted = false
+        local eFont, eSize = slot.PGVEnchant:GetFont()
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
@@ -723,7 +751,17 @@ function AddOn:GetEnchantmentBySlot(slot)
                     else
                         slot.PGVEnchant:SetFormattedText(PGV_ColorText(enchText, "Uncommon"))
                     end
+                    slot.PGVEnchant:SetFont(eFont, eSize)
+                    isEnchanted = true
                 end
+            end
+        end
+
+        if not isEnchanted and AddOn.PGV_IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
+            local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
+            if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
+                slot.PGVEnchant:SetFormattedText(PGV_ColorText(L["no_enchant_text"], "DeathKnight"))
+                slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
             end
         end
     end
@@ -832,7 +870,7 @@ function AddOn:PGV_SetEnchantPositionBySlot(slot)
     local iLvlVisibleInDefaultLocation = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem
     local defaultYOffset = (iLvlVisbleOnItem or (not iLvlVisibleInDefaultLocation and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
 
-    if self.db.profile.collapseEnchants and slot.IsLeftSide == nil then
+    if self.db.profile.collapseEnchants and slot.IsLeftSide == nil and slot.PGVEnchant:GetText() ~= PGV_ColorText(L["no_enchant_text"], "DeathKnight") then
         -- Update positioning for main and off-hand slot enchants when collapsed
         PGV_DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, defaultYOffset)

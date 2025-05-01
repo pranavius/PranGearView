@@ -2,7 +2,7 @@ local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
-local xpacInfo = AddOn.PGVExpansionInfo and AddOn.PGVExpansionInfo.TheWarWithin or {}
+AddOn.CurrentExpac = AddOn.PGVExpansionInfo.TheWarWithin
 
 function PGV_ColorText(text, color)
     if AddOn.PGVHexColors[color] then
@@ -36,8 +36,8 @@ function AddOn.PGV_IsItemEquippedInSlot(slot)
 end
 
 function AddOn.PGV_IsSocketableSlot(slot)
-    if xpacInfo and xpacInfo.SocketableSlots then
-        for _, gearSlot in ipairs(xpacInfo.SocketableSlots) do
+    if AddOn.CurrentExpac and AddOn.CurrentExpac.SocketableSlots then
+        for _, gearSlot in ipairs(AddOn.CurrentExpac.SocketableSlots) do
             if slot == gearSlot then
                 PGV_DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable")
                 return true
@@ -50,8 +50,8 @@ function AddOn.PGV_IsSocketableSlot(slot)
 end
 
 function AddOn.PGV_IsEnchantableSlot(slot)
-    if xpacInfo and xpacInfo.EnchantableSlots then
-        for _, gearSlot in ipairs(xpacInfo.EnchantableSlots) do
+    if AddOn.CurrentExpac and AddOn.CurrentExpac.EnchantableSlots then
+        for _, gearSlot in ipairs(AddOn.CurrentExpac.EnchantableSlots) do
             if slot == gearSlot then
                 PGV_DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is enchantable")
                 return true

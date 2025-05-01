@@ -104,6 +104,7 @@ AddOn.GearSlots = {
 
 AddOn.PGVExpansionInfo = {
     TheWarWithin = {
+        LevelCap = 80,
         SocketableSlots = {
             CharacterNeckSlot,
             CharacterFinger0Slot,
