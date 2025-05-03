@@ -58,7 +58,7 @@ AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Myth", replacement = "M" }
 }
 
-AddOn.PGVHexColors = {
+AddOn.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
     Rare = "0070DD",
@@ -131,4 +131,62 @@ AddOn.PGVExpansionInfo = {
             CharacterSecondaryHandSlot
         }
     }
+}
+
+AddOn.SpecOptions = {
+    [250] = "Blood",
+    [251] = "Frost",
+    [252] = "Unholy",
+    [577] = "Havoc",
+    [581] = "Vengeance",
+    [102] = "Balance",
+    [103] = "Feral",
+    [104] = "Guardian",
+    [105] = "Restoration",
+    [1467] = "Devastation",
+    [1468] = "Preservation",
+    [1473] = "Augmentation",
+    [253] = "Beast Mastery",
+    [254] = "Marksmanship",
+    [255] = "Survival",
+    [62] = "Arcane",
+    [63] = "Fire",
+    [64] = "Frost",
+    [268] = "Brewmaster",
+    [270] = "Mistweaver",
+    [269] = "Windwalker",
+    [65] = "Holy",
+    [66] = "Protection",
+    [70] = "Retribution",
+    [256] = "Discipline",
+    [257] = "Holy",
+    [258] = "Shadow",
+    [259] = "Assassination",
+    [260] = "Outlaw",
+    [261] = "Subtlety",
+    [262] = "Elemental",
+    [263] = "Enchancement",
+    [264] = "Restoration",
+    [265] = "Affliction",
+    [266] = "Demonology",
+    [267] = "Destruction",
+    [71] = "Arms",
+    [72] = "Fury",
+    [73] = "Protection",
+}
+
+AddOn.DefaultStatOrder = {
+    [STAT_CRITICAL_STRIKE] = 1,
+    [STAT_HASTE] = 2,
+    [STAT_MASTERY] = 3,
+    [STAT_VERSATILITY] = 4,
+    [STAT_LIFESTEAL] = 5,
+    [STAT_AVOIDANCE] = 6,
+    [STAT_SPEED] = 7
+}
+
+AddOn.DefaultTankStatOrder = {
+    [STAT_DODGE] = 8,
+    [STAT_PARRY] = 9,
+    [STAT_BLOCK] = 10
 }

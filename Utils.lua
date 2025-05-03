@@ -4,47 +4,68 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 AddOn.CurrentExpac = AddOn.PGVExpansionInfo.TheWarWithin
 
-function PGV_ColorText(text, color)
-    if AddOn.PGVHexColors[color] then
-        return "|cFF"..AddOn.PGVHexColors[color]..text.."|r"
+function ColorText(text, color)
+    if AddOn.HexColorPresets[color] then
+        return "|cFF"..AddOn.HexColorPresets[color]..text.."|r"
     end
 
     return "|cFF"..color..text.."|r"
 end
-AddOn.PGV_ColorText = PGV_ColorText
+AddOn.ColorText = ColorText
 
-function PGV_DebugPrint(...)
+function DebugPrint(...)
     if AddOn.db.profile.debug then
-		print(PGV_ColorText("[PGV Debug]", "Heirloom"), ...)
+		print(ColorText("[PGV Debug]", "Heirloom"), ...)
 	end
 end
-AddOn.PGV_DebugPrint = PGV_DebugPrint
+AddOn.DebugPrint = DebugPrint
 
-function AddOn.PGV_DebugTable(table)
+function AddOn.DebugTable(table)
     if AddOn.db.profile.debug then
-        print(PGV_ColorText("[PGV Debug Table: START]", "Heirloom"))
+        print(ColorText("[PGV Debug Table: START]", "Heirloom"))
         for k, v in pairs(table) do
             print(k, "=", v)
         end
-        print(PGV_ColorText("[PGV Debug Table: END]", "Heirloom"))
+        print(ColorText("[PGV Debug Table: END]", "Heirloom"))
     end
 end
 
-function AddOn.PGV_IsItemEquippedInSlot(slot)
+function AddOn.CompressTable(tbl)
+    -- collect all numeric indices
+    local keys = {}
+    for k in pairs(tbl) do
+        if type(k) == "number" then
+            keys[#keys+1] = k
+        end
+    end
+    table.sort(keys)
+
+    -- re-assign values to 1..n, clear old slots
+    local n = 1
+    for _, oldIndex in ipairs(keys) do
+        tbl[n] = tbl[oldIndex]
+        if oldIndex ~= n then
+            tbl[oldIndex] = nil
+        end
+        n = n + 1
+    end
+end
+
+function AddOn.IsItemEquippedInSlot(slot)
     local item = Item:CreateFromEquipmentSlot(slot:GetID())
     return not item:IsItemEmpty(), item
 end
 
-function AddOn.PGV_IsSocketableSlot(slot)
+function AddOn.IsSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.SocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.SocketableSlots) do
             if slot == gearSlot then
-                PGV_DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable")
+                DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable")
                 return true
             end
         end
     else
-        PGV_DebugPrint("|cFFff3300SocketableSlots not found in expansion info table|r")
+        DebugPrint("|cFFff3300SocketableSlots not found in expansion info table|r")
     end
     return false
 end
@@ -53,35 +74,35 @@ function AddOn.IsAuxSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.AuxSocketableSlots) do
             if slot == gearSlot then
-                PGV_DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable (aux)")
+                DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable (aux)")
                 return true
             end
         end
     else
-        PGV_DebugPrint("|cFFff3300AuxSocketableSlots not found in expansion info table|r")
+        DebugPrint("|cFFff3300AuxSocketableSlots not found in expansion info table|r")
     end
     return false
 end
 
-function AddOn.PGV_IsEnchantableSlot(slot)
+function AddOn.IsEnchantableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.EnchantableSlots) do
             if slot == gearSlot then
-                PGV_DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is enchantable")
+                DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is enchantable")
                 return true
             end
         end
     else
-        PGV_DebugPrint("|cFFff3300EnchantableSlots not found in expansion info table|r")
+        DebugPrint("|cFFff3300EnchantableSlots not found in expansion info table|r")
     end
     return false
 end
 
-function AddOn.PGV_ConvertRGBToHex(r, g, b)
+function AddOn.ConvertRGBToHex(r, g, b)
     return string.format("%02X%02X%02X", r*255, g*255, b*255)
 end
 
-function AddOn.PGV_ConvertHexToRGB(hex)
+function AddOn.ConvertHexToRGB(hex)
     if tonumber("0x"..hex:sub(1,2)) == nil or tonumber("0x"..hex:sub(3,4)) == nil or tonumber("0x"..hex:sub(5,6)) == nil then
         print("|cFF00ccffPran Gear View: |cFFff3300"..L["invalid_hex_code_msg"].."|r")
         return nil, nil, nil
@@ -91,6 +112,6 @@ function AddOn.PGV_ConvertHexToRGB(hex)
            tonumber("0x"..hex:sub(5,6)) / 255
 end
 
-function AddOn.PGV_RoundNumber(val)
+function AddOn.RoundNumber(val)
     return math.floor(val + 0.5)
 end

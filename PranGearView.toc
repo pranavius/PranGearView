@@ -2,7 +2,7 @@
 ## Title: Pran Gear View
 ## Notes: Displays useful information about equipped gear in the character info window
 ## Author: pranavius
-## Version: 0.0.1
+## Version: 0.5.0
 ## SavedVariables: PranGearViewDB
 ## X-Flavor: retail
 ## X-Category: Bags & Inventory
@@ -15,6 +15,7 @@ embeds.xml
 
 Localization\enUS.lua
 Globals.lua
-Elements\PGVToggleEnchantButton.lua
 Utils.lua
+Modules\PGVToggleEnchantButton.lua
+Modules\StatsOrderBySpecOptions.lua
 PranGearView.lua
