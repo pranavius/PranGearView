@@ -403,12 +403,12 @@ local Options = {
         },
         characterStatOptions = {
             type = "group",
-            name = "Character Stats",
+            name = L["Character Stats"],
             order = 12,
             args = {
                 statUsageDesc = {
                     type = "description",
-                    name = ColorText("Customize the secondary & teritary stat order for each spec in the Character Info window", "Info"),
+                    name = ColorText(L["custom_spec_desc"], "Info"),
                     order = 12.01,
                 },
                 spacer = {
@@ -418,7 +418,7 @@ local Options = {
                 },
                 specSelect = {
                     type = "select",
-                    name = "Specialization",
+                    name = L["Specialization"],
                     order = 12.03,
                     values = function()
                         local options = {}
@@ -491,7 +491,7 @@ local Options = {
                 },
                 secondaryStatsHeader = {
                     type = "header",
-                    name = "Secondary Stats",
+                    name = L["Secondary Stats"],
                     order = 12.07
                 },
                 critStrikeLabel = {
@@ -574,7 +574,7 @@ local Options = {
                 },
                 tertiaryStatsHeader = {
                     type = "header",
-                    name = "Tertiary Stats",
+                    name = L["Tertiary Stats"],
                     order = 12.19
                 },
                 leechLabel = {
@@ -634,7 +634,7 @@ local Options = {
                 },
                 tankOnlyHeader = {
                     type = "header",
-                    name = "Tank-Specific Stats",
+                    name = L["Tank-Specific Stats"],
                     order = 12.28,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
