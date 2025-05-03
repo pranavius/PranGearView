@@ -449,16 +449,40 @@ local Options = {
                         AddOn:InitializeCustomSpecStatOrderDB(val)
                     end
                 },
+                resetButtonSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 2.001,
+                    width = "half"
+                },
                 resetOrderButton = {
                     type = "execute",
                     name = L["Reset"],
                     width = "half",
-                    order = 2.001,
+                    order = 2.002,
                     func = function()
                         local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         AddOn:InitializeCustomSpecStatOrderDB(specID, true)
                     end,
-                    disabled = function() return false end
+                    disabled = function()
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        local dbStatOrder = AddOn.db.profile.customSpecStatOrders[specID]
+                        for stat, order in pairs(dbStatOrder) do
+                            local isTankStat = stat == STAT_DODGE or stat == STAT_PARRY or stat == STAT_BLOCK
+                            local defaultStatUnordered = not isTankStat and order ~= AddOn.DefaultStatOrder[stat]
+                            local tankStatUnordered = isTankStat and order ~= AddOn.DefaultTankStatOrder[stat]
+                            if defaultStatUnordered or tankStatUnordered then
+                                DebugPrint(ColorText(stat.." is unordered!", "Legendary"),
+                                    "Expected order:",
+                                    ColorText(AddOn.DefaultStatOrder[stat] or AddOn.DefaultTankStatOrder[stat] or "unknown", "Uncommon"),
+                                    "and actual order:",
+                                    ColorText(order, "DeathKnight")
+                                )
+                                return false
+                            end
+                        end
+                        return true
+                    end
                 },
                 postSpecSelectSpacer = {
                     type = "description",
@@ -879,8 +903,6 @@ local SlashCmds = { "prangearview", "pgv" }
 function AddOn:OnInitialize()
     -- Load database
 	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", Defaults, true)
-    DebugPrint("self.db", self.db)
-    AddOn.PGV_DebugTable(self.db)
 
     -- Setup config options
     local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)

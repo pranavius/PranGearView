@@ -20,7 +20,7 @@ function DebugPrint(...)
 end
 AddOn.DebugPrint = DebugPrint
 
-function AddOn.PGV_DebugTable(table)
+function AddOn.DebugTable(table)
     if AddOn.db.profile.debug then
         print(ColorText("[PGV Debug Table: START]", "Heirloom"))
         for k, v in pairs(table) do
