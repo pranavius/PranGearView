@@ -401,6 +401,218 @@ local Options = {
                 }
             }
         },
+        characterStatOptions = {
+            type = "group",
+            name = "Character Stats",
+            order = 4.1,
+            args = {
+                statUsageDesc = {
+                    type = "description",
+                    name = PGV_ColorText("Customize the order of secondary and teritary stats when viewing the Character Info window by specialization", "Info"),
+                    order = 1,
+                },
+                spacer = {
+                    type = "description",
+                    name = " ",
+                    order = 1.1
+                },
+                specSelect = {
+                    type = "select",
+                    name = "Specialization",
+                    desc = "",
+                    order = 2,
+                    values = function()
+                        local options = {}
+                        local specID = AddOn:GetCharacterCurrentSpecIDAndRole()
+                        if not AddOn.SpecOptions[specID] then
+                            options[0] = ""
+                        end
+                        for id, spec in pairs(AddOn.SpecOptions) do
+                            local classFile = select(6, GetSpecializationInfoByID(id))
+                            options[id] = "|A:classicon-"..classFile..":15:15|a "..spec
+                        end
+                        return options
+                    end,
+                    get = function()
+                        if AddOn.db.profile.lastSelectedSpecID then
+                            return AddOn.db.profile.lastSelectedSpecID
+                        end
+
+                        local specID = AddOn:GetCharacterCurrentSpecIDAndRole()
+                        if AddOn.SpecOptions[specID] then
+                            return specID
+                        else
+                            return 0
+                        end
+                    end,
+                    set = function(_, val)
+                        AddOn.db.profile.lastSelectedSpecID = val
+                        AddOn:InitializeCustomSpecStatOrderDB(val)
+                    end
+                },
+                secondaryStatsHeader = {
+                    type = "header",
+                    name = "Secondary Stats",
+                    order = 2.1
+                },
+                [STAT_CRITICAL_STRIKE] = {
+                    type = "input",
+                    name = "Critical Strike",
+                    order = 3.1,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                [STAT_HASTE] = {
+                    type = "input",
+                    name = "Haste",
+                    order = 3.2,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                [STAT_MASTERY] = {
+                    type = "input",
+                    name = "Mastery",
+                    order = 3.3,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                [STAT_VERSATILITY] = {
+                    type = "input",
+                    name = "Versatility",
+                    order = 3.4,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                tertiaryStatsHeader = {
+                    type = "header",
+                    name = "Tertiary Stats",
+                    order = 4
+                },
+                [STAT_LIFESTEAL] = {
+                    type = "input",
+                    name = "Leech",
+                    order = 5.1,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                [STAT_AVOIDANCE] = {
+                    type = "input",
+                    name = "Avoidance",
+                    order = 5.2,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                [STAT_SPEED] = {
+                    type = "input",
+                    name = "Speed",
+                    order = 5.3,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end
+                },
+                tankOnlyHeader = {
+                    type = "header",
+                    name = "Tank-Specific Stats",
+                    order = 6,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                [STAT_DODGE] = {
+                    type = "input",
+                    name = "Dodge",
+                    order = 7.1,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                [STAT_PARRY] = {
+                    type = "input",
+                    name = "Parry",
+                    order = 7.2,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                [STAT_BLOCK] = {
+                    type = "input",
+                    name = "Block",
+                    order = 7.3,
+                    width = "half",
+                    get = function(item)
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
+                    end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                    end,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+            }
+        },
         otherOptions = {
             type = "group",
             name = L["Other Options"],
@@ -470,6 +682,8 @@ local Defaults = {
         enchCustomColor = AddOn.PGVHexColors.Uncommon,
         showMissingEnchants = true,
         missingEnchantsMaxLevelOnly = true,
+        lastSelectedSpecID = nil,
+        customSpecStatOrders = {},
         iLvlOnItem = false,
         showEmbellishments = true,
         hideShirtTabardInfo = false,
@@ -600,12 +814,36 @@ function AddOn:OnInitialize()
     end)
 
     self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "HandleEquipmentChange")
+    self:RegisterEvent("UPDATE_INVENTORY_DURABILITY", "HandleEquipmentChange")
+    self:RegisterEvent("SOCKET_INFO_ACCEPT", "HandleEquipmentChange")
+
+    -- Necessary to create DB entries for stat ordering when playing a new class/specialization
+    self:RegisterEvent("PLAYER_ENTERING_WORLD", function() self:InitializeCustomSpecStatOrderDB() end)
+    self:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED", function() self:InitializeCustomSpecStatOrderDB() end)
     PGV_DebugPrint(PGV_ColorText(addonName, "Heirloom"), "initialized successfully")
 
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
             self:UpdateEquippedGearInfo()
+            -- self:ReorderStatFramesBySpec()
         end
+    end)
+
+    hooksecurefunc("PaperDollFrame_UpdateStats", function()
+        self:ReorderStatFramesBySpec()
+    end)
+
+    -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
+    -- it shows the character's current specialization options by default
+    SettingsPanel:SetScript("OnShow", function()
+        local specID = AddOn.GetCharacterCurrentSpecIDAndRole(AddOn)
+        if AddOn.SpecOptions[specID] and specID ~= AddOn.db.profile.lastSelectedSpecID then
+            AddOn.db.profile.lastSelectedSpecID = specID
+        else
+            AddOn.db.profile.lastSelectedSpecID = nil
+        end
+        LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+        LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
     end)
 end
 
@@ -718,12 +956,12 @@ function AddOn:GetItemLevelBySlot(slot)
             end
 
             if self.db.profile.useQualityColorForILvl then
-                local _, _, _, qualityHex = GetItemQualityColor(item:GetItemQuality())
+                local qualityHex = select(4, GetItemQualityColor(item:GetItemQuality()))
                 iLvlText = "|c"..qualityHex..iLvlText.."|r"
             elseif self.db.profile.useClassColorForILvl then
-                local _, classFile = UnitClass("player")
-                local _, _, _, classHex = GetClassColor(classFile)
-                iLvlText = "|c"..classHex..iLvlText.."|r"
+                local classFile = select(2, UnitClass("player"))
+                local classHexWithAlpha = select(4, GetClassColor(classFile))
+                iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
             elseif self.db.profile.useCustomColorForILvl then
                 iLvlText = PGV_ColorText(iLvlText, self.db.profile.iLvlCustomColor)
             end
