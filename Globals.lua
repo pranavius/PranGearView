@@ -58,7 +58,7 @@ AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Myth", replacement = "M" }
 }
 
-AddOn.PGVHexColors = {
+AddOn.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
     Rare = "0070DD",
@@ -173,4 +173,20 @@ AddOn.SpecOptions = {
     [71] = "Arms",
     [72] = "Fury",
     [73] = "Protection",
+}
+
+AddOn.DefaultStatOrder = {
+    [STAT_CRITICAL_STRIKE] = 1,
+    [STAT_HASTE] = 2,
+    [STAT_MASTERY] = 3,
+    [STAT_VERSATILITY] = 4,
+    [STAT_LIFESTEAL] = 5,
+    [STAT_AVOIDANCE] = 6,
+    [STAT_SPEED] = 7
+}
+
+AddOn.DefaultTankStatOrder = {
+    [STAT_DODGE] = 8,
+    [STAT_PARRY] = 9,
+    [STAT_BLOCK] = 10
 }

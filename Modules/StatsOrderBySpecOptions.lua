@@ -1,17 +1,32 @@
 local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
-local PGV_DebugPrint = AddOn.PGV_DebugPrint
+local DebugPrint = AddOn.DebugPrint
+
+-- Retrieves acceptable values for stat order dropdowns
+function AddOn:GetStatOrderValuesHandler()
+    local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
+    local options = {}
+    for _, order in pairs(self.db.profile.customSpecStatOrders[specID]) do
+        options[order] = order
+    end
+    return options
+end
+
+function AddOn:GetStatOrderHandler(item)
+    local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
+    return self.db.profile.customSpecStatOrders[specID][item[#item]]
+end
 
 -- handles setting all stat order options
 function AddOn:SetStatOrderHandler(item, val)
-    local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-    local currentOrder = AddOn.db.profile.customSpecStatOrders[specID][item[#item]]
-    AddOn.db.profile.customSpecStatOrders[specID][item[#item]] = tonumber(val)
-    for stat, order in pairs(AddOn.db.profile.customSpecStatOrders[specID]) do
+    local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
+    local currentOrder = self.db.profile.customSpecStatOrders[specID][item[#item]]
+    self.db.profile.customSpecStatOrders[specID][item[#item]] = tonumber(val)
+    for stat, order in pairs(self.db.profile.customSpecStatOrders[specID]) do
         if order == tonumber(val) and stat ~= item[#item] then
-            PGV_DebugPrint("Duplicate order number found on stat:", stat)
-            AddOn.db.profile.customSpecStatOrders[specID][stat] = currentOrder
+            DebugPrint("Duplicate order number found on stat:", stat)
+            self.db.profile.customSpecStatOrders[specID][stat] = currentOrder
             break
         end
     end
@@ -24,7 +39,7 @@ function AddOn:GetCharacterCurrentSpecIDAndRole()
     return specID, role
 end
 
-function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID)
+function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     local specID, role
     if selectedSpecID then
         specID = selectedSpecID
@@ -32,21 +47,13 @@ function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID)
     else
         specID, role = self:GetCharacterCurrentSpecIDAndRole()
     end
-    if not self.db.profile.customSpecStatOrders[specID] then
-        self.db.profile.customSpecStatOrders[specID] = {
-            [STAT_CRITICAL_STRIKE] = 1,
-            [STAT_HASTE] = 2,
-            [STAT_MASTERY] = 3,
-            [STAT_VERSATILITY] = 4,
-            [STAT_LIFESTEAL] = 5,
-            [STAT_AVOIDANCE] = 6,
-            [STAT_SPEED] = 7
-        }
-        -- Tanks have extra secondary stats to consider, so only add those options for Tank specs
+    if not self.db.profile.customSpecStatOrders[specID] or reset then
+        self.db.profile.customSpecStatOrders[specID] = AddOn.DefaultStatOrder
+        -- Tanks have extra stats to consider, so only add those options for Tank specs
         if role == "TANK" then
-            self.db.profile.customSpecStatOrders[specID][STAT_DODGE] = 8
-            self.db.profile.customSpecStatOrders[specID][STAT_PARRY] = 9
-            self.db.profile.customSpecStatOrders[specID][STAT_BLOCK] = 10
+            self.db.profile.customSpecStatOrders[specID][STAT_DODGE] = AddOn.DefaultTankStatOrder[STAT_DODGE]
+            self.db.profile.customSpecStatOrders[specID][STAT_PARRY] = AddOn.DefaultTankStatOrder[STAT_PARRY]
+            self.db.profile.customSpecStatOrders[specID][STAT_BLOCK] = AddOn.DefaultTankStatOrder[STAT_BLOCK]
         end
     end
 end
@@ -74,21 +81,26 @@ function AddOn:ReorderStatFramesBySpec()
     end
 
     for _, statFrame in pairs(statFrames) do
-        local cleanStatName = statFrame.Label:GetText():gsub(":", "")
-        if self.db.profile.customSpecStatOrders[specID][cleanStatName] ~= nil then
+        local cleanStatName = statFrame.Label and statFrame.Label:GetText() and statFrame.Label:GetText():gsub(":", "") or nil
+        if cleanStatName and self.db.profile.customSpecStatOrders[specID][cleanStatName] ~= nil then
             local order = self.db.profile.customSpecStatOrders[specID][cleanStatName]
-            PGV_DebugPrint("Enhancement Stat Frame:", cleanStatName)
             enhancementStatFrames[order] = statFrame
+            DebugPrint("Enhancement stat frame added:", cleanStatName, "with order =", order)
         end
     end
 
-    for order, frame in ipairs(enhancementStatFrames) do
+    -- if stat in position (order - 1) is hidden, there could be overlapping/hidden stats in the Character Info pane
+    -- Compressing the table so that indices are in a running numeric order rather than potentially having gaps between indices
+    AddOn.CompressTable(enhancementStatFrames)
+
+    for order, frame in pairs(enhancementStatFrames) do
+        DebugPrint("Reordering frame: ", frame.Label:GetText())
         frame:ClearAllPoints()
         if order == 1 then
             frame:SetPoint("TOP", CharacterStatsPane.EnhancementsCategory, "BOTTOM", 0, -2)
         else
             frame:SetPoint("TOP", enhancementStatFrames[order - 1], "BOTTOM", 0, 0)
+            frame.Background:SetShown((order % 2) == 0)
         end
-        frame.Background:SetShown((order % 2) == 0)
     end
 end

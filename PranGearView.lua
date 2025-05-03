@@ -2,8 +2,8 @@ local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
-local PGV_DebugPrint = AddOn.PGV_DebugPrint
-local PGV_ColorText = AddOn.PGV_ColorText
+local DebugPrint = AddOn.DebugPrint
+local ColorText = AddOn.ColorText
 
 local Options = {
     type = "group",
@@ -90,7 +90,7 @@ local Options = {
                 },
                 iLvlColorOptionsDesc = {
                     type = "description",
-                    name = PGV_ColorText(L["ilvl_color_opts_desc"], "Info"),
+                    name = ColorText(L["ilvl_color_opts_desc"], "Info"),
                     order = 3
                 },
                 spacerTwo = {
@@ -155,12 +155,12 @@ local Options = {
                     order = 9,
                     hasAlpha = false,
                     get = function(item)
-                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.PGVHexColors.Priest end
+                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
                         local hex = AddOn.db.profile[item[#item]]
-                        return AddOn.PGV_ConvertHexToRGB(hex)
+                        return AddOn.ConvertHexToRGB(hex)
                     end,
                     set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.PGV_ConvertRGBToHex(r, g, b)
+                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                     end,
@@ -174,7 +174,7 @@ local Options = {
                     get = function() return "#"..AddOn.db.profile.iLvlCustomColor end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
-                        local r, g, b = AddOn.PGV_ConvertHexToRGB(val:gsub("#", ""))
+                        local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
                             AddOn.db.profile.iLvlCustomColor = val:gsub("#", "")
                         end
@@ -186,11 +186,11 @@ local Options = {
                     name = L["Reset"],
                     width = "half",
                     order = 11,
-                    func = function() AddOn.db.profile.iLvlCustomColor = AddOn.PGVHexColors.Priest end,
+                    func = function() AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest end,
                     disabled = function()
                         local itemLevelShown = AddOn.db.profile.showiLvl
                         local usingCustomColor = AddOn.db.profile.useCustomColorForILvl
-                        local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.iLvlCustomColor == AddOn.PGVHexColors.Priest
+                        local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.iLvlCustomColor == AddOn.HexColorPresets.Priest
                         return not itemLevelShown or not usingCustomColor or customColorIsDefault
                     end
                 }
@@ -244,12 +244,12 @@ local Options = {
                 },
                 missingGemsDesc = {
                     type = "description",
-                    name = PGV_ColorText(L["add_socket_desc"], "Info"),
+                    name = ColorText(L["add_socket_desc"], "Info"),
                     order = 2.4
                 },
                 emptySocketDesc = {
                     type = "description",
-                    name = PGV_ColorText(L["empty_socket_desc"], "Info"),
+                    name = ColorText(L["empty_socket_desc"], "Info"),
                     order = 2.5
                 }
             }
@@ -331,12 +331,12 @@ local Options = {
                     order = 7,
                     hasAlpha = false,
                     get = function(item)
-                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.PGVHexColors.Uncommon end
+                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Uncommon end
                         local hex = AddOn.db.profile[item[#item]]
-                        return AddOn.PGV_ConvertHexToRGB(hex)
+                        return AddOn.ConvertHexToRGB(hex)
                     end,
                     set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.PGV_ConvertRGBToHex(r, g, b)
+                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                     end,
@@ -350,7 +350,7 @@ local Options = {
                     get = function() return "#"..AddOn.db.profile.enchCustomColor end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
-                        local r, g, b = AddOn.PGV_ConvertHexToRGB(val:gsub("#", ""))
+                        local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
                             AddOn.db.profile.enchCustomColor = val:gsub("#", "")
                         end
@@ -362,11 +362,11 @@ local Options = {
                     name = L["Reset"],
                     width = "half",
                     order = 9,
-                    func = function() AddOn.db.profile.enchCustomColor = AddOn.PGVHexColors.Uncommon end,
+                    func = function() AddOn.db.profile.enchCustomColor = AddOn.HexColorPresets.Uncommon end,
                     disabled = function()
                         local enchantsShown = AddOn.db.profile.showEnchants
                         local usingCustomEnchColor = AddOn.db.profile.useCustomColorForEnchants
-                        local enchCustomColorIsDefault = enchantsShown and usingCustomEnchColor and AddOn.db.profile.enchCustomColor == AddOn.PGVHexColors.Uncommon
+                        local enchCustomColorIsDefault = enchantsShown and usingCustomEnchColor and AddOn.db.profile.enchCustomColor == AddOn.HexColorPresets.Uncommon
                         return not enchantsShown or not usingCustomEnchColor or enchCustomColorIsDefault
                     end
                 }
@@ -379,7 +379,7 @@ local Options = {
             args = {
                 durUsageDesc = {
                     type = "description",
-                    name = PGV_ColorText(L["dur_hidden_at_100"], "Info"),
+                    name = ColorText(L["dur_hidden_at_100"], "Info"),
                     order = 1
                 },
                 spacer = {
@@ -408,7 +408,7 @@ local Options = {
             args = {
                 statUsageDesc = {
                     type = "description",
-                    name = PGV_ColorText("Customize the order of secondary and teritary stats when viewing the Character Info window by specialization", "Info"),
+                    name = ColorText("Customize the secondary & teritary stat order for each spec in the Character Info window", "Info"),
                     order = 1,
                 },
                 spacer = {
@@ -419,7 +419,6 @@ local Options = {
                 specSelect = {
                     type = "select",
                     name = "Specialization",
-                    desc = "",
                     order = 2,
                     values = function()
                         local options = {}
@@ -450,106 +449,164 @@ local Options = {
                         AddOn:InitializeCustomSpecStatOrderDB(val)
                     end
                 },
+                resetOrderButton = {
+                    type = "execute",
+                    name = L["Reset"],
+                    width = "half",
+                    order = 2.001,
+                    func = function()
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        AddOn:InitializeCustomSpecStatOrderDB(specID, true)
+                    end,
+                    disabled = function() return false end
+                },
+                postSpecSelectSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 2.01
+                },
                 secondaryStatsHeader = {
                     type = "header",
                     name = "Secondary Stats",
                     order = 2.1
                 },
+                critStrikeLabel = {
+                    type = "description",
+                    name = ColorText(STAT_CRITICAL_STRIKE, "Info"),
+                    order = 3.01,
+                    width = "half"
+                },
                 [STAT_CRITICAL_STRIKE] = {
-                    type = "input",
-                    name = "Critical Strike",
+                    type = "select",
+                    name = "",
                     order = 3.1,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                },
+                postCritSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 3.11,
+                    width = "full"
+                },
+                hasteLabel = {
+                    type = "description",
+                    name = ColorText(STAT_HASTE, "Info"),
+                    order = 3.15,
+                    width = "half"
                 },
                 [STAT_HASTE] = {
-                    type = "input",
-                    name = "Haste",
+                    type = "select",
+                    name = "",
                     order = 3.2,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                },
+                postHasteSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 3.21,
+                    width = "full"
+                },
+                masteryLabel = {
+                    type = "description",
+                    name = ColorText(STAT_MASTERY, "Info"),
+                    order = 3.25,
+                    width = "half"
                 },
                 [STAT_MASTERY] = {
-                    type = "input",
-                    name = "Mastery",
+                    type = "select",
+                    name = "",
                     order = 3.3,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                },
+                postMastSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 3.31,
+                    width = "full"
+                },
+                versLabel = {
+                    type = "description",
+                    name = ColorText(STAT_VERSATILITY, "Info"),
+                    order = 3.35,
+                    width = "half"
                 },
                 [STAT_VERSATILITY] = {
-                    type = "input",
-                    name = "Versatility",
+                    type = "select",
+                    name = "",
                     order = 3.4,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
                 tertiaryStatsHeader = {
                     type = "header",
                     name = "Tertiary Stats",
                     order = 4
                 },
+                leechLabel = {
+                    type = "description",
+                    name = ColorText(STAT_LIFESTEAL, "Info"),
+                    order = 4.01,
+                    width = "half"
+                },
                 [STAT_LIFESTEAL] = {
-                    type = "input",
-                    name = "Leech",
+                    type = "select",
+                    name = "",
                     order = 5.1,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                },
+                postLeechSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 5.11
+                },
+                avoidLabel = {
+                    type = "description",
+                    name = ColorText(STAT_AVOIDANCE, "Info"),
+                    order = 5.15,
+                    width = "half"
                 },
                 [STAT_AVOIDANCE] = {
-                    type = "input",
-                    name = "Avoidance",
+                    type = "select",
+                    name = "",
                     order = 5.2,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                },
+                postAvoidSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 5.21
+                },
+                speedLabel = {
+                    type = "description",
+                    name = ColorText(STAT_SPEED, "Info"),
+                    order = 5.25,
+                    width = "half"
                 },
                 [STAT_SPEED] = {
-                    type = "input",
-                    name = "Speed",
+                    type = "select",
+                    name = "",
                     order = 5.3,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
                 tankOnlyHeader = {
                     type = "header",
@@ -560,52 +617,88 @@ local Options = {
                         return role ~= "TANK"
                     end
                 },
-                [STAT_DODGE] = {
-                    type = "input",
-                    name = "Dodge",
-                    order = 7.1,
+                dodgeLabel = {
+                    type = "description",
+                    name = ColorText(STAT_DODGE, "Info"),
+                    order = 6.1,
                     width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                [STAT_DODGE] = {
+                    type = "select",
+                    name = "",
+                    order = 7.1,
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                postDodgeSpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 7.11,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                parryLabel = {
+                    type = "description",
+                    name = ColorText(STAT_PARRY, "Info"),
+                    order = 7.15,
+                    width = "half",
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         return role ~= "TANK"
                     end
                 },
                 [STAT_PARRY] = {
-                    type = "input",
-                    name = "Parry",
+                    type = "select",
+                    name = "",
                     order = 7.2,
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                postParrySpacer = {
+                    type = "description",
+                    name = " ",
+                    order = 7.21,
+                    hidden = function()
+                        local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        return role ~= "TANK"
+                    end
+                },
+                blockLabel = {
+                    type = "description",
+                    name = ColorText(STAT_BLOCK, "Info"),
+                    order = 7.25,
                     width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         return role ~= "TANK"
                     end
                 },
                 [STAT_BLOCK] = {
-                    type = "input",
-                    name = "Block",
+                    type = "select",
+                    name = "",
                     order = 7.3,
-                    width = "half",
-                    get = function(item)
-                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        return tostring(AddOn.db.profile.customSpecStatOrders[specID][item[#item]])
-                    end,
-                    set = function(item, val)
-                        AddOn:SetStatOrderHandler(item, val)
-                    end,
+                    width = 0.33,
+                    values = function() return AddOn:GetStatOrderValuesHandler() end,
+                    get = function(item) return AddOn:GetStatOrderHandler(item) end,
+                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         return role ~= "TANK"
@@ -650,7 +743,7 @@ local Options = {
                 debug = {
                     type = "toggle",
                     name = L["Debug Mode"],
-                    desc = L["debug_mode_desc"].."\n\n"..PGV_ColorText(L["dont_enable_warning"], "DeathKnight"),
+                    desc = L["debug_mode_desc"].."\n\n"..ColorText(L["dont_enable_warning"], "DeathKnight"),
                     order = 4,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -672,14 +765,14 @@ local Defaults = {
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
         useCustomColorForILvl = false,
-        iLvlCustomColor = AddOn.PGVHexColors.Priest,
+        iLvlCustomColor = AddOn.HexColorPresets.Priest,
         gemScale = 1,
         showMissingGems = true,
         missingGemsMaxLevelOnly = true,
         enchScale = 1,
         durabilityScale = 1,
         useCustomColorForEnchants = false,
-        enchCustomColor = AddOn.PGVHexColors.Uncommon,
+        enchCustomColor = AddOn.HexColorPresets.Uncommon,
         showMissingEnchants = true,
         missingEnchantsMaxLevelOnly = true,
         lastSelectedSpecID = nil,
@@ -712,7 +805,7 @@ local SlashOptions = {
                 AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 if PaperDollFrame:IsVisible() then
-                    PGV_DebugPrint("Toggled item level with slash command, updating character window")
+                    DebugPrint("Toggled item level with slash command, updating character window")
                     AddOn:UpdateEquippedGearInfo();
                 end
             end
@@ -726,7 +819,7 @@ local SlashOptions = {
                 AddOn.db.profile.showGems = not AddOn.db.profile.showGems
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 if PaperDollFrame:IsVisible() then
-                    PGV_DebugPrint("Toggled gems with slash command, updating character window")
+                    DebugPrint("Toggled gems with slash command, updating character window")
                     AddOn:UpdateEquippedGearInfo();
                 end
             end
@@ -740,7 +833,7 @@ local SlashOptions = {
                 AddOn.db.profile.showEnchants = not AddOn.db.profile.showEnchants
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 if PaperDollFrame:IsVisible() then
-                    PGV_DebugPrint("Toggled enchants with slash command, updating character window")
+                    DebugPrint("Toggled enchants with slash command, updating character window")
                     AddOn:UpdateEquippedGearInfo();
                 end
             end
@@ -754,7 +847,7 @@ local SlashOptions = {
                 AddOn.db.profile.showDurability = not AddOn.db.profile.showDurability
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 if PaperDollFrame:IsVisible() then
-                    PGV_DebugPrint("Toggled durability with slash command, updating character window")
+                    DebugPrint("Toggled durability with slash command, updating character window")
                     AddOn:UpdateEquippedGearInfo();
                 end
             end
@@ -768,7 +861,7 @@ local SlashOptions = {
                 AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 if PaperDollFrame:IsVisible() then
-                    PGV_DebugPrint("Toggled enchant text with slash command, updating character window")
+                    DebugPrint("Toggled enchant text with slash command, updating character window")
                     AddOn:UpdateEquippedGearInfo();
                 end
             end
@@ -786,7 +879,7 @@ local SlashCmds = { "prangearview", "pgv" }
 function AddOn:OnInitialize()
     -- Load database
 	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", Defaults, true)
-    PGV_DebugPrint("self.db", self.db)
+    DebugPrint("self.db", self.db)
     AddOn.PGV_DebugTable(self.db)
 
     -- Setup config options
@@ -802,7 +895,7 @@ function AddOn:OnInitialize()
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
 
     if self.db.profile.collapseEnchants then
-        PGV_DebugPrint("Enchant text is collapsed, update button text accordingly")
+        DebugPrint("Enchant text is collapsed, update button text accordingly")
         AddOn.PGVToggleEnchantButton:UpdateText(L["Show Enchant Text"])
     end
 
@@ -820,7 +913,7 @@ function AddOn:OnInitialize()
     -- Necessary to create DB entries for stat ordering when playing a new class/specialization
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function() self:InitializeCustomSpecStatOrderDB() end)
     self:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED", function() self:InitializeCustomSpecStatOrderDB() end)
-    PGV_DebugPrint(PGV_ColorText(addonName, "Heirloom"), "initialized successfully")
+    DebugPrint(ColorText(addonName, "Heirloom"), "initialized successfully")
 
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
@@ -849,18 +942,18 @@ end
 
 function AddOn:HandleEquipmentChange()
     if PaperDollFrame:IsVisible() then
-        PGV_DebugPrint("Changed equipped item, updating gear information")
+        DebugPrint("Changed equipped item, updating gear information")
         self:UpdateEquippedGearInfo();
     end
 end
 
 function AddOn:UpdateEquippedGearInfo()
     if not AddOn.GearSlots then
-        PGV_DebugPrint("Gear slots table not found")
+        DebugPrint("Gear slots table not found")
         return
     end
     
-    PGV_DebugPrint("Enchants collapsed:", self.db.profile.collapseEnchants)
+    DebugPrint("Enchants collapsed:", self.db.profile.collapseEnchants)
     for _, slot in ipairs(AddOn.GearSlots) do
         local slotID = slot:GetID()
         if self.db.profile.showiLvl then
@@ -933,7 +1026,7 @@ end
 
 ------------ Information Functions ------------
 function AddOn:GetItemLevelBySlot(slot)
-    local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
+    local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local ilvl = item:GetCurrentItemLevel()
         if ilvl > 0 then -- positive value indicates item info has loaded
@@ -948,7 +1041,7 @@ function AddOn:GetItemLevelBySlot(slot)
                             for _, repl in pairs(AddOn.UpgradeTextReplace) do
                                 upgradeText = upgradeText:gsub(repl.original, repl.replacement)
                             end
-                            PGV_DebugPrint("Upgrade track for item", PGV_ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
+                            DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
                             iLvlText = iLvlText.." ("..upgradeText..")"
                         end
                     end
@@ -963,20 +1056,20 @@ function AddOn:GetItemLevelBySlot(slot)
                 local classHexWithAlpha = select(4, GetClassColor(classFile))
                 iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
             elseif self.db.profile.useCustomColorForILvl then
-                iLvlText = PGV_ColorText(iLvlText, self.db.profile.iLvlCustomColor)
+                iLvlText = ColorText(iLvlText, self.db.profile.iLvlCustomColor)
             end
 
-            PGV_DebugPrint("Item Level text for slot", PGV_ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
+            DebugPrint("Item Level text for slot", ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
             slot.PGVItemLevel:SetFormattedText(iLvlText)
         else
-            PGV_DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", PGV_ColorText(slot:GetID(), "Heirloom"))
+            DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", ColorText(slot:GetID(), "Heirloom"))
             C_Timer.After(0.5, function() self:GetItemLevelBySlot(slot) end)
         end
     end
 end
 
 function AddOn:GetGemsBySlot(slot)
-    local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
+    local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local existingSocketCount = 0
         local gemText = ""
@@ -998,11 +1091,11 @@ function AddOn:GetGemsBySlot(slot)
         end
 
         -- Indicates slots that can have sockets added to them
-        if self.db.profile.showMissingGems and AddOn.PGV_IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
+        if self.db.profile.showMissingGems and AddOn.IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
                 for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
-                    PGV_DebugPrint("Slot", PGV_ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
+                    DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
                     gemText = slot.IsLeftSide and gemText.." |A:Socket-Prismatic-Closed:15:15|a" or "|A:Socket-Prismatic-Closed:15:15|a "..gemText
                 end
             end
@@ -1012,7 +1105,7 @@ function AddOn:GetGemsBySlot(slot)
 end
 
 function AddOn:GetEnchantmentBySlot(slot)
-    local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
+    local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local isEnchanted = false
         local eFont, eSize = slot.PGVEnchant:GetFont()
@@ -1021,9 +1114,9 @@ function AddOn:GetEnchantmentBySlot(slot)
             for _, ttdata in pairs(tooltip.lines) do
                 -- Tooltip data type 15 is enchant
                 if ttdata and ttdata.type and ttdata.type == 15 then
-                    PGV_DebugPrint("Item in slot", PGV_ColorText(slot:GetID(), "Heirloom"), "is enchanted")
+                    DebugPrint("Item in slot", ColorText(slot:GetID(), "Heirloom"), "is enchanted")
                     local enchText = ttdata.leftText
-                    PGV_DebugPrint("Original enchantment text:", PGV_ColorText(enchText, "Uncommon"))
+                    DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
                     for _, repl in pairs(AddOn.EnchantTextReplace) do
                         enchText = enchText:gsub(repl.original, repl.replacement)
                     end
@@ -1035,12 +1128,12 @@ function AddOn:GetEnchantmentBySlot(slot)
                     else
                         enchText = enchText:gsub("|A:.-|a", "|A:"..texture..":15:15:0:0|a")
                     end
-                    PGV_DebugPrint("Abbreviated enchantment text:", PGV_ColorText(enchText, "Uncommon"))
+                    DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
     
                     if self.db.profile.useCustomColorForEnchants then
-                        slot.PGVEnchant:SetFormattedText(PGV_ColorText(enchText, self.db.profile.enchCustomColor))
+                        slot.PGVEnchant:SetFormattedText(ColorText(enchText, self.db.profile.enchCustomColor))
                     else
-                        slot.PGVEnchant:SetFormattedText(PGV_ColorText(enchText, "Uncommon"))
+                        slot.PGVEnchant:SetFormattedText(ColorText(enchText, "Uncommon"))
                     end
                     slot.PGVEnchant:SetFont(eFont, eSize)
                     isEnchanted = true
@@ -1048,13 +1141,13 @@ function AddOn:GetEnchantmentBySlot(slot)
             end
         end
 
-        if not isEnchanted and AddOn.PGV_IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
+        if not isEnchanted and AddOn.IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
                 if self.db.profile.collapseEnchants then
                     slot.PGVEnchant:SetFormattedText("|T523826:15:15|t")
                 else
-                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t "..PGV_ColorText(L["Enchant"], "Druid"))
+                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t "..ColorText(L["Enchant"], "Druid"))
                 end
                 slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
             end
@@ -1063,7 +1156,7 @@ function AddOn:GetEnchantmentBySlot(slot)
 end
 
 function AddOn:ShowDurabilityBySlot(slot)
-    local hasItem = AddOn.PGV_IsItemEquippedInSlot(slot)
+    local hasItem = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local cDur, mDur = GetInventoryItemDurability(slot:GetID())
         if cDur and mDur then
@@ -1081,33 +1174,33 @@ function AddOn:ShowDurabilityBySlot(slot)
             slot.PGVDurability:SetPoint("CENTER", slot, "BOTTOM", 0, 5)
 
             local durText = ""
-            local percent = AddOn.PGV_RoundNumber((cDur / mDur) * 100)
+            local percent = AddOn.RoundNumber((cDur / mDur) * 100)
             if percent < 100 and percent > 50 then
-                durText = PGV_ColorText(percent.."%%", "Uncommon")
+                durText = ColorText(percent.."%%", "Uncommon")
             elseif percent < 100 and percent > 25 then
-                durText = PGV_ColorText(percent.."%%", "Info")
+                durText = ColorText(percent.."%%", "Info")
             elseif percent < 100 and percent > 0 then
-                durText = PGV_ColorText(percent.."%%", "Legendary")
+                durText = ColorText(percent.."%%", "Legendary")
             elseif percent == 0 then
-                durText = PGV_ColorText(percent.."%%", "DeathKnight")
+                durText = ColorText(percent.."%%", "DeathKnight")
             end
-            PGV_DebugPrint("Durability for slot", PGV_ColorText(slot:GetID(), "Heirloom"), "=", durText)
+            DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
             slot.PGVDurability:SetFormattedText(durText)
         end
     else
-        PGV_DebugPrint("Slot", PGV_ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
+        DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
     end
 end
 
 function AddOn:ShowEmbellishmentBySlot(slot)
-    local hasItem, item = AddOn.PGV_IsItemEquippedInSlot(slot)
+    local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 if ttdata and ttdata.leftText:find("Embellished") then
                     if not slot.PGVEmbellishmentTexture then
-                        PGV_DebugPrint("Creating embellishment texture in slot", PGV_ColorText(slot:GetID(), "Heirloom"))
+                        DebugPrint("Creating embellishment texture in slot", ColorText(slot:GetID(), "Heirloom"))
                         slot.PGVEmbellishmentTexture = slot:CreateTexture("PGVEmbellishmentTexture"..slot:GetID(), "OVERLAY")
                     end
                     slot.PGVEmbellishmentTexture:SetSize(20, 20)
@@ -1119,14 +1212,14 @@ function AddOn:ShowEmbellishmentBySlot(slot)
                     end
                     slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
                     slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
-                    PGV_DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
+                    DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
                 end
             end
         else
-            PGV_DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
+            DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
         end
     elseif slot.PGVEmbellishmentTexture then
-        PGV_DebugPrint("Showing embellishments enabled, but found embellishment frame on unembellished item in slot |cFF00ccff"..slot:GetID().."|r")
+        DebugPrint("Showing embellishments enabled, but found embellishment frame on unembellished item in slot |cFF00ccff"..slot:GetID().."|r")
     end
 end
 
@@ -1164,19 +1257,19 @@ end
 function AddOn:PGV_SetEnchantPositionBySlot(slot)
     slot.PGVEnchant:ClearAllPoints()
 
-    local isSocketableSlot = AddOn.PGV_IsSocketableSlot(slot)
-    local isEnchantableSlot = AddOn.PGV_IsEnchantableSlot(slot)
+    local isSocketableSlot = AddOn.IsSocketableSlot(slot)
+    local isEnchantableSlot = AddOn.IsEnchantableSlot(slot)
     local iLvlVisbleOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel
     local iLvlVisibleInDefaultLocation = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel
     local defaultYOffset = (iLvlVisbleOnItem or (not iLvlVisibleInDefaultLocation and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
 
     if self.db.profile.collapseEnchants and slot.IsLeftSide == nil then
         -- Update positioning for main and off-hand slot enchants when collapsed
-        PGV_DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
+        DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, defaultYOffset)
     elseif iLvlVisibleInDefaultLocation and slot.PGVItemLevel:GetText() ~= "" and slot.IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both item level and enchants visible
-        PGV_DebugPrint("ilvl and enchant visible")
+        DebugPrint("ilvl and enchant visible")
         slot.PGVItemLevel:ClearAllPoints()
         slot.PGVItemLevel:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
         slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
