@@ -1099,7 +1099,9 @@ function AddOn:GetGemsBySlot(slot)
                     if ttdata.gemIcon then
                         local icon = ttdata.gemIcon
                         gemText = slot.IsLeftSide and gemText.." |T"..icon..":15:15|t" or "|T"..icon..":15:15|t "..gemText
-                    else -- This indicates that there is an empty socket on the item
+                    else
+                        -- This indicates that there is an empty socket on the item
+                        -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
                         gemText = slot.IsLeftSide and gemText.." |T458977:15:15|t" or "|T458977:15:15|t "..gemText
                     end
                     existingSocketCount = existingSocketCount + 1
@@ -1137,11 +1139,35 @@ function AddOn:GetEnchantmentBySlot(slot)
                     for _, repl in pairs(AddOn.EnchantTextReplace) do
                         enchText = enchText:gsub(repl.original, repl.replacement)
                     end
+                    -- Trim enchant text to remove leading and trailing whitespace
+                    -- strtrim is a Blizzard-provided global utility function
+                    enchText = strtrim(enchText)
                     -- Resize any textures in the enchantment text
-                    -- TODO: Check how this work with DK enchants (no texture)
                     local texture = enchText:match("|A:(.-):")
-                    -- If the preference is to hide enchant text, only show the enchant quality
-                    if self.db.profile.collapseEnchants then
+                    -- If no texture is found, the enchant could be an older/DK one.
+                    -- If DK enchant, set texture based on the icon shown for each enchant in Runeforging
+                    if not texture then
+                        if enchText == AddOn.DKEnchantAbbr.Razorice then
+                            texture = "|T135842:15:15|t" -- Interface/Icons/Spell_Frost_FrostArmor
+                        elseif enchText == AddOn.DKEnchantAbbr.Sanguination then
+                            texture = "|T1778226:15:15|t" -- Interface/Icons/Ability_Argus_DeathFod
+                        elseif enchText == AddOn.DKEnchantAbbr.Spellwarding then
+                            texture = "|T425952:15:15|t" -- Interface/Icons/Spell_Fire_TwilightFireward
+                        elseif enchText == AddOn.DKEnchantAbbr.Apocalypse then
+                            texture = "|T237535:15:15|t" -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
+                        elseif enchText == AddOn.DKEnchantAbbr.FallenCrusader then
+                            texture = "|T135957:15:15|t" -- Interface/Icons/Spell_Holy_RetributionAura
+                        elseif enchText == AddOn.DKEnchantAbbr.StoneskinGargoyle then
+                            texture = "|T237480:15:15|t" -- Interface/Icons/Inv_Sword_130
+                        elseif enchText == AddOn.DKEnchantAbbr.UnendingThirst then
+                            texture = "|T3163621:15:15|t" -- Interface/Icons/Spell_NZInsanity_Bloodthirst
+                        else
+                            texture = "|T628564:15:15|t" -- Interface/Scenarios/ScenarioIcon-Check
+                        end
+
+                        enchText = self.db.profile.collapseEnchants and texture or (enchText.." "..texture)
+                        -- If the preference is to hide enchant text, only show the enchant quality
+                    elseif self.db.profile.collapseEnchants then
                         enchText = "|A:"..texture..":15:15:0:0|a"
                     else
                         enchText = enchText:gsub("|A:.-|a", "|A:"..texture..":15:15:0:0|a")
@@ -1162,6 +1188,7 @@ function AddOn:GetEnchantmentBySlot(slot)
         if not isEnchanted and AddOn.IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
+                -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
                 if self.db.profile.collapseEnchants then
                     slot.PGVEnchant:SetFormattedText("|T523826:15:15|t")
                 else
