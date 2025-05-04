@@ -98,6 +98,7 @@ function AddOn:ReorderStatFramesBySpec()
         frame:ClearAllPoints()
         if order == 1 then
             frame:SetPoint("TOP", CharacterStatsPane.EnhancementsCategory, "BOTTOM", 0, -2)
+            frame.Background:SetShown(false)
         else
             frame:SetPoint("TOP", enhancementStatFrames[order - 1], "BOTTOM", 0, 0)
             frame.Background:SetShown((order % 2) == 0)
