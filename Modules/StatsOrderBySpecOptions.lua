@@ -89,7 +89,7 @@ function AddOn:ReorderStatFramesBySpec()
         end
     end
 
-    -- if stat in position (order - 1) is hidden, there could be overlapping/hidden stats in the Character Info pane
+    -- if stat in position (order - 1) is hidden, there could be overlapping/hidden stats in the Character Info window
     -- Compressing the table so that indices are in a running numeric order rather than potentially having gaps between indices
     AddOn.CompressTable(enhancementStatFrames)
 

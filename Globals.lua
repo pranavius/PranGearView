@@ -2,6 +2,21 @@ local addonName, AddOn = ...
 
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 
+AddOn.DKEnchantAbbr = {
+    Razorice = "Razorice",
+    Sanguination = "Sang",
+    Spellwarding = "Spellward",
+    Apocalypse = "Apoc",
+    Fallen = "Fall",
+    Crusader = "Crus",
+    FallenCrusader = "Fall Crus",
+    Stoneskin = "Stnskn",
+    Gargoyle = "Garg",
+    StoneskinGargoyle = "Stnskn Garg",
+    Unending = "Unend",
+    UnendingThirst = "Undend Thirst"
+}
+
 AddOn.EnchantTextReplace = {
     { original = "Enchanted: ", replacement = "" },
     { original = "Chant", replacement = "" },
@@ -10,6 +25,7 @@ AddOn.EnchantTextReplace = {
     { original = "Council's", replacement = "" },
     { original = "Stormrider", replacement = "" },
     { original = "Stormrider's", replacement = "" },
+    { original = "Rune", replacement = "" },
     { original = " of", replacement = "" },
     { original = " the", replacement = "" },
     { original = "'s", replacement = "" },
@@ -47,6 +63,14 @@ AddOn.EnchantTextReplace = {
     { original = "Perception", replacement = "Perc" },
     { original = "Resourcefulness", replacement = "Resource" },
     { original = "Absorption", replacement = "Absorb" },
+    { original = "Sanguination", replacement = AddOn.DKEnchantAbbr.Sanguination },
+    { original = "Spellwarding", replacement = AddOn.DKEnchantAbbr.Spellwarding },
+    { original = "Apocalypse", replacement = AddOn.DKEnchantAbbr.Apocalypse },
+    { original = "Fallen", replacement = AddOn.DKEnchantAbbr.Fallen },
+    { original = "Crusader", replacement = AddOn.DKEnchantAbbr.Crusader },
+    { original = "Stoneskin", replacement = AddOn.DKEnchantAbbr.Stoneskin },
+    { original = "Gargoyle", replacement = AddOn.DKEnchantAbbr.Gargoyle },
+    { original = "Unending", replacement = AddOn.DKEnchantAbbr.Unending },
 }
 
 AddOn.UpgradeTextReplace = {

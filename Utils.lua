@@ -104,7 +104,7 @@ end
 
 function AddOn.ConvertHexToRGB(hex)
     if tonumber("0x"..hex:sub(1,2)) == nil or tonumber("0x"..hex:sub(3,4)) == nil or tonumber("0x"..hex:sub(5,6)) == nil then
-        print("|cFF00ccffPran Gear View: |cFFff3300"..L["invalid_hex_code_msg"].."|r")
+        print("|cFF00ccffPran Gear View: |cFFff3300"..L["Invalid hexadecimal color code provided."].."|r")
         return nil, nil, nil
     end
     return tonumber("0x"..hex:sub(1,2)) / 255,

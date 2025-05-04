@@ -2,7 +2,7 @@ local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
-local button = CreateFrame("Button", "PGV_ToggleEnchantButton", PaperDollSidebarTabs)
+local button = CreateFrame("Button", "PGVToggleEnchantButton", PaperDollSidebarTabs)
 button:SetSize(96, 17)
 button:SetFrameStrata("TOOLTIP")
 button:SetPoint("BOTTOMRIGHT", PaperDollSidebarTabs, "TOPRIGHT", -15, 6)
