@@ -214,3 +214,122 @@ AddOn.DefaultTankStatOrder = {
     [STAT_PARRY] = 9,
     [STAT_BLOCK] = 10
 }
+
+AddOn.RaceIcons = {
+    Human = {
+        Male = "RaceIcon128-Human-Male",
+        Female = "RaceIcon128-Human-Female"
+    },
+    Dwarf = {
+        Male = "RaceIcon128-Dwarf-Male",
+        Female = "RaceIcon128-Dwarf-Female"
+    },
+    NightElf = {
+        Male = "RaceIcon128-NightElf-Male",
+        Female = "RaceIcon128-NightElf-Female"
+    },
+    Gnome = {
+        Male = "RaceIcon128-Gnome-Male",
+        Female = "RaceIcon128-Gnome-Female"
+    },
+    Draenei = {
+        Male = "RaceIcon128-Draenei-Male",
+        Female = "RaceIcon128-Draenei-Female"
+    },
+    Worgen = {
+        Male = "RaceIcon128-Worgen-Male",
+        Female = "RaceIcon128-Worgen-Female"
+    },
+    VoidElf = {
+        Male = "RaceIcon128-VoidElf-Male",
+        Female = "RaceIcon128-VoidElf-Female"
+    },
+    LightforgedDraenei = {
+        Male = "RaceIcon128-Lightforged-Male",
+        Female = "RaceIcon128-Lightforged-Female"
+    },
+    DarkIronDwarf = {
+        Male = "RaceIcon128-DarkIronDwarf-Male",
+        Female = "RaceIcon128-DarkIronDwarf-Female"
+    },
+    KulTiran = {
+        Male = "RaceIcon128-KulTiran-Male",
+        Female = "RaceIcon128-KulTiran-Female"
+    },
+    Mechagnome = {
+        Male = "RaceIcon128-Mechagnome-Male",
+        Female = "RaceIcon128-Mechagnome-Female"
+    },
+    Orc = {
+        Male = "RaceIcon128-Orc-Male",
+        Female = "RaceIcon128-Orc-Female"
+    },
+    Undead = {
+        Male = "RaceIcon128-Undead-Male",
+        Female = "RaceIcon128-Undead-Female"
+    },
+    Tauren = {
+        Male = "RaceIcon128-Tauren-Male",
+        Female = "RaceIcon128-Tauren-Female"
+    },
+    Troll = {
+        Male = "RaceIcon128-Troll-Male",
+        Female = "RaceIcon128-Troll-Female"
+    },
+    BloodElf = {
+        Male = "RaceIcon128-BloodElf-Male",
+        Female = "RaceIcon128-BloodElf-Female"
+    },
+    Goblin = {
+        Male = "RaceIcon128-Goblin-Male",
+        Female = "RaceIcon128-Goblin-Female"
+    },
+    Nightborne = {
+        Male = "RaceIcon128-Nightborne-Male",
+        Female = "RaceIcon128-Nightborne-Female"
+    },
+    HighmountainTauren = {
+        Male = "RaceIcon128-Highmountain-Male",
+        Female = "RaceIcon128-Highmountain-Female"
+    },
+    MagharOrc = {
+        Male = "RaceIcon128-MagharOrc-Male",
+        Female = "RaceIcon128-MagharOrc-Female"
+    },
+    ZandalariTroll = {
+        Male = "RaceIcon128-Zandalari-Male",
+        Female = "RaceIcon128-Zandalari-Female"
+    },
+    Vulpera = {
+        Male = "RaceIcon128-Vulpera-Male",
+        Female = "RaceIcon128-Vulpera-Female"
+    },
+    Pandaren = {
+        Male = "RaceIcon128-Pandaren-Male",
+        Female = "RaceIcon128-Pandaren-Female"
+    },
+    Dracthyr = {
+        Male = "RaceIcon128-Dracthyr-Male",
+        Female = "RaceIcon128-Dracthyr-Female"
+    },
+    Earthen = {
+        Male = "RaceIcon128-Earthen-Male",
+        Female = "RaceIcon128-Earthen-Female"
+    }
+}
+
+AddOn.ClassIcons = {
+    DeathKnight = "ClassIcon-DeathKnight",
+    DemonHunter = "ClassIcon-DemonHunter",
+    Druid = "ClassIcon-Druid",
+    Evoker = "ClassIcon-Evoker",
+    Hunter = "ClassIcon-Hunter",
+    Mage = "ClassIcon-Mage",
+    Monk = "ClassIcon-Monk",
+    Paladin = "ClassIcon-Paladin",
+    Priest = "ClassIcon-Priest",
+    Rogue = "ClassIcon-Rogue",
+    Shaman = "ClassIcon-Shaman",
+    Warlock = "ClassIcon-Warlock",
+    Warrior = "ClassIcon-Warrior"
+}
