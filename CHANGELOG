@@ -1,0 +1,11 @@
+v1.0.0
+Initial Release
+
+v0.5.0
+Add upgrade track option
+Add missing gem, socket, and enchant indicators
+Add stat order customization
+
+v0.1.0
+Display item level, gem, and enchant information
+Basic text color customization

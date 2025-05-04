@@ -11,7 +11,7 @@ local Options = {
     args = {
         usageDesc = {
             type = "description",
-            name = L["usage_desc"],
+            name = L["Choose information to show in the Character Info window"],
             width = "full",
             order = 1,
         },
@@ -23,7 +23,7 @@ local Options = {
         showiLvl = {
             type = "toggle",
             name = L["Item Level"],
-            desc = L["show_ilvl_desc"],
+            desc = L["Display item levels for equipped items"],
             order = 3,
             get = function(item) return AddOn.db.profile[item[#item]] end,
             set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -31,7 +31,7 @@ local Options = {
         showGems = {
             type = "toggle",
             name = L["Gems"],
-            desc = L["show_gems_desc"],
+            desc = L["Display gem and socket information for equipped items"],
             order = 4,
             get = function(item) return AddOn.db.profile[item[#item]] end,
             set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -39,7 +39,7 @@ local Options = {
         showEnchants = {
             type = "toggle",
             name = L["Enchants"],
-            desc = L["show_enchants_desc"],
+            desc = L["Display enchant information for equipped items"],
             order = 5,
             get = function(item) return AddOn.db.profile[item[#item]] end,
             set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -47,7 +47,7 @@ local Options = {
         showDurability = {
             type = "toggle",
             name = L["Durability"],
-            desc = L["show_durability_desc"],
+            desc = L["Display durability percentages for equipped items"],
             order = 6,
             get = function(item) return AddOn.db.profile[item[#item]] end,
             set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -65,7 +65,7 @@ local Options = {
                 iLvlScale = {
                     type = "range",
                     name = L["Font Scale"],
-                    desc = L["ilvl_font_scale_desc"],
+                    desc = L["Scale item level text size relative to the default"],
                     order = 8.01,
                     min = 0.1,
                     max = 2,
@@ -82,7 +82,7 @@ local Options = {
                 showUpgradeTrack = {
                     type = "toggle",
                     name = L["Show Upgrade Track"],
-                    desc = L["upgrade_track_desc"],
+                    desc = L["Display upgrade track and progress next to item level"],
                     order = 8.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -90,7 +90,7 @@ local Options = {
                 },
                 iLvlColorOptionsDesc = {
                     type = "description",
-                    name = ColorText(L["ilvl_color_opts_desc"], "Info"),
+                    name = ColorText(L["Item levels shown in white when no color options are selected"], "Info"),
                     order = 8.04
                 },
                 spacerTwo = {
@@ -101,7 +101,7 @@ local Options = {
                 useQualityColorForILvl = {
                     type = "toggle",
                     name = L["Use Item Quality Color"],
-                    desc = L["ilvl_use_quality_color_desc"],
+                    desc = L["Color item levels based on item quality"],
                     order = 8.06,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -116,7 +116,7 @@ local Options = {
                 useClassColorForILvl = {
                     type = "toggle",
                     name = L["Use Class Color"],
-                    desc = L["ilvl_use_class_color_desc"],
+                    desc = L["Color item levels based on the character's class"],
                     order = 8.07,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -132,7 +132,7 @@ local Options = {
                     type = "toggle",
                     name = L["Use Custom Color"],
                     width = "full",
-                    desc = L["ilvl_use_custom_color_desc"],
+                    desc = L["Customize item level color"],
                     order = 8.08,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -146,7 +146,7 @@ local Options = {
                 },
                 customColorDesc = {
                     type = "description",
-                    name = "\n"..L["custom_color_desc"].."\n"..L["custom_color_instruction"].."\n\n",
+                    name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #|cFFff3300RR|cFF1eff00GG|cFF0070ddBB|r"].."\n\n",
                     order = 8.09
                 },
                 iLvlCustomColor = {
@@ -204,7 +204,7 @@ local Options = {
                 gemScale = {
                     type = "range",
                     name = L["Icon Scale"],
-                    desc = L["gem_icon_scale_desc"],
+                    desc = L["Scale gem icon size relative to the default"],
                     order = 9.01,
                     min = 0.1,
                     max = 2,
@@ -220,8 +220,8 @@ local Options = {
                 },
                 showMissingGems = {
                     type = "toggle",
-                    name = L["Missing Gems Indicator"],
-                    desc = L["missing_gems_desc"],
+                    name = L["Show Missing Gems & Sockets"],
+                    desc = L["Show when an item is missing gems or sockets"],
                     order = 9.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -229,8 +229,8 @@ local Options = {
                 },
                 missingGemsMaxLevelOnly = {
                     type = "toggle",
-                    name = L["Only Show Missing Gems for Max Level"],
-                    desc = L["missing_gems_max_lvl_desc"],
+                    name = L["Only Show for Max Level"],
+                    desc = L["Hide missing gem & socket info for characters under the level cap"],
                     width = "double",
                     order = 9.04,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
@@ -244,12 +244,12 @@ local Options = {
                 },
                 missingGemsDesc = {
                     type = "description",
-                    name = ColorText(L["add_socket_desc"], "Info"),
+                    name = ColorText(L["indicates that a socket can be added to the item"], "Info"),
                     order = 9.06
                 },
                 emptySocketDesc = {
                     type = "description",
-                    name = ColorText(L["empty_socket_desc"], "Info"),
+                    name = ColorText(L["indicates an empty socket on the item"], "Info"),
                     order = 9.07
                 }
             }
@@ -262,7 +262,7 @@ local Options = {
                 enchScale = {
                     type = "range",
                     name = L["Font Scale"],
-                    desc = L["ench_font_scale_desc"],
+                    desc = L["Scale enchant text size relative to the default"],
                     order = 10.01,
                     min = 0.1,
                     max = 2,
@@ -279,7 +279,7 @@ local Options = {
                 showMissingEnchants = {
                     type = "toggle",
                     name = L["Missing Enchant Indicator"],
-                    desc = L["missing_ench_desc"],
+                    desc = L["Show when an item is missing an enchant with a warning symbol"],
                     order = 10.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -287,8 +287,8 @@ local Options = {
                 },
                 missingEnchantsMaxLevelOnly = {
                     type = "toggle",
-                    name = L["Only Show Missing Enchants for Max Level"],
-                    desc = L["missing_ench_max_lvl_desc"],
+                    name = L["Only Show for Max Level"],
+                    desc = L["Hide missing enchant info for characters under the level cap"],
                     width = "double",
                     order = 10.04,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
@@ -302,7 +302,7 @@ local Options = {
                 },
                 enchTextColorOptionsDesc = {
                     type = "description",
-                    name = L["ench_color_opts_desc"],
+                    name = ColorText(L["Enchant quality symbol is not affected by the custom color option"], "Info"),
                     order = 10.06
                 },
                 spacerThree = {
@@ -314,7 +314,7 @@ local Options = {
                     type = "toggle",
                     name = L["Use Custom Color"],
                     width = "full",
-                    desc = L["ench_use_custom_color_desc"],
+                    desc = L["Customize enchant text color"],
                     order = 10.08,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -322,7 +322,7 @@ local Options = {
                 },
                 customColorDesc = {
                     type = "description",
-                    name = "\n"..L["custom_color_desc"].."\n"..L["custom_color_instruction"].."\n\n",
+                    name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #|cFFff3300RR|cFF1eff00GG|cFF0070ddBB|r"].."\n\n",
                     order = 10.09
                 },
                 enchCustomColor = {
@@ -379,7 +379,7 @@ local Options = {
             args = {
                 durUsageDesc = {
                     type = "description",
-                    name = ColorText(L["dur_hidden_at_100"], "Info"),
+                    name = ColorText(L["Durability always hidden at 100%"], "Info"),
                     order = 11.01
                 },
                 spacer = {
@@ -390,7 +390,7 @@ local Options = {
                 durabilityScale = {
                     type = "range",
                     name = L["Font Scale"],
-                    desc = L["dur_font_scale_desc"],
+                    desc = L["Scale durability text size relative to the default"],
                     order = 11.03,
                     min = 0.1,
                     max = 2,
@@ -408,7 +408,7 @@ local Options = {
             args = {
                 statUsageDesc = {
                     type = "description",
-                    name = ColorText(L["custom_spec_desc"], "Info"),
+                    name = ColorText(L["Customize secondary & tertiary stat order in the Character Info window by specialization"], "Info"),
                     order = 12.01,
                 },
                 spacer = {
@@ -634,7 +634,7 @@ local Options = {
                 },
                 tankOnlyHeader = {
                     type = "header",
-                    name = L["Tank-Specific Stats"],
+                    name = L["Tank Stats"],
                     order = 12.28,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
@@ -739,7 +739,7 @@ local Options = {
                     type = "toggle",
                     name = L["Alternate Item Level Placement"],
                     width = "full",
-                    desc = L["alt_ilvl_placement_desc"].."\n\n"..L["ilvl_unchecked_info_text"],
+                    desc = L["Display item levels on top of equipment icons"].."\n\n"..L["Does nothing if the Item Level checkbox is unchecked"],
                     order = 13.1,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -749,7 +749,7 @@ local Options = {
                     type = "toggle",
                     name = L["Show Embellishments"],
                     width = "full",
-                    desc = L["show_embellish_desc"],
+                    desc = L["Show a green star in the top-left corner of embellished equipment"],
                     order = 13.2,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -758,7 +758,7 @@ local Options = {
                     type = "toggle",
                     name = L["Hide Shirt & Tabard Info"],
                     width = "full",
-                    desc = L["hide_shirt_tabard_desc"],
+                    desc = L["Hide information for equipped shirt & tabard"],
                     order = 13.3,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
@@ -767,7 +767,7 @@ local Options = {
                 debug = {
                     type = "toggle",
                     name = L["Debug Mode"],
-                    desc = L["debug_mode_desc"].."\n\n"..ColorText(L["dont_enable_warning"], "DeathKnight"),
+                    desc = L["Display debugging messages in the default chat window"].."\n\n"..ColorText(L["You should never need to enable this"], "DeathKnight"),
                     order = 13.4,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
@@ -817,13 +817,13 @@ local SlashOptions = {
 		config = {
 			type = "execute",
 			name = "config",
-			desc = L["config_desc"],
+			desc = L["Open the AddOn options window"],
 			func = function() Settings.OpenToCategory(addonName) end,
 		},
         ilvl = {
             type = "toggle",
             name = "ilvl",
-            desc = L["ilvl_desc"],
+            desc = L["Toggle showing item level info"],
             get = function() return AddOn.db.profile.showiLvl end,
 	        set = function()
                 AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
@@ -837,7 +837,7 @@ local SlashOptions = {
         gems = {
             type = "toggle",
             name = "gems",
-            desc = L["gems_desc"],
+            desc = L["Toggle showing gem info"],
             get = function() return AddOn.db.profile.showGems end,
 	        set = function()
                 AddOn.db.profile.showGems = not AddOn.db.profile.showGems
@@ -851,7 +851,7 @@ local SlashOptions = {
         ench = {
             type = "toggle",
             name = "ench",
-            desc = L["ench_desc"],
+            desc = L["Toggle showing enchant info"],
             get = function() return AddOn.db.profile.showEnchants end,
 	        set = function()
                 AddOn.db.profile.showEnchants = not AddOn.db.profile.showEnchants
@@ -865,7 +865,7 @@ local SlashOptions = {
         dur = {
             type = "toggle",
             name = "dur",
-            desc = L["dur_desc"],
+            desc = L["Toggle showing durability percentages"],
             get = function() return AddOn.db.profile.showDurability end,
             set = function()
                 AddOn.db.profile.showDurability = not AddOn.db.profile.showDurability
@@ -879,7 +879,7 @@ local SlashOptions = {
         etext = {
             type = "toggle",
             name = "etext",
-            desc = L["etext_desc"],
+            desc = L["Toggle showing enchant text in the Character Info window"],
             get = function() return AddOn.db.profile.collapseEnchants end,
             set = function()
                 AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
@@ -889,11 +889,6 @@ local SlashOptions = {
                     AddOn:UpdateEquippedGearInfo();
                 end
             end
-        },
-        debug = {
-            type = "toggle",
-            name = "debug",
-            desc = L["debug_desc"]
         }
 	},
 }
@@ -1143,6 +1138,7 @@ function AddOn:GetEnchantmentBySlot(slot)
                         enchText = enchText:gsub(repl.original, repl.replacement)
                     end
                     -- Resize any textures in the enchantment text
+                    -- TODO: Check how this work with DK enchants (no texture)
                     local texture = enchText:match("|A:(.-):")
                     -- If the preference is to hide enchant text, only show the enchant quality
                     if self.db.profile.collapseEnchants then
