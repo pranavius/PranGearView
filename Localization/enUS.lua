@@ -75,3 +75,11 @@ L["Toggle showing enchant text in the Character Info window"] = "Toggle showing 
 L["Show Enchant Text"] = "Show Enchant Text"
 L["Hide Enchant Text"] = "Hide Enchant Text"
 L["Invalid hexadecimal color code provided."] = "Invalid hexadecimal color code provided."
+
+------------ Credits ------------
+L["Credits"] = "Credits"
+L["Contributors"] = "Contributors"
+L["If you would like to contribute to development, you can find the repository on GitHub."] = "If you would like to contribute to development, you can find the repository on |cFF1eff00GitHub|r."
+L["Please follow the development guidelines outlined in the README document."] = "Please follow the development guidelines outlined in the README document."
+L["Special Thanks"] = "Special Thanks"
+L["Connect"] = "Connect"

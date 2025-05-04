@@ -51,6 +51,14 @@ function AddOn.CompressTable(tbl)
     end
 end
 
+function AddOn.CreateOptionsSpacer(order)
+    return {
+        type = "description",
+        name = " ",
+        order = order
+    }
+end
+
 function AddOn.IsItemEquippedInSlot(slot)
     local item = Item:CreateFromEquipmentSlot(slot:GetID())
     return not item:IsItemEmpty(), item

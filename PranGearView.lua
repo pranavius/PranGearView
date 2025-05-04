@@ -15,11 +15,7 @@ local Options = {
             width = "full",
             order = 1,
         },
-        spacer = {
-            type = "description",
-            name = " ",
-            order = 2,
-        },
+        spacer = AddOn.CreateOptionsSpacer(2),
         showiLvl = {
             type = "toggle",
             name = L["Item Level"],
@@ -74,11 +70,7 @@ local Options = {
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
-                spacer = {
-                    type = "description",
-                    name = " ",
-                    order = 8.02
-                },
+                spacer = AddOn.CreateOptionsSpacer(8.02),
                 showUpgradeTrack = {
                     type = "toggle",
                     name = L["Show Upgrade Track"],
@@ -93,11 +85,7 @@ local Options = {
                     name = ColorText(L["Item levels shown in white when no color options are selected"], "Info"),
                     order = 8.04
                 },
-                spacerTwo = {
-                    type = "description",
-                    name = " ",
-                    order = 8.05
-                },
+                spacerTwo = AddOn.CreateOptionsSpacer(8.05),
                 useQualityColorForILvl = {
                     type = "toggle",
                     name = L["Use Item Quality Color"],
@@ -213,11 +201,7 @@ local Options = {
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
                     disabled = function() return not AddOn.db.profile.showGems end
                 },
-                spacer = {
-                    type = "description",
-                    name = " ",
-                    order = 9.02
-                },
+                spacer = AddOn.CreateOptionsSpacer(9.02),
                 showMissingGems = {
                     type = "toggle",
                     name = L["Show Missing Gems & Sockets"],
@@ -237,11 +221,7 @@ local Options = {
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
                     disabled = function() return not AddOn.db.profile.showGems or (AddOn.db.profile.showGems and not AddOn.db.profile.showMissingGems) end
                 },
-                spacerTwo = {
-                    type = "description",
-                    name = " ",
-                    order = 9.05
-                },
+                spacerTwo = AddOn.CreateOptionsSpacer(9.05),
                 missingGemsDesc = {
                     type = "description",
                     name = ColorText(L["indicates that a socket can be added to the item"], "Info"),
@@ -271,11 +251,7 @@ local Options = {
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
                     disabled = function() return not AddOn.db.profile.showEnchants end
                 },
-                spacer = {
-                    type = "description",
-                    name = " ",
-                    order = 10.02
-                },
+                spacer = AddOn.CreateOptionsSpacer(10.02),
                 showMissingEnchants = {
                     type = "toggle",
                     name = L["Missing Enchant Indicator"],
@@ -295,21 +271,13 @@ local Options = {
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end,
                     disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
                 },
-                spacerTwo = {
-                    type = "description",
-                    name = " ",
-                    order = 10.05
-                },
+                spacerTwo = AddOn.CreateOptionsSpacer(10.05),
                 enchTextColorOptionsDesc = {
                     type = "description",
                     name = ColorText(L["Enchant quality symbol is not affected by the custom color option"], "Info"),
                     order = 10.06
                 },
-                spacerThree = {
-                    type = "description",
-                    name = " ",
-                    order = 10.07
-                },
+                spacerThree = AddOn.CreateOptionsSpacer(10.07),
                 useCustomColorForEnchants = {
                     type = "toggle",
                     name = L["Use Custom Color"],
@@ -382,11 +350,7 @@ local Options = {
                     name = ColorText(L["Durability always hidden at 100%"], "Info"),
                     order = 11.01
                 },
-                spacer = {
-                    type = "description",
-                    name = " ",
-                    order = 11.02
-                },
+                spacer = AddOn.CreateOptionsSpacer(11.02),
                 durabilityScale = {
                     type = "range",
                     name = L["Font Scale"],
@@ -411,11 +375,7 @@ local Options = {
                     name = ColorText(L["Customize secondary & tertiary stat order in the Character Info window by specialization"], "Info"),
                     order = 12.01,
                 },
-                spacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.02
-                },
+                spacer = AddOn.CreateOptionsSpacer(12.02),
                 specSelect = {
                     type = "select",
                     name = L["Specialization"],
@@ -484,11 +444,7 @@ local Options = {
                         return true
                     end
                 },
-                postSpecSelectSpacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.06
-                },
+                postSpecSelectSpacer = AddOn.CreateOptionsSpacer(12.06),
                 secondaryStatsHeader = {
                     type = "header",
                     name = L["Secondary Stats"],
@@ -509,12 +465,7 @@ local Options = {
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
                     set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
-                postCritSpacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.1,
-                    width = "full"
-                },
+                postCritSpacer = AddOn.CreateOptionsSpacer(12.1),
                 hasteLabel = {
                     type = "description",
                     name = ColorText(STAT_HASTE, "Info"),
@@ -530,12 +481,7 @@ local Options = {
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
                     set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
-                postHasteSpacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.13,
-                    width = "full"
-                },
+                postHasteSpacer = AddOn.CreateOptionsSpacer(12.13),
                 masteryLabel = {
                     type = "description",
                     name = ColorText(STAT_MASTERY, "Info"),
@@ -551,12 +497,7 @@ local Options = {
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
                     set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
-                postMastSpacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.16,
-                    width = "full"
-                },
+                postMastSpacer = AddOn.CreateOptionsSpacer(12.16),
                 versLabel = {
                     type = "description",
                     name = ColorText(STAT_VERSATILITY, "Info"),
@@ -592,11 +533,7 @@ local Options = {
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
                     set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
-                postLeechSpacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.22
-                },
+                postLeechSpacer = AddOn.CreateOptionsSpacer(12.22),
                 avoidLabel = {
                     type = "description",
                     name = ColorText(STAT_AVOIDANCE, "Info"),
@@ -612,11 +549,7 @@ local Options = {
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
                     set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
                 },
-                postAvoidSpacer = {
-                    type = "description",
-                    name = " ",
-                    order = 12.25
-                },
+                postAvoidSpacer = AddOn.CreateOptionsSpacer(12.25),
                 speedLabel = {
                     type = "description",
                     name = ColorText(STAT_SPEED, "Info"),
@@ -773,7 +706,8 @@ local Options = {
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
                 },
             }
-        }
+        },
+        credits = AddOn.BuildCreditsGroup()
     }
 }
 
