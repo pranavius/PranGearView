@@ -123,3 +123,19 @@ end
 function AddOn.RoundNumber(val)
     return math.floor(val + 0.5)
 end
+
+function AddOn.GetTextureString(texture, dim)
+    local size = 15
+    if dim and type(dim) == "number" then
+        size = dim
+    end
+    return "|T"..texture..":"..size..":"..size.."|t"
+end
+
+function AddOn.GetTextureAtlasString(atlas, dim)
+    local size = 15
+    if dim and type(dim) == "number" then
+        size = dim
+    end
+    return "|A:"..atlas..":"..size..":"..size.."|a"
+end

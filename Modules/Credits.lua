@@ -4,14 +4,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local ColorText = AddOn.ColorText
 
-local function GetSizedIconText(icon, dim)
-    local size = 15
-    if dim and type(dim) == "number" then
-        size = dim
-    end
-    return "|A:"..icon..":"..size..":"..size.."|a"
-end
-
 -- { name, race, class, color }
 local contributors = {}
 
@@ -40,7 +32,7 @@ function AddOn.BuildCreditsGroup()
             spacer = AddOn.CreateOptionsSpacer(2),
             author = {
                 type = "description",
-                name = ColorText("Created by "..GetSizedIconText(AddOn.RaceIcons.BloodElf.Male)..GetSizedIconText(AddOn.ClassIcons.Monk).." Pranavius", "Heirloom"),
+                name = ColorText("Created by "..AddOn.GetTextureAtlasString(AddOn.RaceIcons.BloodElf.Male)..AddOn.GetTextureAtlasString(AddOn.ClassIcons.Monk).." Pranavius", "Heirloom"),
                 fontSize = "medium",
                 order = 3
             },
@@ -57,7 +49,7 @@ function AddOn.BuildCreditsGroup()
     for idx, contributor in ipairs(contributors) do
         credits.args["contributor"..idx] = {
             type = "description",
-            name = GetSizedIconText(contributor.race)..GetSizedIconText(contributor.class).." "..contributor.name,
+            name = AddOn.GetTextureAtlasString(contributor.race)..AddOn.GetTextureAtlasString(contributor.class).." "..contributor.name,
             fontSize = "medium",
             order = credits.args.contributorsTitle.order + idx
         }
@@ -86,7 +78,7 @@ function AddOn.BuildCreditsGroup()
         credits.args["specialThanks"..idx] = {
             type = "description",
             fontSize = "medium",
-            name = GetSizedIconText(thanks.race)..GetSizedIconText(thanks.class).." "..ColorText(thanks.name, thanks.color),
+            name = AddOn.GetTextureAtlasString(thanks.race)..AddOn.GetTextureAtlasString(thanks.class).." "..ColorText(thanks.name, thanks.color),
             order = credits.args.specialThanksTitle.order + idx
         }
     end
