@@ -153,7 +153,9 @@ AddOn.PGVExpansionInfo = {
             CharacterFinger1Slot,
             CharacterMainHandSlot,
             CharacterSecondaryHandSlot
-        }
+        },
+        ShieldEnchantAvailable = false,
+        OffhandEnchantAvailable = false
     }
 }
 

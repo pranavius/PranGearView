@@ -38,7 +38,14 @@ local Options = {
             desc = L["Display enchant information for equipped items"],
             order = 5,
             get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val) AddOn.db.profile[item[#item]] = val end
+            set = function(item, val)
+                AddOn.db.profile[item[#item]] = val
+                if not val and AddOn.PGVToggleEnchantButton:IsShown() then
+                    AddOn.PGVToggleEnchantButton:Hide()
+                elseif val and not AddOn.PGVToggleEnchantButton:IsShown() then
+                    AddOn.PGVToggleEnchantButton:Show()
+                end
+            end
         },
         showDurability = {
             type = "toggle",
@@ -794,6 +801,11 @@ local SlashOptions = {
                     DebugPrint("Toggled enchants with slash command, updating character window")
                     AddOn:UpdateEquippedGearInfo();
                 end
+                if not AddOn.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
+                    AddOn.PGVToggleEnchantButton:Hide()
+                elseif AddOn.db.profile.showEnchants and not AddOn.PGVToggleEnchantButton:IsShown() then
+                    AddOn.PGVToggleEnchantButton:Show()
+                end
             end
         },
         dur = {
@@ -856,6 +868,10 @@ function AddOn:OnInitialize()
         AddOn.UpdateEquippedGearInfo(AddOn)
         self:UpdateText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
+
+    if not self.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
+        AddOn.PGVToggleEnchantButton:Hide()
+    end
 
     self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "HandleEquipmentChange")
     self:RegisterEvent("UPDATE_INVENTORY_DURABILITY", "HandleEquipmentChange")
