@@ -1,3 +1,7 @@
+v1.1.0
+Show/Hide Enchant button hidden when enchants are disabled
+Fixed bug that flagged shields and offhand items as not being enchanted
+
 v1.0.0
 Initial Release
 

@@ -2,7 +2,7 @@
 ## Title: Pran Gear View
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## Author: pranavius
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: PranGearViewDB
 ## X-Flavor: retail
 ## X-Category: Bags & Inventory

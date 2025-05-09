@@ -95,9 +95,23 @@ end
 function AddOn.IsEnchantableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.EnchantableSlots) do
+            if slot == gearSlot and slot == CharacterSecondaryHandSlot then
+                local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
+                local isShield = itemClassID == 4 and itemSubclassID == 6
+                local isOffhand = itemClassID == 4 and itemSubclassID == 0
+                if isShield and AddOn.CurrentExpac.ShieldEnchantAvailable then
+                    return true
+                elseif isShield then
+                    return false
+                elseif isOffhand and AddOn.CurrentExpac.OffhandEnchantAvailable then
+                    return true
+                elseif isOffhand then
+                    return false
+                end
+            end
             if slot == gearSlot then
                 DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is enchantable")
-                return true
+                    return true
             end
         end
     else
