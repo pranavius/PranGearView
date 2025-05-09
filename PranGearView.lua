@@ -885,7 +885,6 @@ function AddOn:OnInitialize()
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
             self:UpdateEquippedGearInfo()
-            -- self:ReorderStatFramesBySpec()
         end
     end)
 
@@ -968,6 +967,8 @@ function AddOn:UpdateEquippedGearInfo()
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
+            local eFont, eSize = slot.PGVEnchant:GetFont()
+            slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
             slot.PGVEnchant:Hide()
             local enchTextScale = 0.9
             if self.db.profile.enchScale and self.db.profile.enchScale > 0 then
@@ -1068,7 +1069,8 @@ function AddOn:GetUpgradeTrackBySlot(slot)
                 upgradeTrackText = "("..upgradeTrackText..")"
             end
             upgradeTrackText = ((slot.IsLeftSide == nil and slot == CharacterSecondaryHandSlot) or slot.IsLeftSide) and " "..upgradeTrackText or upgradeTrackText.." "
-            slot.PGVUpgradeTrack:SetFormattedText(ColorText(" "..upgradeTrackText, upgradeColor == AddOn.HexColorPresets.Poor and upgradeColor or "Priest"))
+            if upgradeColor:lower() ~= AddOn.HexColorPresets.Poor:lower() then upgradeColor = AddOn.HexColorPresets.Priest end
+            slot.PGVUpgradeTrack:SetFormattedText(ColorText(upgradeTrackText, upgradeColor))
             slot.PGVUpgradeTrack:Show()
         end
     end
@@ -1122,7 +1124,6 @@ function AddOn:GetEnchantmentBySlot(slot)
     local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local isEnchanted = false
-        local eFont, eSize = slot.PGVEnchant:GetFont()
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
@@ -1142,30 +1143,30 @@ function AddOn:GetEnchantmentBySlot(slot)
                     -- If no texture is found, the enchant could be an older/DK one.
                     -- If DK enchant, set texture based on the icon shown for each enchant in Runeforging
                     if not texture then
+                        local textureID
                         if enchText == AddOn.DKEnchantAbbr.Razorice then
-                            texture = "|T135842:15:15|t" -- Interface/Icons/Spell_Frost_FrostArmor
+                            textureID = 135842 -- Interface/Icons/Spell_Frost_FrostArmor
                         elseif enchText == AddOn.DKEnchantAbbr.Sanguination then
-                            texture = "|T1778226:15:15|t" -- Interface/Icons/Ability_Argus_DeathFod
+                            textureID = 1778226 -- Interface/Icons/Ability_Argus_DeathFod
                         elseif enchText == AddOn.DKEnchantAbbr.Spellwarding then
-                            texture = "|T425952:15:15|t" -- Interface/Icons/Spell_Fire_TwilightFireward
+                            textureID = 425952 -- Interface/Icons/Spell_Fire_TwilightFireward
                         elseif enchText == AddOn.DKEnchantAbbr.Apocalypse then
-                            texture = "|T237535:15:15|t" -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
+                            textureID = 237535 -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
                         elseif enchText == AddOn.DKEnchantAbbr.FallenCrusader then
-                            texture = "|T135957:15:15|t" -- Interface/Icons/Spell_Holy_RetributionAura
+                            textureID = 135957 -- Interface/Icons/Spell_Holy_RetributionAura
                         elseif enchText == AddOn.DKEnchantAbbr.StoneskinGargoyle then
-                            texture = "|T237480:15:15|t" -- Interface/Icons/Inv_Sword_130
+                            textureID = 237480 -- Interface/Icons/Inv_Sword_130
                         elseif enchText == AddOn.DKEnchantAbbr.UnendingThirst then
-                            texture = "|T3163621:15:15|t" -- Interface/Icons/Spell_NZInsanity_Bloodthirst
+                            textureID = 3163621 -- Interface/Icons/Spell_NZInsanity_Bloodthirst
                         else
-                            texture = "|T628564:15:15|t" -- Interface/Scenarios/ScenarioIcon-Check
+                            textureID = 628564 -- Interface/Scenarios/ScenarioIcon-Check
                         end
+                        texture = AddOn.GetTextureString(textureID)
 
                         enchText = self.db.profile.collapseEnchants and texture or (enchText.." "..texture)
-                        -- If the preference is to hide enchant text, only show the enchant quality
-                    elseif self.db.profile.collapseEnchants then
-                        enchText = "|A:"..texture..":15:15:0:0|a"
                     else
-                        enchText = enchText:gsub("|A:.-|a", "|A:"..texture..":15:15:0:0|a")
+                        -- If the preference is to hide enchant text, only show the enchant quality
+                        enchText = self.db.profile.collapseEnchants and AddOn.GetAtlasTextureString(texture) or enchText:gsub("|A:.-|a", AddOn.GetAtlasTextureString(texture))
                     end
                     DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
     
@@ -1174,7 +1175,6 @@ function AddOn:GetEnchantmentBySlot(slot)
                     else
                         slot.PGVEnchant:SetFormattedText(ColorText(enchText, "Uncommon"))
                     end
-                    slot.PGVEnchant:SetFont(eFont, eSize)
                     slot.PGVEnchant:Show()
                     isEnchanted = true
                 end
@@ -1185,12 +1185,7 @@ function AddOn:GetEnchantmentBySlot(slot)
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
                 -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
-                if self.db.profile.collapseEnchants then
-                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t")
-                else
-                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t "..ColorText(L["Enchant"], "Druid"))
-                end
-                slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
+                slot.PGVEnchant:SetFormattedText(self.db.profile.collapseEnchants and AddOn.GetTextureString(523826) or AddOn.GetTextureString(523826)..ColorText(" "..L["Enchant"], "Druid"))
                 slot.PGVEnchant:Show()
             end
         end
