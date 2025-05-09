@@ -85,7 +85,6 @@ function AddOn:ReorderStatFramesBySpec()
         if cleanStatName and self.db.profile.customSpecStatOrders[specID][cleanStatName] ~= nil then
             local order = self.db.profile.customSpecStatOrders[specID][cleanStatName]
             enhancementStatFrames[order] = statFrame
-            DebugPrint("Enhancement stat frame added:", cleanStatName, "with order =", order)
         end
     end
 
@@ -94,7 +93,6 @@ function AddOn:ReorderStatFramesBySpec()
     AddOn.CompressTable(enhancementStatFrames)
 
     for order, frame in pairs(enhancementStatFrames) do
-        DebugPrint("Reordering frame: ", frame.Label:GetText())
         frame:ClearAllPoints()
         if order == 1 then
             frame:SetPoint("TOP", CharacterStatsPane.EnhancementsCategory, "BOTTOM", 0, -2)

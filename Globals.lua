@@ -91,6 +91,7 @@ AddOn.HexColorPresets = {
     Artifact = "E6CC80",
     Heirloom = "00CCFF",
     Info = "FFD100",
+    PrevSeasonGear = "808080",
     DeathKnight = "C41E3A",
     DemonHunter = "A330C9",
     Druid = "FF7C0A",
