@@ -91,29 +91,17 @@ local Options = {
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
                 spacer = AddOn.CreateOptionsSpacer(8.02),
-                showUpgradeTrack = {
-                    type = "toggle",
-                    name = L["Show Upgrade Track"],
-                    desc = L["Display upgrade track and progress next to item level"],
-                    order = 8.03,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
-                        AddOn:HandleEquipmentOrSettingsChange()
-                        end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
-                },
                 iLvlColorOptionsDesc = {
                     type = "description",
                     name = ColorText(L["Item levels shown in white when no color options are selected"], "Info"),
-                    order = 8.04
+                    order = 8.03
                 },
-                spacerTwo = AddOn.CreateOptionsSpacer(8.05),
+                spacerTwo = AddOn.CreateOptionsSpacer(8.04),
                 useQualityColorForILvl = {
                     type = "toggle",
                     name = L["Use Item Quality Color"],
                     desc = L["Color item levels based on item quality"],
-                    order = 8.06,
+                    order = 8.05,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -129,7 +117,7 @@ local Options = {
                     type = "toggle",
                     name = L["Use Class Color"],
                     desc = L["Color item levels based on the character's class"],
-                    order = 8.07,
+                    order = 8.06,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -146,7 +134,7 @@ local Options = {
                     name = L["Use Custom Color"],
                     width = "full",
                     desc = L["Customize item level color"],
-                    order = 8.08,
+                    order = 8.07,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -161,12 +149,12 @@ local Options = {
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #|cFFff3300RR|cFF1eff00GG|cFF0070ddBB|r"].."\n\n",
-                    order = 8.09
+                    order = 8.08
                 },
                 iLvlCustomColor = {
                     type = "color",
                     name = L["Choose a Color"],
-                    order = 8.1,
+                    order = 8.09,
                     hasAlpha = false,
                     get = function(item)
                         if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
@@ -185,8 +173,13 @@ local Options = {
                     type = "input",
                     name = "",
                     width = "half",
-                    order = 8.11,
-                    get = function() return "#"..AddOn.db.profile.iLvlCustomColor end,
+                    order = 8.1,
+                    get = function()
+                        if not AddOn.db.profile.iLvlCustomColor then
+                            AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
+                        end
+                        return "#"..AddOn.db.profile.iLvlCustomColor
+                    end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
@@ -201,7 +194,7 @@ local Options = {
                     type = "execute",
                     name = L["Reset"],
                     width = "half",
-                    order = 8.12,
+                    order = 8.11,
                     func = function()
                         AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -212,7 +205,95 @@ local Options = {
                         local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.iLvlCustomColor == AddOn.HexColorPresets.Priest
                         return not itemLevelShown or not usingCustomColor or customColorIsDefault
                     end
-                }
+                },
+                spacerThree = AddOn.CreateOptionsSpacer(8.12),
+                upgradeTrackHeader = {
+                    type = "header",
+                    name = L["Upgrade Track"],
+                    order = 8.13
+                },
+                showUpgradeTrack = {
+                    type = "toggle",
+                    name = L["Show Upgrade Track"],
+                    desc = L["Display upgrade track and progress next to item level"],
+                    order = 8.14,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function() return not AddOn.db.profile.showiLvl end
+                },
+                useCustomColorForUpgradeTrack = {
+                    type = "toggle",
+                    name = L["Use Custom Color"],
+                    width = "full",
+                    desc = L["Customize upgrade track color"],
+                    order = 8.15,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.showUpgradeTrack end
+                },
+                spacerFour = AddOn.CreateOptionsSpacer(8.16),
+                upgradeTrackCustomColor = {
+                    type = "color",
+                    name = L["Choose a Color"],
+                    order = 8.17,
+                    hasAlpha = false,
+                    get = function(item)
+                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
+                        local hex = AddOn.db.profile[item[#item]]
+                        return AddOn.ConvertHexToRGB(hex)
+                    end,
+                    set = function(item, r, g, b)
+                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.showUpgradeTrack end
+                },
+                upgradeTrackCustomColorHex = {
+                    type = "input",
+                    name = "",
+                    width = "half",
+                    order = 8.18,
+                    get = function()
+                        if not AddOn.db.profile.upgradeTrackCustomColor then
+                            AddOn.db.profile.upgradeTrackCustomColor = AddOn.HexColorPresets.Priest
+                        end
+                        return "#"..AddOn.db.profile.upgradeTrackCustomColor
+                    end,
+                    set = function(_, val)
+                        -- Validate that the provided hex code can be converted to an RGB color before setting
+                        local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
+                        if r ~= nil and g ~= nil and b ~= nil then
+                            AddOn.db.profile.upgradeTrackCustomColor = val:gsub("#", "")
+                            AddOn:HandleEquipmentOrSettingsChange()
+                        end
+                    end,
+                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end
+                },
+                resetUpgradeTrackCustomColor = {
+                    type = "execute",
+                    name = L["Reset"],
+                    width = "half",
+                    order = 8.19,
+                    func = function()
+                        AddOn.db.profile.upgradeTrackCustomColor = AddOn.HexColorPresets.Priest
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function()
+                        local itemLevelShown = AddOn.db.profile.showiLvl
+                        local upgradeTrackShown = AddOn.db.profile.showUpgradeTrack
+                        local usingCustomColor = AddOn.db.profile.useCustomColorForUpgradeTrack
+                        local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.upgradeTrackCustomColor == AddOn.HexColorPresets.Priest
+                        return not itemLevelShown or not upgradeTrackShown or not usingCustomColor or customColorIsDefault
+                    end
+                },
             }
         },
         gemOptions = {
@@ -240,6 +321,7 @@ local Options = {
                     type = "toggle",
                     name = L["Show Missing Gems & Sockets"],
                     desc = L["Show when an item is missing gems or sockets"],
+                    width = "full",
                     order = 9.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -818,11 +900,12 @@ local Defaults = {
         showDurability = false,
         debug = false,
         iLvlScale = 1,
-        showUpgradeTrack = true,
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
+        showUpgradeTrack = true,
+        upgradeTrackCustomColor = AddOn.HexColorPresets.Priest,
         gemScale = 1,
         showMissingGems = true,
         missingGemsMaxLevelOnly = true,
@@ -1150,7 +1233,14 @@ function AddOn:GetUpgradeTrackBySlot(slot)
             if slot.IsLeftSide ~= nil and slot.IsLeftSide then upgradeTrackText = " "..upgradeTrackText
             elseif slot.IsLeftSide ~= nil then upgradeTrackText = upgradeTrackText.." "
             end
-            if upgradeColor:lower() ~= AddOn.HexColorPresets.PrevSeasonGear:lower() then upgradeColor = AddOn.HexColorPresets.Priest end
+            if upgradeColor:lower() ~= AddOn.HexColorPresets.PrevSeasonGear:lower() then
+                if self.db.profile.useCustomColorForUpgradeTrack then
+                    upgradeColor = self.db.profile.upgradeTrackCustomColor
+                else
+                    upgradeColor = select(4, GetItemQualityColor(item:GetItemQuality()))
+                    upgradeColor = upgradeColor:sub(3)
+                end
+            end
             slot.PGVUpgradeTrack:SetFormattedText(ColorText(upgradeTrackText, upgradeColor))
             slot.PGVUpgradeTrack:Show()
         end
@@ -1372,7 +1462,7 @@ function AddOn:GetUpgradeTrackPositionBySlot(slot)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
         slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 35, 5)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
-        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 1)
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, (0.1 * slot.PGVItemLevel:GetHeight()) / 2)
     end
 end
 
