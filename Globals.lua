@@ -74,12 +74,12 @@ AddOn.EnchantTextReplace = {
 }
 
 AddOn.UpgradeTextReplace = {
-    { original = "Upgrade Level: Explorer", replacement = "E" },
-    { original = "Upgrade Level: Adventurer", replacement = "A" },
-    { original = "Upgrade Level: Veteran", replacement = "V" },
-    { original = "Upgrade Level: Champion", replacement = "C" },
-    { original = "Upgrade Level: Hero", replacement = "H" },
-    { original = "Upgrade Level: Myth", replacement = "M" }
+    { original = "Upgrade Level: Explorer ", replacement = "E" },
+    { original = "Upgrade Level: Adventurer ", replacement = "A" },
+    { original = "Upgrade Level: Veteran ", replacement = "V" },
+    { original = "Upgrade Level: Champion ", replacement = "C" },
+    { original = "Upgrade Level: Hero ", replacement = "H" },
+    { original = "Upgrade Level: Myth ", replacement = "M" }
 }
 
 AddOn.HexColorPresets = {

@@ -5,7 +5,10 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local ColorText = AddOn.ColorText
 
 -- { name, race, class, color }
-local contributors = {}
+local contributors = {
+    { name = "ZamestoTV", race = AddOn.RaceIcons.NightElf.Male, class = AddOn.ClassIcons.Druid, color = AddOn.HexColorPresets.Druid },
+    { name = "Lirfdam", race = AddOn.RaceIcons.Nightborne.Female, class = AddOn.ClassIcons.Mage, color = AddOn.HexColorPresets.Mage }
+}
 
 local specialThanks = {
     { name = "Tusk", race = AddOn.RaceIcons.Pandaren.Male, class = AddOn.ClassIcons.Monk, color = AddOn.HexColorPresets.Monk },
@@ -29,14 +32,14 @@ function AddOn.BuildCreditsGroup()
                 fontSize = "large",
                 order = 1
             },
-            spacer = AddOn.CreateOptionsSpacer(2),
+            postTitleSpacer = AddOn.CreateOptionsSpacer(2),
             author = {
                 type = "description",
                 name = ColorText("Created by "..AddOn.GetTextureAtlasString(AddOn.RaceIcons.BloodElf.Male)..AddOn.GetTextureAtlasString(AddOn.ClassIcons.Monk).." Pranavius", "Heirloom"),
                 fontSize = "medium",
                 order = 3
             },
-            spacer2 = AddOn.CreateOptionsSpacer(4),
+            postDescSpacer = AddOn.CreateOptionsSpacer(4),
             contributorsTitle = {
                 type = "description",
                 name = ColorText(L["Contributors"], "Info"),
@@ -46,10 +49,10 @@ function AddOn.BuildCreditsGroup()
         }
     }
 
-    for idx, contributor in ipairs(contributors) do
+    for idx, cont in ipairs(contributors) do
         credits.args["contributor"..idx] = {
             type = "description",
-            name = AddOn.GetTextureAtlasString(contributor.race)..AddOn.GetTextureAtlasString(contributor.class).." "..contributor.name,
+            name = AddOn.GetTextureAtlasString(cont.race)..AddOn.GetTextureAtlasString(cont.class).." "..ColorText(cont.name, cont.color),
             fontSize = "medium",
             order = credits.args.contributorsTitle.order + idx
         }
@@ -61,17 +64,19 @@ function AddOn.BuildCreditsGroup()
         argsSize = argsSize + 1
     end
 
+    credits.args.postContributorsSpacer = AddOn.CreateOptionsSpacer(argsSize + 1)
+
     credits.args.contributionMessage = {
         type = "description",
         name = L["If you would like to contribute to development, you can find the repository on GitHub."].."\n"..L["Please follow the development guidelines outlined in the README document."],
-        order = argsSize + 1
+        order = argsSize + 2
     }
-    credits.args.spacer4 = AddOn.CreateOptionsSpacer(argsSize + 2)
+    credits.args.postContributionMessageSpacer = AddOn.CreateOptionsSpacer(argsSize + 3)
     credits.args.specialThanksTitle = {
         type = "description",
         name = ColorText(L["Special Thanks"], "Info"),
         fontSize = "large",
-        order = argsSize + 3
+        order = argsSize + 4
     }
 
     for idx, thanks in ipairs(specialThanks) do
@@ -89,14 +94,14 @@ function AddOn.BuildCreditsGroup()
         argsSize = argsSize + 1
     end
 
-    credits.args.spacer6 = AddOn.CreateOptionsSpacer(argsSize + 1)
+    credits.args.postSpecialThanksSpacer = AddOn.CreateOptionsSpacer(argsSize + 1)
     credits.args.connectTitle = {
         type = "description",
         name = ColorText(L["Connect"], "Info"),
         fontSize = "large",
         order = argsSize + 2
     }
-    credits.args.spacer7 = AddOn.CreateOptionsSpacer(argsSize + 3)
+    credits.args.postConnectTitleSpacer = AddOn.CreateOptionsSpacer(argsSize + 3)
     credits.args.twitter = {
         type = "description",
         name = "|TInterface\\AddOns\\PranGearView\\Media\\X-logo:20:20:0:5|t   "..ColorText("@PranaviusWoW", "Legendary"),
