@@ -3,6 +3,7 @@ Enable live updates to Character Info window when Character Info and Settings wi
 Remove less important characters and spaces in text to improve readability
 Adjust upgrade track position for main hand and off-hand equipment
 Add language support for Portuguese (BR) and Russian (RU)
+Add color customization options for upgrade track when shown (shows in item quality color by default)
 
 v1.1.1
 Improve upgrade track info positioning
