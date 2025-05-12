@@ -1,13 +1,16 @@
 ## Interface: 110105
 ## Title: Pran Gear View
 ## Notes: Displays useful information about equipped gear in the Character Info window
+## IconTexture: Interface/PaperDollInfoFrame/UI-EquipmentManager-Toggle
 ## Author: pranavius
-## Version: 1.1.1
+## Version: 1.2.0
 ## SavedVariables: PranGearViewDB
 ## X-Flavor: retail
-## X-Category: Bags & Inventory
-## X-Localizations: enUS
-## X-AddOn-Provider: github
+## X-Category: Class
+## X-Additional-Categories: Unit Frames, Combat, Buffs & Debuffs
+## X-Localizations: enUS, enGB, ptBR, ruRU
+## X-Source: https://github.com/pranavius/PranGearView
+## X-Bug-Tracker: https://github.com/pranavius/PranGearView/issues
 ## X-Curse-Project-ID: 1249452
 ## X-License: GNU General Public License
 
@@ -15,6 +18,8 @@ embeds.xml
 
 Localization\enUS.lua
 Localization\enGB.lua
+Localization\ptBR.lua
+Localization\ruRU.lua
 Globals.lua
 Utils.lua
 Modules\ToggleEnchantButton.lua

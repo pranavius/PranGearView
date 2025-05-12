@@ -22,7 +22,10 @@ local Options = {
             desc = L["Display item levels for equipped items"],
             order = 3,
             get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val) AddOn.db.profile[item[#item]] = val end
+            set = function(item, val)
+                AddOn.db.profile[item[#item]] = val
+                AddOn:HandleEquipmentOrSettingsChange()
+                end
         },
         showGems = {
             type = "toggle",
@@ -30,7 +33,10 @@ local Options = {
             desc = L["Display gem and socket information for equipped items"],
             order = 4,
             get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val) AddOn.db.profile[item[#item]] = val end
+            set = function(item, val)
+                AddOn.db.profile[item[#item]] = val
+                AddOn:HandleEquipmentOrSettingsChange()
+                end
         },
         showEnchants = {
             type = "toggle",
@@ -45,6 +51,7 @@ local Options = {
                 elseif val and not AddOn.PGVToggleEnchantButton:IsShown() then
                     AddOn.PGVToggleEnchantButton:Show()
                 end
+                AddOn:HandleEquipmentOrSettingsChange()
             end
         },
         showDurability = {
@@ -53,7 +60,10 @@ local Options = {
             desc = L["Display durability percentages for equipped items"],
             order = 6,
             get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val) AddOn.db.profile[item[#item]] = val end
+            set = function(item, val)
+                AddOn.db.profile[item[#item]] = val
+                AddOn:HandleEquipmentOrSettingsChange()
+                end
         },
         divider = {
             type = "header",
@@ -74,7 +84,10 @@ local Options = {
                     max = 2,
                     step = 0.05,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
                 spacer = AddOn.CreateOptionsSpacer(8.02),
@@ -84,7 +97,10 @@ local Options = {
                     desc = L["Display upgrade track and progress next to item level"],
                     order = 8.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
                 iLvlColorOptionsDesc = {
@@ -105,6 +121,7 @@ local Options = {
                             AddOn.db.profile.useClassColorForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
+                        AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
@@ -120,6 +137,7 @@ local Options = {
                             AddOn.db.profile.useQualityColorForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
+                        AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
@@ -136,6 +154,7 @@ local Options = {
                             AddOn.db.profile.useQualityColorForILvl = false
                             AddOn.db.profile.useClassColorForILvl = false
                         end
+                        AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
@@ -158,6 +177,7 @@ local Options = {
                         AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                        AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end
                 },
@@ -172,6 +192,7 @@ local Options = {
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
                             AddOn.db.profile.iLvlCustomColor = val:gsub("#", "")
+                            AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end
@@ -181,7 +202,10 @@ local Options = {
                     name = L["Reset"],
                     width = "half",
                     order = 8.12,
-                    func = function() AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest end,
+                    func = function()
+                        AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function()
                         local itemLevelShown = AddOn.db.profile.showiLvl
                         local usingCustomColor = AddOn.db.profile.useCustomColorForILvl
@@ -205,7 +229,10 @@ local Options = {
                     max = 2,
                     step = 0.05,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showGems end
                 },
                 spacer = AddOn.CreateOptionsSpacer(9.02),
@@ -215,7 +242,10 @@ local Options = {
                     desc = L["Show when an item is missing gems or sockets"],
                     order = 9.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showGems end
                 },
                 missingGemsMaxLevelOnly = {
@@ -225,7 +255,10 @@ local Options = {
                     width = "double",
                     order = 9.04,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showGems or (AddOn.db.profile.showGems and not AddOn.db.profile.showMissingGems) end
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(9.05),
@@ -255,7 +288,10 @@ local Options = {
                     max = 2,
                     step = 0.05,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showEnchants end
                 },
                 spacer = AddOn.CreateOptionsSpacer(10.02),
@@ -265,7 +301,10 @@ local Options = {
                     desc = L["Show when an item is missing an enchant with a warning symbol"],
                     order = 10.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showEnchants end
                 },
                 missingEnchantsMaxLevelOnly = {
@@ -275,7 +314,10 @@ local Options = {
                     width = "double",
                     order = 10.04,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(10.05),
@@ -292,7 +334,10 @@ local Options = {
                     desc = L["Customize enchant text color"],
                     order = 10.08,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showEnchants end
                 },
                 customColorDesc = {
@@ -314,6 +359,7 @@ local Options = {
                         AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                        AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end
                 },
@@ -328,6 +374,7 @@ local Options = {
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
                             AddOn.db.profile.enchCustomColor = val:gsub("#", "")
+                            AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
                     disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end
@@ -337,7 +384,10 @@ local Options = {
                     name = L["Reset"],
                     width = "half",
                     order = 10.12,
-                    func = function() AddOn.db.profile.enchCustomColor = AddOn.HexColorPresets.Uncommon end,
+                    func = function()
+                        AddOn.db.profile.enchCustomColor = AddOn.HexColorPresets.Uncommon
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function()
                         local enchantsShown = AddOn.db.profile.showEnchants
                         local usingCustomEnchColor = AddOn.db.profile.useCustomColorForEnchants
@@ -367,7 +417,10 @@ local Options = {
                     max = 2,
                     step = 0.05,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showDurability end
                 }
             }
@@ -470,7 +523,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 postCritSpacer = AddOn.CreateOptionsSpacer(12.1),
                 hasteLabel = {
@@ -486,7 +542,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 postHasteSpacer = AddOn.CreateOptionsSpacer(12.13),
                 masteryLabel = {
@@ -502,7 +561,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 postMastSpacer = AddOn.CreateOptionsSpacer(12.16),
                 versLabel = {
@@ -518,7 +580,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 tertiaryStatsHeader = {
                     type = "header",
@@ -538,7 +603,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 postLeechSpacer = AddOn.CreateOptionsSpacer(12.22),
                 avoidLabel = {
@@ -554,7 +622,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 postAvoidSpacer = AddOn.CreateOptionsSpacer(12.25),
                 speedLabel = {
@@ -570,7 +641,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 tankOnlyHeader = {
                     type = "header",
@@ -598,7 +672,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         return role ~= "TANK"
@@ -630,7 +707,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         return role ~= "TANK"
@@ -662,7 +742,10 @@ local Options = {
                     width = 0.33,
                     values = function() return AddOn:GetStatOrderValuesHandler() end,
                     get = function(item) return AddOn:GetStatOrderHandler(item) end,
-                    set = function(item, val) AddOn:SetStatOrderHandler(item, val) end,
+                    set = function(item, val)
+                        AddOn:SetStatOrderHandler(item, val)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     hidden = function()
                         local _, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         return role ~= "TANK"
@@ -682,7 +765,10 @@ local Options = {
                     desc = L["Display item levels on top of equipment icons"].."\n\n"..L["Does nothing if the Item Level checkbox is unchecked"],
                     order = 13.1,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
                 showEmbellishments = {
@@ -692,7 +778,10 @@ local Options = {
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
                     order = 13.2,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end
                 },
                 hideShirtTabardInfo = {
                     type = "toggle",
@@ -701,7 +790,10 @@ local Options = {
                     desc = L["Hide information for equipped shirt & tabard"],
                     order = 13.3,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
                     disabled = function() return not AddOn.db.profile.showiLvl and not AddOn.db.profile.showGems and not AddOn.db.profile.showEnchants end
                 },
                 debug = {
@@ -769,10 +861,7 @@ local SlashOptions = {
 	        set = function()
                 AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
-                if PaperDollFrame:IsVisible() then
-                    DebugPrint("Toggled item level with slash command, updating character window")
-                    AddOn:UpdateEquippedGearInfo();
-                end
+                AddOn:HandleEquipmentOrSettingsChange()
             end
         },
         gems = {
@@ -783,10 +872,7 @@ local SlashOptions = {
 	        set = function()
                 AddOn.db.profile.showGems = not AddOn.db.profile.showGems
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
-                if PaperDollFrame:IsVisible() then
-                    DebugPrint("Toggled gems with slash command, updating character window")
-                    AddOn:UpdateEquippedGearInfo();
-                end
+                AddOn:HandleEquipmentOrSettingsChange()
             end
         },
         ench = {
@@ -797,10 +883,7 @@ local SlashOptions = {
 	        set = function()
                 AddOn.db.profile.showEnchants = not AddOn.db.profile.showEnchants
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
-                if PaperDollFrame:IsVisible() then
-                    DebugPrint("Toggled enchants with slash command, updating character window")
-                    AddOn:UpdateEquippedGearInfo();
-                end
+                AddOn:HandleEquipmentOrSettingsChange()
                 if not AddOn.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
                     AddOn.PGVToggleEnchantButton:Hide()
                 elseif AddOn.db.profile.showEnchants and not AddOn.PGVToggleEnchantButton:IsShown() then
@@ -816,10 +899,7 @@ local SlashOptions = {
             set = function()
                 AddOn.db.profile.showDurability = not AddOn.db.profile.showDurability
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
-                if PaperDollFrame:IsVisible() then
-                    DebugPrint("Toggled durability with slash command, updating character window")
-                    AddOn:UpdateEquippedGearInfo();
-                end
+                AddOn:HandleEquipmentOrSettingsChange()
             end
         },
         etext = {
@@ -830,10 +910,7 @@ local SlashOptions = {
             set = function()
                 AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
-                if PaperDollFrame:IsVisible() then
-                    DebugPrint("Toggled enchant text with slash command, updating character window")
-                    AddOn:UpdateEquippedGearInfo();
-                end
+                AddOn:HandleEquipmentOrSettingsChange()
             end
         }
 	},
@@ -873,9 +950,9 @@ function AddOn:OnInitialize()
         AddOn.PGVToggleEnchantButton:Hide()
     end
 
-    self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "HandleEquipmentChange")
-    self:RegisterEvent("UPDATE_INVENTORY_DURABILITY", "HandleEquipmentChange")
-    self:RegisterEvent("SOCKET_INFO_ACCEPT", "HandleEquipmentChange")
+    self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "HandleEquipmentOrSettingsChange")
+    self:RegisterEvent("UPDATE_INVENTORY_DURABILITY", "HandleEquipmentOrSettingsChange")
+    self:RegisterEvent("SOCKET_INFO_ACCEPT", "HandleEquipmentOrSettingsChange")
 
     -- Necessary to create DB entries for stat ordering when playing a new class/specialization
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function() self:InitializeCustomSpecStatOrderDB() end)
@@ -906,9 +983,9 @@ function AddOn:OnInitialize()
     end)
 end
 
-function AddOn:HandleEquipmentChange()
+function AddOn:HandleEquipmentOrSettingsChange()
     if PaperDollFrame:IsVisible() then
-        DebugPrint("Changed equipped item, updating gear information")
+        DebugPrint("Changed equipped item or AddOn setting, updating gear information")
         self:UpdateEquippedGearInfo();
     end
 end
@@ -951,11 +1028,11 @@ function AddOn:UpdateEquippedGearInfo()
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
             slot.PGVUpgradeTrack:Hide()
-            local iLvlTextScale = 0.9
+            local upgradeTrackTextScale = 0.9
             if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
-                iLvlTextScale = iLvlTextScale * self.db.profile.iLvlScale
+                upgradeTrackTextScale = upgradeTrackTextScale * self.db.profile.iLvlScale
             end
-            slot.PGVUpgradeTrack:SetTextScale(iLvlTextScale)
+            slot.PGVUpgradeTrack:SetTextScale(upgradeTrackTextScale)
 
             self:GetUpgradeTrackBySlot(slot)
             self:GetUpgradeTrackPositionBySlot(slot)
@@ -1070,11 +1147,9 @@ function AddOn:GetUpgradeTrackBySlot(slot)
         end
 
         if upgradeTrackText ~= "" then
-            -- Add parenthesis is item level is shown in default location or if the slot is not one of the weapon/offhand slots
-            if not self.db.profile.iLvlOnItem and slot.IsLeftSide ~= nil then
-                upgradeTrackText = "("..upgradeTrackText..")"
+            if slot.IsLeftSide ~= nil and slot.IsLeftSide then upgradeTrackText = " "..upgradeTrackText
+            elseif slot.IsLeftSide ~= nil then upgradeTrackText = upgradeTrackText.." "
             end
-            upgradeTrackText = ((slot.IsLeftSide == nil and slot == CharacterSecondaryHandSlot) or slot.IsLeftSide) and " "..upgradeTrackText or upgradeTrackText.." "
             if upgradeColor:lower() ~= AddOn.HexColorPresets.PrevSeasonGear:lower() then upgradeColor = AddOn.HexColorPresets.Priest end
             slot.PGVUpgradeTrack:SetFormattedText(ColorText(upgradeTrackText, upgradeColor))
             slot.PGVUpgradeTrack:Show()
@@ -1094,15 +1169,15 @@ function AddOn:GetGemsBySlot(slot)
                 if ttdata and ttdata.type and ttdata.type == 3 then
                     -- Socketed item will have gemIcon variable
                     if ttdata.gemIcon and slot.IsLeftSide then
-                        gemText = gemText.." "..AddOn.GetTextureString(ttdata.gemIcon)
+                        gemText = gemText..(existingSocketCount > 0 and "" or " ")..AddOn.GetTextureString(ttdata.gemIcon)
                     elseif ttdata.gemIcon then
-                        gemText = AddOn.GetTextureString(ttdata.gemIcon).." "..gemText
+                        gemText = AddOn.GetTextureString(ttdata.gemIcon)..(existingSocketCount > 0 and "" or " ")..gemText
                     -- The two conditions below indicate that there is an empty socket on the item
                     -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
                     elseif slot.IsLeftSide then
-                        gemText = gemText.." "..AddOn.GetTextureString(458977)
+                        gemText = gemText..(existingSocketCount > 0 and "" or " ")..AddOn.GetTextureString(458977)
                     else
-                        gemText = AddOn.GetTextureString(458977).." "..gemText
+                        gemText = AddOn.GetTextureString(458977)..(existingSocketCount > 0 and "" or " ")..gemText
                     end
                     existingSocketCount = existingSocketCount + 1
                 end
@@ -1115,7 +1190,7 @@ function AddOn:GetGemsBySlot(slot)
             if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
                 for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
                     DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
-                    gemText = slot.IsLeftSide and gemText.." "..AddOn.GetTextureAtlasString("Socket-Prismatic-Closed") or AddOn.GetTextureAtlasString("Socket-Prismatic-Closed").." "..gemText
+                    gemText = slot.IsLeftSide and gemText..(existingSocketCount > 0 and "" or " ")..AddOn.GetTextureAtlasString("Socket-Prismatic-Closed") or AddOn.GetTextureAtlasString("Socket-Prismatic-Closed")..(existingSocketCount > 0 and "" or " ")..gemText
                 end
             end
         end
@@ -1141,6 +1216,8 @@ function AddOn:GetEnchantmentBySlot(slot)
                     for _, repl in pairs(AddOn.EnchantTextReplace) do
                         enchText = enchText:gsub(repl.original, repl.replacement)
                     end
+                    -- Remove the + that usually prefixes enchant text
+                    enchText = enchText:gsub("+", "")
                     -- Trim enchant text to remove leading and trailing whitespace
                     -- strtrim is a Blizzard-provided global utility function
                     enchText = strtrim(enchText)
@@ -1169,10 +1246,10 @@ function AddOn:GetEnchantmentBySlot(slot)
                         end
                         texture = AddOn.GetTextureString(textureID)
 
-                        enchText = self.db.profile.collapseEnchants and texture or (enchText.." "..texture)
+                        enchText = self.db.profile.collapseEnchants and texture or (enchText..texture)
                     else
                         -- If the preference is to hide enchant text, only show the enchant quality
-                        enchText = self.db.profile.collapseEnchants and AddOn.GetTextureAtlasString(texture) or enchText:gsub("|A:.-|a", AddOn.GetTextureAtlasString(texture))
+                        enchText = self.db.profile.collapseEnchants and AddOn.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", AddOn.GetTextureAtlasString(texture))
                     end
                     DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
     
@@ -1191,7 +1268,7 @@ function AddOn:GetEnchantmentBySlot(slot)
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
                 -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
-                slot.PGVEnchant:SetFormattedText(self.db.profile.collapseEnchants and AddOn.GetTextureString(523826) or AddOn.GetTextureString(523826)..ColorText(" "..L["Enchant"], "Druid"))
+                slot.PGVEnchant:SetFormattedText(self.db.profile.collapseEnchants and AddOn.GetTextureString(523826) or AddOn.GetTextureString(523826)..ColorText(L["Enchant"], "Druid"))
                 slot.PGVEnchant:Show()
             end
         end
@@ -1289,13 +1366,13 @@ function AddOn:GetUpgradeTrackPositionBySlot(slot)
     slot.PGVUpgradeTrack:ClearAllPoints()
 
     if self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
-        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "TOP", 0, 10)
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 35, 5)
     elseif self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
         slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
-        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "TOP", 0, -10)
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 35, 5)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
-        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 1)
     end
 end
 
@@ -1305,19 +1382,19 @@ function AddOn:SetGemsPositionBySlot(slot)
     local upgradeTrackShown = slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
 
     if self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
+        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
     elseif self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
     elseif self.db.profile.iLvlOnItem and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, -1)
     elseif self.db.profile.iLvlOnItem and itemLevelShown then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
     elseif slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
+        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
     elseif slot.IsLeftSide == nil and itemLevelShown then
         slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 0, 0)
     elseif itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, -1)
     elseif itemLevelShown then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
     elseif slot.IsLeftSide == nil then
