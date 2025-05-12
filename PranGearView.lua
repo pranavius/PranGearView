@@ -885,7 +885,6 @@ function AddOn:OnInitialize()
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
             self:UpdateEquippedGearInfo()
-            -- self:ReorderStatFramesBySpec()
         end
     end)
 
@@ -928,13 +927,13 @@ function AddOn:UpdateEquippedGearInfo()
                 slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
             end
             -- Outline text when placed on the gear icon
+            local iFont, iSize = slot.PGVItemLevel:GetFont()
             if self.db.profile.iLvlOnItem then
-                local iFont, iSize = slot.PGVItemLevel:GetFont()
                 slot.PGVItemLevel:SetFont(iFont, iSize, "THICKOUTLINE")
             else
-                slot.PGVItemLevel:SetFontObject("GameTooltipText")
+                slot.PGVItemLevel:SetFont(iFont, iSize, "")
             end
-            slot.PGVItemLevel:SetFormattedText("")
+            slot.PGVItemLevel:Hide()
             local iLvlTextScale = 1
             if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
                 iLvlTextScale = iLvlTextScale * self.db.profile.iLvlScale
@@ -943,13 +942,32 @@ function AddOn:UpdateEquippedGearInfo()
 
             self:GetItemLevelBySlot(slot)
             self:SetItemLevelPositionBySlot(slot)
+        elseif slot.PGVItemLevel then
+            slot.PGVItemLevel:Hide()
+        end
+
+        if self.db.profile.showiLvl and self.db.profile.showUpgradeTrack then
+            if not slot.PGVUpgradeTrack then
+                slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
+            end
+            slot.PGVUpgradeTrack:Hide()
+            local iLvlTextScale = 0.9
+            if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
+                iLvlTextScale = iLvlTextScale * self.db.profile.iLvlScale
+            end
+            slot.PGVUpgradeTrack:SetTextScale(iLvlTextScale)
+
+            self:GetUpgradeTrackBySlot(slot)
+            self:GetUpgradeTrackPositionBySlot(slot)
+        elseif slot.PGVUpgradeTrack then
+            slot.PGVUpgradeTrack:Hide()
         end
 
         if self.db.profile.showGems then
             if not slot.PGVGems then
                 slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
             end
-            slot.PGVGems:SetFormattedText("")
+            slot.PGVGems:Hide()
             local gemScale = 1
             if self.db.profile.gemScale and self.db.profile.gemScale > 0 then
                 gemScale = gemScale * self.db.profile.gemScale
@@ -958,13 +976,17 @@ function AddOn:UpdateEquippedGearInfo()
 
             self:GetGemsBySlot(slot)
             self:SetGemsPositionBySlot(slot)
+        elseif slot.PGVGems then
+            slot.PGVGems:Hide()
         end
 
         if self.db.profile.showEnchants then
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
-            slot.PGVEnchant:SetFormattedText("")
+            local eFont, eSize = slot.PGVEnchant:GetFont()
+            slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
+            slot.PGVEnchant:Hide()
             local enchTextScale = 0.9
             if self.db.profile.enchScale and self.db.profile.enchScale > 0 then
                 enchTextScale = enchTextScale * self.db.profile.enchScale
@@ -973,20 +995,26 @@ function AddOn:UpdateEquippedGearInfo()
 
             self:GetEnchantmentBySlot(slot)
             self:PGV_SetEnchantPositionBySlot(slot)
+        elseif slot.PGVEnchant then
+            slot.PGVEnchant:Hide()
         end
         
         if self.db.profile.showDurability then
             self:ShowDurabilityBySlot(slot)
+        elseif slot.PGVDurability then
+            slot.PGVDurability:Hide()
         end
 
         if self.db.profile.showEmbellishments then
             self:ShowEmbellishmentBySlot(slot)
+        elseif slot.PGVEmbellishmentTexture then
+            slot.PGVEmbellishmentTexture:Hide()
         end
 
         if self.db.profile.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot) then
-            if slot.PGVItemLevel then slot.PGVItemLevel:SetFormattedText("") end
-            if slot.PGVGems then slot.PGVGems:SetFormattedText("") end
-            if slot.PGVEnchant then slot.PGVEnchant:SetFormattedText("") end
+            if slot.PGVItemLevel then slot.PGVItemLevel:Hide() end
+            if slot.PGVGems then slot.PGVGems:Hide() end
+            if slot.PGVEnchant then slot.PGVEnchant:Hide() end
         end
     end
 end
@@ -995,26 +1023,9 @@ end
 function AddOn:GetItemLevelBySlot(slot)
     local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
-        local ilvl = item:GetCurrentItemLevel()
-        if ilvl > 0 then -- positive value indicates item info has loaded
-            local iLvlText = ilvl
-            if self.db.profile.showUpgradeTrack then
-                local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
-                if tooltip and tooltip.lines then
-                    for _, ttdata in pairs(tooltip.lines) do
-                        -- Tooltip data type 42 is upgrade track
-                        if ttdata and ttdata.type and ttdata.type == 42 then
-                            local upgradeText = ttdata.leftText
-                            for _, repl in pairs(AddOn.UpgradeTextReplace) do
-                                upgradeText = upgradeText:gsub(repl.original, repl.replacement)
-                            end
-                            DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
-                            iLvlText = iLvlText.." ("..upgradeText..")"
-                        end
-                    end
-                end
-            end
-
+        local itemLevel = item:GetCurrentItemLevel()
+        if itemLevel > 0 then -- positive value indicates item info has loaded
+            local iLvlText = itemLevel
             if self.db.profile.useQualityColorForILvl then
                 local qualityHex = select(4, GetItemQualityColor(item:GetItemQuality()))
                 iLvlText = "|c"..qualityHex..iLvlText.."|r"
@@ -1028,9 +1039,45 @@ function AddOn:GetItemLevelBySlot(slot)
 
             DebugPrint("Item Level text for slot", ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
             slot.PGVItemLevel:SetFormattedText(iLvlText)
+            slot.PGVItemLevel:Show()
         else
             DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", ColorText(slot:GetID(), "Heirloom"))
             C_Timer.After(0.5, function() self:GetItemLevelBySlot(slot) end)
+        end
+    end
+end
+
+function AddOn:GetUpgradeTrackBySlot(slot)
+    local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
+    if hasItem then
+        local upgradeTrackText = ""
+        local upgradeColor = ""
+        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+        if tooltip and tooltip.lines then
+            for _, ttdata in pairs(tooltip.lines) do
+                -- Tooltip data type 42 is upgrade track
+                if ttdata and ttdata.type and ttdata.type == 42 then
+                    -- Displays past-season upgrade tracks in Gray
+                    upgradeColor = ttdata.leftColor:GenerateHexColorNoAlpha()
+                    local upgradeText = ttdata.leftText
+                    for _, repl in pairs(AddOn.UpgradeTextReplace) do
+                        upgradeText = upgradeText:gsub(repl.original, repl.replacement)
+                    end
+                    upgradeTrackText = upgradeText
+                    DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
+                end
+            end
+        end
+
+        if upgradeTrackText ~= "" then
+            -- Add parenthesis is item level is shown in default location or if the slot is not one of the weapon/offhand slots
+            if not self.db.profile.iLvlOnItem and slot.IsLeftSide ~= nil then
+                upgradeTrackText = "("..upgradeTrackText..")"
+            end
+            upgradeTrackText = ((slot.IsLeftSide == nil and slot == CharacterSecondaryHandSlot) or slot.IsLeftSide) and " "..upgradeTrackText or upgradeTrackText.." "
+            if upgradeColor:lower() ~= AddOn.HexColorPresets.PrevSeasonGear:lower() then upgradeColor = AddOn.HexColorPresets.Priest end
+            slot.PGVUpgradeTrack:SetFormattedText(ColorText(upgradeTrackText, upgradeColor))
+            slot.PGVUpgradeTrack:Show()
         end
     end
 end
@@ -1046,13 +1093,16 @@ function AddOn:GetGemsBySlot(slot)
                 -- Tooltip data type 3 is gem
                 if ttdata and ttdata.type and ttdata.type == 3 then
                     -- Socketed item will have gemIcon variable
-                    if ttdata.gemIcon then
-                        local icon = ttdata.gemIcon
-                        gemText = slot.IsLeftSide and gemText.." |T"..icon..":15:15|t" or "|T"..icon..":15:15|t "..gemText
+                    if ttdata.gemIcon and slot.IsLeftSide then
+                        gemText = gemText.." "..AddOn.GetTextureString(ttdata.gemIcon)
+                    elseif ttdata.gemIcon then
+                        gemText = AddOn.GetTextureString(ttdata.gemIcon).." "..gemText
+                    -- The two conditions below indicate that there is an empty socket on the item
+                    -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
+                    elseif slot.IsLeftSide then
+                        gemText = gemText.." "..AddOn.GetTextureString(458977)
                     else
-                        -- This indicates that there is an empty socket on the item
-                        -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
-                        gemText = slot.IsLeftSide and gemText.." |T458977:15:15|t" or "|T458977:15:15|t "..gemText
+                        gemText = AddOn.GetTextureString(458977).." "..gemText
                     end
                     existingSocketCount = existingSocketCount + 1
                 end
@@ -1060,16 +1110,19 @@ function AddOn:GetGemsBySlot(slot)
         end
 
         -- Indicates slots that can have sockets added to them
-        if self.db.profile.showMissingGems and AddOn.IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
+        if self.db.profile.showGems and self.db.profile.showMissingGems and AddOn.IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
                 for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
                     DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
-                    gemText = slot.IsLeftSide and gemText.." |A:Socket-Prismatic-Closed:15:15|a" or "|A:Socket-Prismatic-Closed:15:15|a "..gemText
+                    gemText = slot.IsLeftSide and gemText.." "..AddOn.GetTextureAtlasString("Socket-Prismatic-Closed") or AddOn.GetTextureAtlasString("Socket-Prismatic-Closed").." "..gemText
                 end
             end
         end
-        slot.PGVGems:SetFormattedText(gemText)
+        if gemText ~= "" then
+            slot.PGVGems:SetFormattedText(gemText)
+            slot.PGVGems:Show()
+        end
     end
 end
 
@@ -1077,7 +1130,6 @@ function AddOn:GetEnchantmentBySlot(slot)
     local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local isEnchanted = false
-        local eFont, eSize = slot.PGVEnchant:GetFont()
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
@@ -1097,30 +1149,30 @@ function AddOn:GetEnchantmentBySlot(slot)
                     -- If no texture is found, the enchant could be an older/DK one.
                     -- If DK enchant, set texture based on the icon shown for each enchant in Runeforging
                     if not texture then
+                        local textureID
                         if enchText == AddOn.DKEnchantAbbr.Razorice then
-                            texture = "|T135842:15:15|t" -- Interface/Icons/Spell_Frost_FrostArmor
+                            textureID = 135842 -- Interface/Icons/Spell_Frost_FrostArmor
                         elseif enchText == AddOn.DKEnchantAbbr.Sanguination then
-                            texture = "|T1778226:15:15|t" -- Interface/Icons/Ability_Argus_DeathFod
+                            textureID = 1778226 -- Interface/Icons/Ability_Argus_DeathFod
                         elseif enchText == AddOn.DKEnchantAbbr.Spellwarding then
-                            texture = "|T425952:15:15|t" -- Interface/Icons/Spell_Fire_TwilightFireward
+                            textureID = 425952 -- Interface/Icons/Spell_Fire_TwilightFireward
                         elseif enchText == AddOn.DKEnchantAbbr.Apocalypse then
-                            texture = "|T237535:15:15|t" -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
+                            textureID = 237535 -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
                         elseif enchText == AddOn.DKEnchantAbbr.FallenCrusader then
-                            texture = "|T135957:15:15|t" -- Interface/Icons/Spell_Holy_RetributionAura
+                            textureID = 135957 -- Interface/Icons/Spell_Holy_RetributionAura
                         elseif enchText == AddOn.DKEnchantAbbr.StoneskinGargoyle then
-                            texture = "|T237480:15:15|t" -- Interface/Icons/Inv_Sword_130
+                            textureID = 237480 -- Interface/Icons/Inv_Sword_130
                         elseif enchText == AddOn.DKEnchantAbbr.UnendingThirst then
-                            texture = "|T3163621:15:15|t" -- Interface/Icons/Spell_NZInsanity_Bloodthirst
+                            textureID = 3163621 -- Interface/Icons/Spell_NZInsanity_Bloodthirst
                         else
-                            texture = "|T628564:15:15|t" -- Interface/Scenarios/ScenarioIcon-Check
+                            textureID = 628564 -- Interface/Scenarios/ScenarioIcon-Check
                         end
+                        texture = AddOn.GetTextureString(textureID)
 
                         enchText = self.db.profile.collapseEnchants and texture or (enchText.." "..texture)
-                        -- If the preference is to hide enchant text, only show the enchant quality
-                    elseif self.db.profile.collapseEnchants then
-                        enchText = "|A:"..texture..":15:15:0:0|a"
                     else
-                        enchText = enchText:gsub("|A:.-|a", "|A:"..texture..":15:15:0:0|a")
+                        -- If the preference is to hide enchant text, only show the enchant quality
+                        enchText = self.db.profile.collapseEnchants and AddOn.GetTextureAtlasString(texture) or enchText:gsub("|A:.-|a", AddOn.GetTextureAtlasString(texture))
                     end
                     DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
     
@@ -1129,7 +1181,7 @@ function AddOn:GetEnchantmentBySlot(slot)
                     else
                         slot.PGVEnchant:SetFormattedText(ColorText(enchText, "Uncommon"))
                     end
-                    slot.PGVEnchant:SetFont(eFont, eSize)
+                    slot.PGVEnchant:Show()
                     isEnchanted = true
                 end
             end
@@ -1139,12 +1191,8 @@ function AddOn:GetEnchantmentBySlot(slot)
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
                 -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
-                if self.db.profile.collapseEnchants then
-                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t")
-                else
-                    slot.PGVEnchant:SetFormattedText("|T523826:15:15|t "..ColorText(L["Enchant"], "Druid"))
-                end
-                slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
+                slot.PGVEnchant:SetFormattedText(self.db.profile.collapseEnchants and AddOn.GetTextureString(523826) or AddOn.GetTextureString(523826)..ColorText(" "..L["Enchant"], "Druid"))
+                slot.PGVEnchant:Show()
             end
         end
     end
@@ -1158,9 +1206,9 @@ function AddOn:ShowDurabilityBySlot(slot)
             if not slot.PGVDurability then
                 slot.PGVDurability = slot:CreateFontString("PGVDurability"..slot:GetID(), "OVERLAY", "GameTooltipText")
             end
+            slot.PGVDurability:Hide()
             local dFont, dSize = slot.PGVDurability:GetFont()
             slot.PGVDurability:SetFont(dFont, dSize, "OUTLINE")
-            slot.PGVDurability:SetFormattedText("")
             local durTextScale = 0.9
             if self.db.profile.durabilityScale and self.db.profile.durabilityScale > 0 then
                 durTextScale = durTextScale * self.db.profile.durabilityScale
@@ -1181,13 +1229,18 @@ function AddOn:ShowDurabilityBySlot(slot)
             end
             DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
             slot.PGVDurability:SetFormattedText(durText)
+            if durText ~= "" then slot.PGVDurability:Show() end
+        elseif slot.PGVDurability then
+            slot.PGVDurability:Hide()
         end
     else
         DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
+        if slot.PGVDurability then slot.PGVDurability:Hide() end
     end
 end
 
 function AddOn:ShowEmbellishmentBySlot(slot)
+    if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
     local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
@@ -1208,13 +1261,14 @@ function AddOn:ShowEmbellishmentBySlot(slot)
                     slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
                     slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
                     DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
+                    slot.PGVEmbellishmentTexture:Show()
                 end
             end
         else
             DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
         end
-    elseif slot.PGVEmbellishmentTexture then
-        DebugPrint("Showing embellishments enabled, but found embellishment frame on unembellished item in slot |cFF00ccff"..slot:GetID().."|r")
+    else
+        DebugPrint("No item equipped in slot |cFF00ccff"..slot:GetID().."|r")
     end
 end
 
@@ -1231,16 +1285,40 @@ function AddOn:SetItemLevelPositionBySlot(slot)
     end
 end
 
+function AddOn:GetUpgradeTrackPositionBySlot(slot)
+    slot.PGVUpgradeTrack:ClearAllPoints()
+
+    if self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "TOP", 0, 10)
+    elseif self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
+    elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "TOP", 0, -10)
+    elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+    end
+end
+
 function AddOn:SetGemsPositionBySlot(slot)
     slot.PGVGems:ClearAllPoints()
+    local itemLevelShown = slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local upgradeTrackShown = slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
 
-    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.IsLeftSide == nil then
+    if self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
+        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
+    elseif self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
-    elseif self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
+    elseif self.db.profile.iLvlOnItem and itemLevelShown and upgradeTrackShown then
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+    elseif self.db.profile.iLvlOnItem and itemLevelShown then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
-    elseif self.db.profile.showiLvl and slot.IsLeftSide == nil then
+    elseif slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
+        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
+    elseif slot.IsLeftSide == nil and itemLevelShown then
         slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 0, 0)
-    elseif self.db.profile.showiLvl then
+    elseif itemLevelShown and upgradeTrackShown then
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+    elseif itemLevelShown then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
     elseif slot.IsLeftSide == nil then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
@@ -1254,21 +1332,33 @@ function AddOn:PGV_SetEnchantPositionBySlot(slot)
 
     local isSocketableSlot = AddOn.IsSocketableSlot(slot)
     local isEnchantableSlot = AddOn.IsEnchantableSlot(slot)
-    local iLvlVisbleOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel
-    local iLvlVisibleInDefaultLocation = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel
-    local defaultYOffset = (iLvlVisbleOnItem or (not iLvlVisibleInDefaultLocation and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
+    local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local upgradeTrackShown = self.db.profile.showiLvl and self.db.profile.showUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local gemsShown = self.db.profile.showGems and slot.PGVGems and slot.PGVGems:IsShown()
+    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
 
-    if self.db.profile.collapseEnchants and slot.IsLeftSide == nil then
+    if self.db.profile.collapseEnchants and slot.IsLeftSide == nil and upgradeTrackShown then
+        -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown
+        DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
+        slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, 25)
+    elseif self.db.profile.collapseEnchants and slot.IsLeftSide == nil then
         -- Update positioning for main and off-hand slot enchants when collapsed
         DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, defaultYOffset)
-    elseif iLvlVisibleInDefaultLocation and slot.PGVItemLevel:GetText() ~= "" and slot.IsLeftSide ~= nil and isEnchantableSlot then
+    elseif itemLevelShown and slot.IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both item level and enchants visible
         DebugPrint("ilvl and enchant visible")
         slot.PGVItemLevel:ClearAllPoints()
         slot.PGVItemLevel:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
         slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
-    elseif (not self.db.profile.showiLvl or iLvlVisbleOnItem) and slot.PGVGems and slot.PGVGems:GetText() ~= "" and self.db.profile.showGems and slot.IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
+    elseif itemLevelShownOnItem and upgradeTrackShown and slot.IsLeftSide ~= nil and isEnchantableSlot then
+        -- Adjust positioning for slots that have both upgrade track and enchants visible
+        DebugPrint("upgrade track and enchant visible in slot", slot:GetID())
+        slot.PGVUpgradeTrack:ClearAllPoints()
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
+        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+    elseif (not self.db.profile.showiLvl or itemLevelShownOnItem) and gemsShown and slot.IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
         -- Adjust positioning for slots that have both gems and enchants visible
         slot.PGVGems:ClearAllPoints()
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)

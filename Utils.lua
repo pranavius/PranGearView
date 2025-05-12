@@ -24,7 +24,7 @@ function AddOn.DebugTable(table)
     if AddOn.db.profile.debug then
         print(ColorText("[PGV Debug Table: START]", "Heirloom"))
         for k, v in pairs(table) do
-            print(k, "=", v)
+            print(k, "=", ColorText(v, "Info"))
         end
         print(ColorText("[PGV Debug Table: END]", "Heirloom"))
     end
@@ -95,7 +95,7 @@ end
 function AddOn.IsEnchantableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.EnchantableSlots) do
-            if slot == gearSlot and slot == CharacterSecondaryHandSlot then
+            if slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
                 local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
                 local isOffhand = itemClassID == 4 and itemSubclassID == 0
@@ -136,4 +136,20 @@ end
 
 function AddOn.RoundNumber(val)
     return math.floor(val + 0.5)
+end
+
+function AddOn.GetTextureString(texture, dim)
+    local size = 15
+    if dim and type(dim) == "number" then
+        size = dim
+    end
+    return "|T"..texture..":"..size..":"..size.."|t"
+end
+
+function AddOn.GetTextureAtlasString(atlas, dim)
+    local size = 15
+    if dim and type(dim) == "number" then
+        size = dim
+    end
+    return "|A:"..atlas..":"..size..":"..size.."|a"
 end
