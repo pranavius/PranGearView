@@ -65,6 +65,16 @@ local Options = {
                 AddOn:HandleEquipmentOrSettingsChange()
                 end
         },
+        showOnInspect = {
+            type = "toggle",
+            name = "Show on Inspect",
+            desc = "Shows the chosen information when inspecting another player",
+            order = 6.5,
+            get = function(item) return AddOn.db.profile[item[#item]] end,
+            set = function(item, val)
+                AddOn.db.profile[item[#item]] = val
+            end
+        },
         divider = {
             type = "header",
             name = "",
@@ -898,6 +908,8 @@ local Defaults = {
         showGems = true,
         showEnchants = true,
         showDurability = false,
+        showOnInspect = false,
+        inspectedUnitID = nil,
         debug = false,
         iLvlScale = 1,
         useQualityColorForILvl = true,
@@ -1040,6 +1052,8 @@ function AddOn:OnInitialize()
     -- Necessary to create DB entries for stat ordering when playing a new class/specialization
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function() self:InitializeCustomSpecStatOrderDB() end)
     self:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED", function() self:InitializeCustomSpecStatOrderDB() end)
+
+    self:RegisterEvent("INSPECT_READY", "UpdatedInspectedGearInfo")
     DebugPrint(ColorText(addonName, "Heirloom"), "initialized successfully")
 
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
@@ -1180,33 +1194,6 @@ function AddOn:UpdateEquippedGearInfo()
 end
 
 ------------ Information Functions ------------
-function AddOn:GetItemLevelBySlot(slot)
-    local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
-    if hasItem then
-        local itemLevel = item:GetCurrentItemLevel()
-        if itemLevel > 0 then -- positive value indicates item info has loaded
-            local iLvlText = itemLevel
-            if self.db.profile.useQualityColorForILvl then
-                local qualityHex = select(4, GetItemQualityColor(item:GetItemQuality()))
-                iLvlText = "|c"..qualityHex..iLvlText.."|r"
-            elseif self.db.profile.useClassColorForILvl then
-                local classFile = select(2, UnitClass("player"))
-                local classHexWithAlpha = select(4, GetClassColor(classFile))
-                iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
-            elseif self.db.profile.useCustomColorForILvl then
-                iLvlText = ColorText(iLvlText, self.db.profile.iLvlCustomColor)
-            end
-
-            DebugPrint("Item Level text for slot", ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
-            slot.PGVItemLevel:SetFormattedText(iLvlText)
-            slot.PGVItemLevel:Show()
-        else
-            DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", ColorText(slot:GetID(), "Heirloom"))
-            C_Timer.After(0.5, function() self:GetItemLevelBySlot(slot) end)
-        end
-    end
-end
-
 function AddOn:GetUpgradeTrackBySlot(slot)
     local hasItem, item = AddOn.IsItemEquippedInSlot(slot)
     if hasItem then

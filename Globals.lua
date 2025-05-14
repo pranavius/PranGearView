@@ -128,18 +128,61 @@ AddOn.GearSlots = {
     CharacterSecondaryHandSlot
 }
 
+AddOn.InspectInfo = {
+    slots = {
+        InspectHeadSlot,
+        InspectNeckSlot,
+        InspectShoulderSlot,
+        InspectBackSlot,
+        InspectChestSlot,
+        InspectShirtSlot,
+        InspectTabardSlot,
+        InspectWristSlot,
+        InspectHandsSlot,
+        InspectWaistSlot,
+        InspectLegsSlot,
+        InspectFeetSlot,
+        InspectFinger0Slot,
+        InspectFinger1Slot,
+        InspectTrinket0Slot,
+        InspectTrinket1Slot,
+        InspectMainHandSlot,
+        InspectSecondaryHandSlot
+    },
+    leftSideSlots = {
+        InspectHeadSlot,
+        InspectNeckSlot,
+        InspectShoulderSlot,
+        InspectBackSlot,
+        InspectChestSlot,
+        InspectShirtSlot,
+        InspectTabardSlot,
+        InspectWristSlot
+    },
+    bottomSlots = {
+        InspectMainHandSlot,
+        InspectSecondaryHandSlot
+    }
+}
+
 AddOn.PGVExpansionInfo = {
     TheWarWithin = {
         LevelCap = 80,
         SocketableSlots = {
             CharacterNeckSlot,
             CharacterFinger0Slot,
-            CharacterFinger1Slot
+            CharacterFinger1Slot,
+            InspectNeckSlot,
+            InspectFinger0Slot,
+            InspectFinger1Slot
         },
         AuxSocketableSlots = {
             CharacterHeadSlot,
             CharacterWristSlot,
-            CharacterWaistSlot
+            CharacterWaistSlot,
+            InspectHeadSlot,
+            InspectWristSlot,
+            InspectWaistSlot
         },
         MaxSocketsPerItem = 2,
         MaxAuxSocketsPerItem = 1,
@@ -153,7 +196,16 @@ AddOn.PGVExpansionInfo = {
             CharacterFinger0Slot,
             CharacterFinger1Slot,
             CharacterMainHandSlot,
-            CharacterSecondaryHandSlot
+            CharacterSecondaryHandSlot,
+            InspectBackSlot,
+            InspectChestSlot,
+            InspectWristSlot,
+            InspectLegsSlot,
+            InspectFeetSlot,
+            InspectFinger0Slot,
+            InspectFinger1Slot,
+            InspectMainHandSlot,
+            InspectSecondaryHandSlot
         },
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false

@@ -68,7 +68,7 @@ function AddOn.IsSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.SocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.SocketableSlots) do
             if slot == gearSlot then
-                DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable")
+                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable")
                 return true
             end
         end
@@ -82,7 +82,7 @@ function AddOn.IsAuxSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.AuxSocketableSlots) do
             if slot == gearSlot then
-                DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is socketable (aux)")
+                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable (aux)")
                 return true
             end
         end
