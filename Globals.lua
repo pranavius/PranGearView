@@ -18,6 +18,8 @@ AddOn.DKEnchantAbbr = {
 }
 
 AddOn.EnchantTextReplace = {
+    { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
+    { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
     { original = "Enchanted: ", replacement = "" },
     { original = "Chant", replacement = "" },
     { original = "Whisper", replacement = "" },

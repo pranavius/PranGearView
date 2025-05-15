@@ -1,5 +1,6 @@
 local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
@@ -132,8 +133,6 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                     for _, repl in pairs(AddOn.EnchantTextReplace) do
                         enchText = enchText:gsub(repl.original, repl.replacement)
                     end
-                    -- Remove the + that usually prefixes enchant text
-                    enchText = enchText:gsub("+", "")
                     -- Trim enchant text to remove leading and trailing whitespace
                     -- strtrim is a Blizzard-provided global utility function
                     enchText = strtrim(enchText)
@@ -162,10 +161,10 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                         end
                         texture = AddOn.GetTextureString(textureID)
 
-                        enchText = self.db.profile.collapseEnchants and texture or (enchText..texture)
+                        enchText = (self.db.profile.collapseEnchants and not isInspect) and texture or (enchText..texture)
                     else
                         -- If the preference is to hide enchant text, only show the enchant quality
-                        enchText = self.db.profile.collapseEnchants and AddOn.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", AddOn.GetTextureAtlasString(texture))
+                        enchText = (self.db.profile.collapseEnchants and not isInspect) and AddOn.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", AddOn.GetTextureAtlasString(texture))
                     end
                     DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
     
