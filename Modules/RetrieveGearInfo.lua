@@ -189,3 +189,77 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
         end
     end
 end
+
+function AddOn:ShowDurabilityBySlot(slot)
+    local hasItem = AddOn:IsItemEquippedInSlot(slot)
+    if hasItem then
+        local cDur, mDur = GetInventoryItemDurability(slot:GetID())
+        if cDur and mDur then
+            if not slot.PGVDurability then
+                slot.PGVDurability = slot:CreateFontString("PGVDurability"..slot:GetID(), "OVERLAY", "GameTooltipText")
+            end
+            slot.PGVDurability:Hide()
+            local dFont, dSize = slot.PGVDurability:GetFont()
+            slot.PGVDurability:SetFont(dFont, dSize, "OUTLINE")
+            local durTextScale = 0.9
+            if self.db.profile.durabilityScale and self.db.profile.durabilityScale > 0 then
+                durTextScale = durTextScale * self.db.profile.durabilityScale
+            end
+            slot.PGVDurability:SetTextScale(durTextScale)
+            slot.PGVDurability:SetPoint("CENTER", slot, "BOTTOM", 0, 5)
+
+            local durText = ""
+            local percent = AddOn.RoundNumber((cDur / mDur) * 100)
+            if percent < 100 and percent > 50 then
+                durText = ColorText(percent.."%%", "Uncommon")
+            elseif percent < 100 and percent > 25 then
+                durText = ColorText(percent.."%%", "Info")
+            elseif percent < 100 and percent > 0 then
+                durText = ColorText(percent.."%%", "Legendary")
+            elseif percent == 0 then
+                durText = ColorText(percent.."%%", "DeathKnight")
+            end
+            DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
+            slot.PGVDurability:SetFormattedText(durText)
+            if durText ~= "" then slot.PGVDurability:Show() end
+        elseif slot.PGVDurability then
+            slot.PGVDurability:Hide()
+        end
+    else
+        DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
+        if slot.PGVDurability then slot.PGVDurability:Hide() end
+    end
+end
+
+function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
+    if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
+    local hasItem, item = AddOn:IsItemEquippedInSlot(slot, isInspect)
+    if hasItem then
+        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+        if tooltip and tooltip.lines then
+            for _, ttdata in pairs(tooltip.lines) do
+                if ttdata and ttdata.leftText:find("Embellished") then
+                    if not slot.PGVEmbellishmentTexture then
+                        DebugPrint("Creating embellishment texture in slot", ColorText(slot:GetID(), "Heirloom"))
+                        slot.PGVEmbellishmentTexture = slot:CreateTexture("PGVEmbellishmentTexture"..slot:GetID(), "OVERLAY")
+                    end
+                    slot.PGVEmbellishmentTexture:SetSize(20, 20)
+                    slot.PGVEmbellishmentTexture:ClearAllPoints()
+                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
+                        slot.PGVEmbellishmentTexture:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, -5)
+                    else
+                        slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
+                    end
+                    slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
+                    slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
+                    DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
+                    slot.PGVEmbellishmentTexture:Show()
+                end
+            end
+        else
+            DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
+        end
+    else
+        DebugPrint("No item equipped in slot |cFF00ccff"..slot:GetID().."|r")
+    end
+end

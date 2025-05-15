@@ -7,7 +7,7 @@ local ColorText = AddOn.ColorText
 function AddOn:SetInspectUnitGUID(unitGUID)
     if self.db.profile.showOnInspect and (not self.db.profile.inspectedUnitGUID or self.db.profile.inspectedUnitGUID ~= unitGUID) then
         self.db.profile.inspectedUnitGUID = unitGUID
-        print("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Legendary"), self.db.profile.inspectedUnitGUID)
+        DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Legendary"), self.db.profile.inspectedUnitGUID)
     end
 end
 
@@ -17,7 +17,7 @@ function AddOn:UpdatedInspectedGearInfo(_, unitGUID)
     --     return
     -- end
     if not AddOn.InspectInfo or not AddOn.InspectInfo.slots then
-        print("Inspect slots table not found")
+        DebugPrint("Inspect slots table not found")
         return
     end
 
@@ -25,7 +25,7 @@ function AddOn:UpdatedInspectedGearInfo(_, unitGUID)
     for _, slotName in ipairs(AddOn.InspectInfo.slots) do
         local slot = _G[slotName]
         local slotID = slot:GetID()
-        if self.db.profile.showiLvl then
+        if self.db.profile.showInspectiLvl then
             if not slot.PGVItemLevel then
                 slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -42,12 +42,15 @@ function AddOn:UpdatedInspectedGearInfo(_, unitGUID)
                 iLvlTextScale = iLvlTextScale * self.db.profile.iLvlScale
             end
             slot.PGVItemLevel:SetTextScale(iLvlTextScale)
+            
+            self:GetItemLevelBySlot(slot, true)
+            self:SetInspectItemLevelPositionBySlot(slot)
+        elseif slot.PGVItemLevel then
+            slot.PGVItemLevel:Hide()
         end
 
-        self:GetItemLevelBySlot(slot, true)
-        self:SetInspectItemLevelPositionBySlot(slot)
 
-        if self.db.profile.showiLvl and self.db.profile.showUpgradeTrack then
+        if self.db.profile.showInspectiLvl and self.db.profile.showInspectUpgradeTrack then
             if not slot.PGVUpgradeTrack then
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -64,7 +67,7 @@ function AddOn:UpdatedInspectedGearInfo(_, unitGUID)
             slot.PGVUpgradeTrack:Hide()
         end
 
-        if self.db.profile.showGems then
+        if self.db.profile.showInspectGems then
             if not slot.PGVGems then
                 slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -81,7 +84,7 @@ function AddOn:UpdatedInspectedGearInfo(_, unitGUID)
             slot.PGVGems:Hide()
         end
 
-        if self.db.profile.showEnchants then
+        if self.db.profile.showInspectEnchants then
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -95,9 +98,15 @@ function AddOn:UpdatedInspectedGearInfo(_, unitGUID)
             slot.PGVEnchant:SetTextScale(enchTextScale)
 
             self:GetEnchantmentBySlot(slot, true)
-            self:PGV_SetInspectEnchantPositionBySlot(slot)
+            self:SetInspectEnchantPositionBySlot(slot)
         elseif slot.PGVEnchant then
             slot.PGVEnchant:Hide()
+        end
+
+        if self.db.profile.showInspectEmbellishments then
+            self:ShowEmbellishmentBySlot(slot, true)
+        elseif slot.PGVEmbellishmentTexture then
+            slot.PGVEmbellishmentTexture:Hide()
         end
     end
 end
@@ -159,26 +168,22 @@ function AddOn:SetInspectGemsPositionBySlot(slot)
     end
 end
 
-function AddOn:PGV_SetInspectEnchantPositionBySlot(slot)
+function AddOn:SetInspectEnchantPositionBySlot(slot)
     local IsLeftSide = self.GetSlotIsLeftSide(slot, true)
     slot.PGVEnchant:ClearAllPoints()
 
     local isSocketableSlot = AddOn.IsSocketableSlot(slot)
     local isEnchantableSlot = AddOn.IsEnchantableSlot(slot)
-    local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local upgradeTrackShown = self.db.profile.showiLvl and self.db.profile.showUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
-    local gemsShown = self.db.profile.showGems and slot.PGVGems and slot.PGVGems:IsShown()
-    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
+    local itemLevelShown = self.db.profile.showInspectiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local itemLevelShownOnItem = self.db.profile.showInspectiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local upgradeTrackShown = self.db.profile.showInspectiLvl and self.db.profile.showInspectUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local gemsShown = self.db.profile.showInspectGems and slot.PGVGems and slot.PGVGems:IsShown()
+    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self.db.profile.showInspectGems and not isSocketableSlot)) and 10 or 25
 
-    if self.db.profile.collapseEnchants and IsLeftSide == nil and upgradeTrackShown then
+    if IsLeftSide == nil and upgradeTrackShown then
         -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown
         DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, 25)
-    elseif self.db.profile.collapseEnchants and IsLeftSide == nil then
-        -- Update positioning for main and off-hand slot enchants when collapsed
-        DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
-        slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, defaultYOffset)
     elseif itemLevelShown and IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both item level and enchants visible
         DebugPrint("ilvl and enchant visible")
@@ -191,13 +196,13 @@ function AddOn:PGV_SetInspectEnchantPositionBySlot(slot)
         slot.PGVUpgradeTrack:ClearAllPoints()
         slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
         slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
-    elseif (not self.db.profile.showiLvl or itemLevelShownOnItem) and gemsShown and IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
+    elseif (not self.db.profile.showInspectiLvl or itemLevelShownOnItem) and gemsShown and IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
         -- Adjust positioning for slots that have both gems and enchants visible
         slot.PGVGems:ClearAllPoints()
         slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
         slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
     elseif IsLeftSide == nil then
-        slot.PGVEnchant:SetPoint(slot == InspectMainHandSlot and "RIGHT" or "LEFT", slot, slot == InspectMainHandSlot and "TOPRIGHT" or "TOPLEFT", 0, 25)
+        slot.PGVEnchant:SetPoint(slot == _G["InspectMainHandSlot"] and "RIGHT" or "LEFT", slot, slot == _G["InspectMainHandSlot"] and "TOPRIGHT" or "TOPLEFT", 0, 25)
     else
         slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, 0)
     end
