@@ -86,14 +86,18 @@ function AddOn:GetGemsBySlot(slot, isInspect)
                 if ttdata and ttdata.type and ttdata.type == 3 then
                     -- Socketed item will have gemIcon variable
                     if ttdata.gemIcon and IsLeftSide then
+                        DebugPrint("Found Gem Icon on left side slot:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, AddOn.GetTextureString(ttdata.gemIcon))
                         gemText = gemText..(existingSocketCount > 0 and "" or " ")..AddOn.GetTextureString(ttdata.gemIcon)
                     elseif ttdata.gemIcon then
+                        DebugPrint("Found Gem Icon:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, AddOn.GetTextureString(ttdata.gemIcon))
                         gemText = AddOn.GetTextureString(ttdata.gemIcon)..(existingSocketCount > 0 and "" or " ")..gemText
                     -- The two conditions below indicate that there is an empty socket on the item
-                    -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
                     elseif IsLeftSide then
+                        DebugPrint("Empty socket found in slot on left side:", ColorText(slot:GetID(), "Heirloom"), AddOn.GetTextureString(458977))
+                        -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
                         gemText = gemText..(existingSocketCount > 0 and "" or " ")..AddOn.GetTextureString(458977)
                     else
+                        DebugPrint("Empty socket found in slot:", ColorText(slot:GetID(), "Heirloom"), AddOn.GetTextureString(458977))
                         gemText = AddOn.GetTextureString(458977)..(existingSocketCount > 0 and "" or " ")..gemText
                     end
                     existingSocketCount = existingSocketCount + 1
@@ -102,7 +106,8 @@ function AddOn:GetGemsBySlot(slot, isInspect)
         end
 
         -- Indicates slots that can have sockets added to them
-        if self.db.profile.showGems and self.db.profile.showMissingGems and AddOn.IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
+        local showGems = isInspect and self.db.profile.showInspectGems or self.db.profile.showGems
+        if showGems and self.db.profile.showMissingGems and AddOn.IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
             local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
             if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
                 for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
