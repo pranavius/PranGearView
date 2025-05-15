@@ -92,6 +92,7 @@ AddOn.HexColorPresets = {
     Heirloom = "00CCFF",
     Info = "FFD100",
     PrevSeasonGear = "808080",
+    Error = "FF3300",
     DeathKnight = "C41E3A",
     DemonHunter = "A330C9",
     Druid = "FF7C0A",
@@ -130,38 +131,38 @@ AddOn.GearSlots = {
 
 AddOn.InspectInfo = {
     slots = {
-        InspectHeadSlot,
-        InspectNeckSlot,
-        InspectShoulderSlot,
-        InspectBackSlot,
-        InspectChestSlot,
-        InspectShirtSlot,
-        InspectTabardSlot,
-        InspectWristSlot,
-        InspectHandsSlot,
-        InspectWaistSlot,
-        InspectLegsSlot,
-        InspectFeetSlot,
-        InspectFinger0Slot,
-        InspectFinger1Slot,
-        InspectTrinket0Slot,
-        InspectTrinket1Slot,
-        InspectMainHandSlot,
-        InspectSecondaryHandSlot
+        "InspectHeadSlot",
+        "InspectNeckSlot",
+        "InspectShoulderSlot",
+        "InspectBackSlot",
+        "InspectChestSlot",
+        "InspectShirtSlot",
+        "InspectTabardSlot",
+        "InspectWristSlot",
+        "InspectHandsSlot",
+        "InspectWaistSlot",
+        "InspectLegsSlot",
+        "InspectFeetSlot",
+        "InspectFinger0Slot",
+        "InspectFinger1Slot",
+        "InspectTrinket0Slot",
+        "InspectTrinket1Slot",
+        "InspectMainHandSlot",
+        "InspectSecondaryHandSlot"
     },
     leftSideSlots = {
-        InspectHeadSlot,
-        InspectNeckSlot,
-        InspectShoulderSlot,
-        InspectBackSlot,
-        InspectChestSlot,
-        InspectShirtSlot,
-        InspectTabardSlot,
-        InspectWristSlot
+        "InspectHeadSlot",
+        "InspectNeckSlot",
+        "InspectShoulderSlot",
+        "InspectBackSlot",
+        "InspectChestSlot",
+        "InspectShirtSlot",
+        "InspectTabardSlot",
+        "InspectWristSlot"
     },
     bottomSlots = {
-        InspectMainHandSlot,
-        InspectSecondaryHandSlot
+        "InspectMainHandSlot",
+        "InspectSecondaryHandSlot"
     }
 }
 
@@ -172,17 +173,17 @@ AddOn.PGVExpansionInfo = {
             CharacterNeckSlot,
             CharacterFinger0Slot,
             CharacterFinger1Slot,
-            InspectNeckSlot,
-            InspectFinger0Slot,
-            InspectFinger1Slot
+            "InspectNeckSlot",
+            "InspectFinger0Slot",
+            "InspectFinger1Slot"
         },
         AuxSocketableSlots = {
             CharacterHeadSlot,
             CharacterWristSlot,
             CharacterWaistSlot,
-            InspectHeadSlot,
-            InspectWristSlot,
-            InspectWaistSlot
+            "InspectHeadSlot",
+            "InspectWristSlot",
+            "InspectWaistSlot"
         },
         MaxSocketsPerItem = 2,
         MaxAuxSocketsPerItem = 1,
@@ -197,15 +198,15 @@ AddOn.PGVExpansionInfo = {
             CharacterFinger1Slot,
             CharacterMainHandSlot,
             CharacterSecondaryHandSlot,
-            InspectBackSlot,
-            InspectChestSlot,
-            InspectWristSlot,
-            InspectLegsSlot,
-            InspectFeetSlot,
-            InspectFinger0Slot,
-            InspectFinger1Slot,
-            InspectMainHandSlot,
-            InspectSecondaryHandSlot
+            "InspectBackSlot",
+            "InspectChestSlot",
+            "InspectWristSlot",
+            "InspectLegsSlot",
+            "InspectFeetSlot",
+            "InspectFinger0Slot",
+            "InspectFinger1Slot",
+            "InspectMainHandSlot",
+            "InspectSecondaryHandSlot"
         },
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false

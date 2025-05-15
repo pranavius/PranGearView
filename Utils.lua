@@ -59,21 +59,60 @@ function AddOn.CreateOptionsSpacer(order)
     }
 end
 
-function AddOn.IsItemEquippedInSlot(slot)
-    local item = Item:CreateFromEquipmentSlot(slot:GetID())
-    return not item:IsItemEmpty(), item
+function AddOn:IsItemEquippedInSlot(slot, isInspect)
+    local slotID = slot:GetID()
+    if isInspect then
+        DebugPrint("Inspected unit GUID:", self.db.profile.inspectedUnitGUID)
+        if IsInRaid() then
+            local numRaidMembers = GetNumGroupMembers()
+            for i = 1, numRaidMembers do
+                local token = "raid"..i
+                if UnitExists(token) and UnitGUID(token) == self.db.profile.inspectedUnitGUID then
+                    DebugPrint("Matching raid unit found")
+                    local itemLink = GetInventoryItemLink(token, slotID)
+                    if itemLink then return true, Item:CreateFromItemLink(itemLink) end
+                    return false, nil
+                end
+            end
+        elseif IsInGroup() then
+            for i = 1, MAX_PARTY_MEMBERS do
+                local token = "party"..i
+                if UnitExists(token) and UnitGUID(token) == self.db.profile.inspectedUnitGUID then
+                    DebugPrint("Matching party unit found")
+                    local itemLink = GetInventoryItemLink(token, slotID)
+                    if itemLink then return true, Item:CreateFromItemLink(itemLink) end
+                    return false, nil
+                end
+            end
+        else -- remove else condition for release (testing only)
+            for _, plate in ipairs(C_NamePlate.GetNamePlates()) do
+                -- use the nameplate token to get item info
+                local token = plate.namePlateUnitToken
+                if UnitGUID(token) == self.db.profile.inspectedUnitGUID then
+                    local itemLink = GetInventoryItemLink(token, slotID)
+                    if itemLink then
+                        return true, Item:CreateFromItemLink(itemLink)
+                    end
+                    return false, nil
+                end
+            end
+        end
+    else
+        local item = Item:CreateFromEquipmentSlot(slot:GetID())
+        return not item:IsItemEmpty(), item
+    end
 end
 
 function AddOn.IsSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.SocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.SocketableSlots) do
-            if slot == gearSlot then
+            if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
                 DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable")
                 return true
             end
         end
     else
-        DebugPrint("|cFFff3300SocketableSlots not found in expansion info table|r")
+        DebugPrint(ColorText("SocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
@@ -81,13 +120,13 @@ end
 function AddOn.IsAuxSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.AuxSocketableSlots) do
-            if slot == gearSlot then
+            if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
                 DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable (aux)")
                 return true
             end
         end
     else
-        DebugPrint("|cFFff3300AuxSocketableSlots not found in expansion info table|r")
+        DebugPrint(ColorText("AuxSocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
@@ -95,6 +134,30 @@ end
 function AddOn.IsEnchantableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.EnchantableSlots) do
+            -- Condition for checking available shield/offhand enchants when inspecting another player
+            if gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
+                local _, item = AddOn:IsItemEquippedInSlot(slot, true)
+                if item then
+                    local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(item:GetItemLink()))
+                    local isShield = itemClassID == 4 and itemSubclassID == 6
+                    local isOffhand = itemClassID == 4 and itemSubclassID == 0
+                    if isShield and AddOn.CurrentExpac.ShieldEnchantAvailable then
+                        return true
+                    elseif isShield then
+                        return false
+                    elseif isOffhand and AddOn.CurrentExpac.OffhandEnchantAvailable then
+                        return true
+                    elseif isOffhand then
+                        return false
+                    end
+                end
+            end
+            -- Condition for checking available enchants when inspecting another player
+            if type(gearSlot) == "string" and slot == _G[gearSlot] then
+                DebugPrint("Inspect Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
+                return true
+            end
+            -- Condition for checking available shield/offhand enchants for current character
             if slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
                 local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
@@ -109,13 +172,14 @@ function AddOn.IsEnchantableSlot(slot)
                     return false
                 end
             end
+            -- Condition for checking available enchants for current character
             if slot == gearSlot then
-                DebugPrint("Slot", "|cff00ccff"..slot:GetID().."|r", "is enchantable")
+                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
                     return true
             end
         end
     else
-        DebugPrint("|cFFff3300EnchantableSlots not found in expansion info table|r")
+        DebugPrint(ColorText("EnchantableSlots not found in expansion info table", "Error"))
     end
     return false
 end
@@ -126,7 +190,7 @@ end
 
 function AddOn.ConvertHexToRGB(hex)
     if tonumber("0x"..hex:sub(1,2)) == nil or tonumber("0x"..hex:sub(3,4)) == nil or tonumber("0x"..hex:sub(5,6)) == nil then
-        print("|cFF00ccffPran Gear View: |cFFff3300"..L["Invalid hexadecimal color code provided."].."|r")
+        print(ColorText("Pran Gear View:", "Heirloom"), ColorText(L["Invalid hexadecimal color code provided."], "Error"))
         return nil, nil, nil
     end
     return tonumber("0x"..hex:sub(1,2)) / 255,
@@ -152,4 +216,18 @@ function AddOn.GetTextureAtlasString(atlas, dim)
         size = dim
     end
     return "|A:"..atlas..":"..size..":"..size.."|a"
+end
+
+function AddOn.GetSlotIsLeftSide(slot, isInspect)
+    if isInspect then
+        for _, bottomSlotName in ipairs(AddOn.InspectInfo.bottomSlots) do
+            if slot == _G[bottomSlotName] then return nil end
+        end
+        for _, leftSlotName in ipairs(AddOn.InspectInfo.leftSideSlots) do
+            if slot == _G[leftSlotName] then return true end
+        end
+        return false
+    else
+        return slot.IsLeftSide
+    end
 end
