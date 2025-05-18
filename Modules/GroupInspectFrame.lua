@@ -18,10 +18,11 @@ function AddOn:UpdateInspectedGearInfo(unitGUID)
         return
     end
     
+    -- Retained as more of a failsafe in case db variable is not set to nil when the inspect window is closed
     if self.db.profile.inspectedUnitGUID ~= unitGUID then
         self.db.profile.inspectedUnitGUID = unitGUID
     end
-    print("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Legendary"), self.db.profile.inspectedUnitGUID)
+    DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
     for _, slotName in ipairs(self.InspectInfo.slots) do
         local slot = _G[slotName]
         local slotID = slot:GetID()

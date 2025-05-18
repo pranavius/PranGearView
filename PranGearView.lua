@@ -1134,7 +1134,17 @@ function AddOn:OnInitialize()
     self:RegisterEvent("PLAYER_ENTERING_WORLD", function() self:InitializeCustomSpecStatOrderDB() end)
     self:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED", function() self:InitializeCustomSpecStatOrderDB() end)
 
-    self:RegisterEvent("INSPECT_READY", function(_, unitGUID) if InspectFrame and InspectFrame.unit then self:UpdateInspectedGearInfo(unitGUID) end end)
+    self:RegisterEvent("INSPECT_READY", function(_, unitGUID)
+        if InspectFrame and InspectFrame.unit then
+            InspectFrame:HookScript("OnHide", function()
+                AddOn.db.profile.inspectedUnitGUID = nil
+                ClearInspectPlayer()
+                DebugPrint("InspectFrame hidden, DB value and InspectPlayer cleared")
+            end)
+
+            self:UpdateInspectedGearInfo(unitGUID)
+        end
+    end)
     DebugPrint(ColorText(addonName, "Heirloom"), "initialized successfully")
 
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
