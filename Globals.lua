@@ -18,6 +18,8 @@ AddOn.DKEnchantAbbr = {
 }
 
 AddOn.EnchantTextReplace = {
+    { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
+    { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
     { original = "Enchanted: ", replacement = "" },
     { original = "Chant", replacement = "" },
     { original = "Whisper", replacement = "" },
@@ -25,6 +27,7 @@ AddOn.EnchantTextReplace = {
     { original = "Council's", replacement = "" },
     { original = "Stormrider", replacement = "" },
     { original = "Stormrider's", replacement = "" },
+    { original = "Stonebound", replacement = "Stn" },
     { original = "Rune", replacement = "" },
     { original = " of", replacement = "" },
     { original = " the", replacement = "" },
@@ -63,6 +66,7 @@ AddOn.EnchantTextReplace = {
     { original = "Perception", replacement = "Perc" },
     { original = "Resourcefulness", replacement = "Resource" },
     { original = "Absorption", replacement = "Absorb" },
+    { original = "Artistry", replacement = "Art" },
     { original = "Sanguination", replacement = AddOn.DKEnchantAbbr.Sanguination },
     { original = "Spellwarding", replacement = AddOn.DKEnchantAbbr.Spellwarding },
     { original = "Apocalypse", replacement = AddOn.DKEnchantAbbr.Apocalypse },
@@ -92,6 +96,7 @@ AddOn.HexColorPresets = {
     Heirloom = "00CCFF",
     Info = "FFD100",
     PrevSeasonGear = "808080",
+    Error = "FF3300",
     DeathKnight = "C41E3A",
     DemonHunter = "A330C9",
     Druid = "FF7C0A",
@@ -128,18 +133,61 @@ AddOn.GearSlots = {
     CharacterSecondaryHandSlot
 }
 
+AddOn.InspectInfo = {
+    slots = {
+        "InspectHeadSlot",
+        "InspectNeckSlot",
+        "InspectShoulderSlot",
+        "InspectBackSlot",
+        "InspectChestSlot",
+        "InspectShirtSlot",
+        "InspectTabardSlot",
+        "InspectWristSlot",
+        "InspectHandsSlot",
+        "InspectWaistSlot",
+        "InspectLegsSlot",
+        "InspectFeetSlot",
+        "InspectFinger0Slot",
+        "InspectFinger1Slot",
+        "InspectTrinket0Slot",
+        "InspectTrinket1Slot",
+        "InspectMainHandSlot",
+        "InspectSecondaryHandSlot"
+    },
+    leftSideSlots = {
+        "InspectHeadSlot",
+        "InspectNeckSlot",
+        "InspectShoulderSlot",
+        "InspectBackSlot",
+        "InspectChestSlot",
+        "InspectShirtSlot",
+        "InspectTabardSlot",
+        "InspectWristSlot"
+    },
+    bottomSlots = {
+        "InspectMainHandSlot",
+        "InspectSecondaryHandSlot"
+    }
+}
+
 AddOn.PGVExpansionInfo = {
     TheWarWithin = {
         LevelCap = 80,
         SocketableSlots = {
             CharacterNeckSlot,
             CharacterFinger0Slot,
-            CharacterFinger1Slot
+            CharacterFinger1Slot,
+            "InspectNeckSlot",
+            "InspectFinger0Slot",
+            "InspectFinger1Slot"
         },
         AuxSocketableSlots = {
             CharacterHeadSlot,
             CharacterWristSlot,
-            CharacterWaistSlot
+            CharacterWaistSlot,
+            "InspectHeadSlot",
+            "InspectWristSlot",
+            "InspectWaistSlot"
         },
         MaxSocketsPerItem = 2,
         MaxAuxSocketsPerItem = 1,
@@ -153,7 +201,16 @@ AddOn.PGVExpansionInfo = {
             CharacterFinger0Slot,
             CharacterFinger1Slot,
             CharacterMainHandSlot,
-            CharacterSecondaryHandSlot
+            CharacterSecondaryHandSlot,
+            "InspectBackSlot",
+            "InspectChestSlot",
+            "InspectWristSlot",
+            "InspectLegsSlot",
+            "InspectFeetSlot",
+            "InspectFinger0Slot",
+            "InspectFinger1Slot",
+            "InspectMainHandSlot",
+            "InspectSecondaryHandSlot"
         },
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false

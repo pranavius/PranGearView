@@ -20,7 +20,7 @@ local specialThanks = {
     { name = "Grok", race = AddOn.RaceIcons.Orc.Male, class = AddOn.ClassIcons.Warrior, color = AddOn.HexColorPresets.Warrior }
 }
 
-function AddOn.BuildCreditsGroup()
+function AddOn:BuildCreditsGroup()
     local credits = {
         type = "group",
         name = L["Credits"],
@@ -32,18 +32,17 @@ function AddOn.BuildCreditsGroup()
                 fontSize = "large",
                 order = 1
             },
-            postTitleSpacer = AddOn.CreateOptionsSpacer(2),
+            postTitleSpacer = self.CreateOptionsSpacer(2),
             author = {
                 type = "description",
-                name = ColorText("Created by "..AddOn.GetTextureAtlasString(AddOn.RaceIcons.BloodElf.Male)..AddOn.GetTextureAtlasString(AddOn.ClassIcons.Monk).." Pranavius", "Heirloom"),
+                name = ColorText("Created by "..self.GetTextureAtlasString(self.RaceIcons.BloodElf.Male)..self.GetTextureAtlasString(self.ClassIcons.Monk).." Pranavius", "Heirloom"),
                 fontSize = "medium",
                 order = 3
             },
-            postDescSpacer = AddOn.CreateOptionsSpacer(4),
-            contributorsTitle = {
-                type = "description",
-                name = ColorText(L["Contributors"], "Info"),
-                fontSize = "large",
+            postDescSpacer = self.CreateOptionsSpacer(4),
+            contributorsHeader = {
+                type = "header",
+                name = L["Contributors"],
                 order = 5
             },
         }
@@ -52,9 +51,9 @@ function AddOn.BuildCreditsGroup()
     for idx, cont in ipairs(contributors) do
         credits.args["contributor"..idx] = {
             type = "description",
-            name = AddOn.GetTextureAtlasString(cont.race)..AddOn.GetTextureAtlasString(cont.class).." "..ColorText(cont.name, cont.color),
+            name = self.GetTextureAtlasString(cont.race)..self.GetTextureAtlasString(cont.class).." "..ColorText(cont.name, cont.color),
             fontSize = "medium",
-            order = credits.args.contributorsTitle.order + idx
+            order = credits.args.contributorsHeader.order + idx
         }
     end
 
@@ -64,18 +63,17 @@ function AddOn.BuildCreditsGroup()
         argsSize = argsSize + 1
     end
 
-    credits.args.postContributorsSpacer = AddOn.CreateOptionsSpacer(argsSize + 1)
+    credits.args.postContributorsSpacer = self.CreateOptionsSpacer(argsSize + 1)
 
     credits.args.contributionMessage = {
         type = "description",
         name = L["If you would like to contribute to development, you can find the repository on GitHub."].."\n"..L["Please follow the development guidelines outlined in the README document."],
         order = argsSize + 2
     }
-    credits.args.postContributionMessageSpacer = AddOn.CreateOptionsSpacer(argsSize + 3)
-    credits.args.specialThanksTitle = {
-        type = "description",
-        name = ColorText(L["Special Thanks"], "Info"),
-        fontSize = "large",
+    credits.args.postContributionMessageSpacer = self.CreateOptionsSpacer(argsSize + 3)
+    credits.args.specialThanksHeader = {
+        type = "header",
+        name = L["Special Thanks"],
         order = argsSize + 4
     }
 
@@ -83,8 +81,8 @@ function AddOn.BuildCreditsGroup()
         credits.args["specialThanks"..idx] = {
             type = "description",
             fontSize = "medium",
-            name = AddOn.GetTextureAtlasString(thanks.race)..AddOn.GetTextureAtlasString(thanks.class).." "..ColorText(thanks.name, thanks.color),
-            order = credits.args.specialThanksTitle.order + idx
+            name = self.GetTextureAtlasString(thanks.race)..self.GetTextureAtlasString(thanks.class).." "..ColorText(thanks.name, thanks.color),
+            order = credits.args.specialThanksHeader.order + idx
         }
     end
 
@@ -94,23 +92,21 @@ function AddOn.BuildCreditsGroup()
         argsSize = argsSize + 1
     end
 
-    credits.args.postSpecialThanksSpacer = AddOn.CreateOptionsSpacer(argsSize + 1)
-    credits.args.connectTitle = {
-        type = "description",
-        name = ColorText(L["Connect"], "Info"),
-        fontSize = "large",
+    credits.args.postSpecialThanksSpacer = self.CreateOptionsSpacer(argsSize + 1)
+    credits.args.connectHeader = {
+        type = "header",
+        name = L["Connect"],
         order = argsSize + 2
     }
-    credits.args.postConnectTitleSpacer = AddOn.CreateOptionsSpacer(argsSize + 3)
     credits.args.twitter = {
         type = "description",
         name = "|TInterface\\AddOns\\PranGearView\\Media\\X-logo:20:20:0:5|t   "..ColorText("@PranaviusWoW", "Legendary"),
-        order = argsSize + 4,
+        order = argsSize + 3,
     }
     credits.args.github = {
         type = "description",
         name = "|TInterface\\AddOns\\PranGearView\\Media\\Github-logo:20:20:0:5|t   "..ColorText("Pranavius", "Legendary"),
-        order = argsSize + 5,
+        order = argsSize + 4,
     }
 
     return credits

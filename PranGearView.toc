@@ -25,5 +25,8 @@ Globals.lua
 Utils.lua
 Modules\ToggleEnchantButton.lua
 Modules\StatsOrderBySpecOptions.lua
+Modules\RetrieveGearInfo.lua
+Modules\PositionGearInfo.lua
+Modules\GroupInspectFrame.lua
 Modules\Credits.lua
 PranGearView.lua

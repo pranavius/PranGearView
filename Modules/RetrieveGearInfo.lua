@@ -1,0 +1,270 @@
+local addonName, AddOn = ...
+AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
+
+local DebugPrint = AddOn.DebugPrint
+local ColorText = AddOn.ColorText
+
+function AddOn:GetItemLevelBySlot(slot, isInspect)
+    local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
+    if hasItem then
+        local itemLevel = item:GetCurrentItemLevel()
+        if itemLevel > 0 then -- positive value indicates item info has loaded
+            local iLvlText = itemLevel
+            if self.db.profile.useQualityColorForILvl then
+                local qualityHex = select(4, GetItemQualityColor(item:GetItemQuality()))
+                iLvlText = "|c"..qualityHex..iLvlText.."|r"
+            elseif self.db.profile.useClassColorForILvl then
+                local classFile = select(2, UnitClass("player"))
+                local classHexWithAlpha = select(4, GetClassColor(classFile))
+                iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
+            elseif self.db.profile.useCustomColorForILvl then
+                iLvlText = ColorText(iLvlText, self.db.profile.iLvlCustomColor)
+            end
+
+            DebugPrint("Item Level text for slot", ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
+            slot.PGVItemLevel:SetFormattedText(iLvlText)
+            slot.PGVItemLevel:Show()
+        else
+            DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", ColorText(slot:GetID(), "Heirloom"))
+            C_Timer.After(0.5, function() self:GetItemLevelBySlot(slot, isInspect) end)
+        end
+    end
+end
+
+function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
+    local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
+    if hasItem then
+        local upgradeTrackText = ""
+        local upgradeColor = ""
+        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+        if tooltip and tooltip.lines then
+            for _, ttdata in pairs(tooltip.lines) do
+                -- Tooltip data type 42 is upgrade track
+                if ttdata and ttdata.type and ttdata.type == 42 then
+                    -- Displays past-season upgrade tracks in Gray
+                    upgradeColor = ttdata.leftColor:GenerateHexColorNoAlpha()
+                    local upgradeText = ttdata.leftText
+                    for _, repl in pairs(self.UpgradeTextReplace) do
+                        upgradeText = upgradeText:gsub(repl.original, repl.replacement)
+                    end
+                    upgradeTrackText = upgradeText
+                    DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
+                end
+            end
+        end
+
+        if upgradeTrackText ~= "" then
+            local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
+            if IsLeftSide ~= nil and IsLeftSide then upgradeTrackText = " "..upgradeTrackText
+            elseif IsLeftSide ~= nil then upgradeTrackText = upgradeTrackText.." "
+            end
+            if upgradeColor:lower() ~= self.HexColorPresets.PrevSeasonGear:lower() then
+                if self.db.profile.useCustomColorForUpgradeTrack then
+                    upgradeColor = self.db.profile.upgradeTrackCustomColor
+                else
+                    upgradeColor = select(4, GetItemQualityColor(item:GetItemQuality()))
+                    upgradeColor = upgradeColor:sub(3)
+                end
+            end
+            slot.PGVUpgradeTrack:SetFormattedText(ColorText(upgradeTrackText, upgradeColor))
+            slot.PGVUpgradeTrack:Show()
+        end
+    end
+end
+
+function AddOn:GetGemsBySlot(slot, isInspect)
+    local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
+    if hasItem then
+        local existingSocketCount = 0
+        local gemText = ""
+        local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
+        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+        if tooltip and tooltip.lines then
+            for _, ttdata in pairs(tooltip.lines) do
+                -- Tooltip data type 3 is gem
+                if ttdata and ttdata.type and ttdata.type == 3 then
+                    -- Socketed item will have gemIcon variable
+                    if ttdata.gemIcon and IsLeftSide then
+                        DebugPrint("Found Gem Icon on left side slot:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, self.GetTextureString(ttdata.gemIcon))
+                        gemText = gemText..(existingSocketCount > 0 and "" or " ")..self.GetTextureString(ttdata.gemIcon)
+                    elseif ttdata.gemIcon then
+                        DebugPrint("Found Gem Icon:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, self.GetTextureString(ttdata.gemIcon))
+                        gemText = self.GetTextureString(ttdata.gemIcon)..(existingSocketCount > 0 and "" or " ")..gemText
+                    -- The two conditions below indicate that there is an empty socket on the item
+                    elseif IsLeftSide then
+                        DebugPrint("Empty socket found in slot on left side:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString(458977))
+                        -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
+                        gemText = gemText..(existingSocketCount > 0 and "" or " ")..self.GetTextureString(458977)
+                    else
+                        DebugPrint("Empty socket found in slot:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString(458977))
+                        gemText = self.GetTextureString(458977)..(existingSocketCount > 0 and "" or " ")..gemText
+                    end
+                    existingSocketCount = existingSocketCount + 1
+                end
+            end
+        end
+
+        -- Indicates slots that can have sockets added to them
+        local showGems = isInspect and self.db.profile.showInspectGems or self.db.profile.showGems
+        if showGems and self.db.profile.showMissingGems and self:IsSocketableSlot(slot) and existingSocketCount < self.CurrentExpac.MaxSocketsPerItem then
+            local isCharacterMaxLevel = UnitLevel("player") == self.CurrentExpac.LevelCap
+            if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
+                for i = 1, self.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
+                    DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
+                    gemText = IsLeftSide and gemText..(existingSocketCount > 0 and "" or " ")..self.GetTextureAtlasString("Socket-Prismatic-Closed") or self.GetTextureAtlasString("Socket-Prismatic-Closed")..(existingSocketCount > 0 and "" or " ")..gemText
+                end
+            end
+        end
+        if gemText ~= "" then
+            slot.PGVGems:SetFormattedText(gemText)
+            slot.PGVGems:Show()
+        end
+    end
+end
+
+function AddOn:GetEnchantmentBySlot(slot, isInspect)
+    local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
+    if hasItem then
+        local isEnchanted = false
+        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+        if tooltip and tooltip.lines then
+            for _, ttdata in pairs(tooltip.lines) do
+                -- Tooltip data type 15 is enchant
+                if ttdata and ttdata.type and ttdata.type == 15 then
+                    DebugPrint("Item in slot", ColorText(slot:GetID(), "Heirloom"), "is enchanted")
+                    local enchText = ttdata.leftText
+                    DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
+                    for _, repl in pairs(self.EnchantTextReplace) do
+                        enchText = enchText:gsub(repl.original, repl.replacement)
+                    end
+                    -- Trim enchant text to remove leading and trailing whitespace
+                    -- strtrim is a Blizzard-provided global utility function
+                    enchText = strtrim(enchText)
+                    -- Resize any textures in the enchantment text
+                    local texture = enchText:match("|A:(.-):")
+                    -- If no texture is found, the enchant could be an older/DK one.
+                    -- If DK enchant, set texture based on the icon shown for each enchant in Runeforging
+                    if not texture then
+                        local textureID
+                        if enchText == self.DKEnchantAbbr.Razorice then
+                            textureID = 135842 -- Interface/Icons/Spell_Frost_FrostArmor
+                        elseif enchText == self.DKEnchantAbbr.Sanguination then
+                            textureID = 1778226 -- Interface/Icons/Ability_Argus_DeathFod
+                        elseif enchText == self.DKEnchantAbbr.Spellwarding then
+                            textureID = 425952 -- Interface/Icons/Spell_Fire_TwilightFireward
+                        elseif enchText == self.DKEnchantAbbr.Apocalypse then
+                            textureID = 237535 -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
+                        elseif enchText == self.DKEnchantAbbr.FallenCrusader then
+                            textureID = 135957 -- Interface/Icons/Spell_Holy_RetributionAura
+                        elseif enchText == self.DKEnchantAbbr.StoneskinGargoyle then
+                            textureID = 237480 -- Interface/Icons/Inv_Sword_130
+                        elseif enchText == self.DKEnchantAbbr.UnendingThirst then
+                            textureID = 3163621 -- Interface/Icons/Spell_NZInsanity_Bloodthirst
+                        else
+                            textureID = 628564 -- Interface/Scenarios/ScenarioIcon-Check
+                        end
+                        texture = self.GetTextureString(textureID)
+
+                        enchText = (self.db.profile.collapseEnchants and not isInspect) and texture or (enchText..texture)
+                    else
+                        -- If the preference is to hide enchant text, only show the enchant quality
+                        enchText = (self.db.profile.collapseEnchants and not isInspect) and self.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", self.GetTextureAtlasString(texture))
+                    end
+                    DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
+    
+                    if self.db.profile.useCustomColorForEnchants then
+                        slot.PGVEnchant:SetFormattedText(ColorText(enchText, self.db.profile.enchCustomColor))
+                    else
+                        slot.PGVEnchant:SetFormattedText(ColorText(enchText, "Uncommon"))
+                    end
+                    slot.PGVEnchant:Show()
+                    isEnchanted = true
+                end
+            end
+        end
+
+        if not isEnchanted and self:IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
+            local isCharacterMaxLevel = UnitLevel("player") == self.CurrentExpac.LevelCap
+            if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
+                -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
+                slot.PGVEnchant:SetFormattedText(self.db.profile.collapseEnchants and self.GetTextureString(523826) or self.GetTextureString(523826)..ColorText(L["Enchant"], "Druid"))
+                slot.PGVEnchant:Show()
+            end
+        end
+    end
+end
+
+function AddOn:ShowDurabilityBySlot(slot)
+    local hasItem = self:IsItemEquippedInSlot(slot)
+    if hasItem then
+        local cDur, mDur = GetInventoryItemDurability(slot:GetID())
+        if cDur and mDur then
+            if not slot.PGVDurability then
+                slot.PGVDurability = slot:CreateFontString("PGVDurability"..slot:GetID(), "OVERLAY", "GameTooltipText")
+            end
+            slot.PGVDurability:Hide()
+            local dFont, dSize = slot.PGVDurability:GetFont()
+            slot.PGVDurability:SetFont(dFont, dSize, "OUTLINE")
+            local durTextScale = 0.9
+            if self.db.profile.durabilityScale and self.db.profile.durabilityScale > 0 then
+                durTextScale = durTextScale * self.db.profile.durabilityScale
+            end
+            slot.PGVDurability:SetTextScale(durTextScale)
+            slot.PGVDurability:SetPoint("CENTER", slot, "BOTTOM", 0, 5)
+
+            local durText = ""
+            local percent = self.RoundNumber((cDur / mDur) * 100)
+            if percent < 100 and percent > 50 then
+                durText = ColorText(percent.."%%", "Uncommon")
+            elseif percent < 100 and percent > 25 then
+                durText = ColorText(percent.."%%", "Info")
+            elseif percent < 100 and percent > 0 then
+                durText = ColorText(percent.."%%", "Legendary")
+            elseif percent == 0 then
+                durText = ColorText(percent.."%%", "DeathKnight")
+            end
+            DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
+            slot.PGVDurability:SetFormattedText(durText)
+            if durText ~= "" then slot.PGVDurability:Show() end
+        elseif slot.PGVDurability then
+            slot.PGVDurability:Hide()
+        end
+    else
+        DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
+        if slot.PGVDurability then slot.PGVDurability:Hide() end
+    end
+end
+
+function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
+    if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
+    local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
+    if hasItem then
+        local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+        if tooltip and tooltip.lines then
+            for _, ttdata in pairs(tooltip.lines) do
+                if ttdata and ttdata.leftText:find("Embellished") then
+                    if not slot.PGVEmbellishmentTexture then
+                        DebugPrint("Creating embellishment texture in slot", ColorText(slot:GetID(), "Heirloom"))
+                        slot.PGVEmbellishmentTexture = slot:CreateTexture("PGVEmbellishmentTexture"..slot:GetID(), "OVERLAY")
+                    end
+                    slot.PGVEmbellishmentTexture:SetSize(20, 20)
+                    slot.PGVEmbellishmentTexture:ClearAllPoints()
+                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
+                        slot.PGVEmbellishmentTexture:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, -5)
+                    else
+                        slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
+                    end
+                    slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
+                    slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
+                    DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
+                    slot.PGVEmbellishmentTexture:Show()
+                end
+            end
+        else
+            DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
+        end
+    else
+        DebugPrint("No item equipped in slot |cFF00ccff"..slot:GetID().."|r")
+    end
+end
