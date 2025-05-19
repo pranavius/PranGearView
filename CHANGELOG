@@ -1,3 +1,7 @@
+v1.3.0
+Enable option to show gear info when Inspecting another player
+Minor code cleanup and refactoring
+
 v1.2.0
 Enable live updates to Character Info window when Character Info and Settings windows are both open
 Remove less important characters and spaces in text to improve readability

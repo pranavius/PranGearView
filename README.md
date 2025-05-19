@@ -4,6 +4,7 @@
 ## Highlights
 - Allows for a wide range of text color and size customization
 - Lets you know when items are missing sockets, gems, and enchants
+- Can show gear information when inspecting players in your party or raid
 - Provides an interface for customizing the order of secondary and tertiary stats under the *Enchancements* category based on class and specialization
 - Shows abbreviated names for item enchants to reduce visual clutter
 - Allows quick showing/hiding of enchant text if you are only concerned with the quality of the enchant (Dragonflight enchants and onward)
@@ -33,6 +34,7 @@ You can use the options window to modify all available options. To open the opti
 - **Gems**: Change icon size, show missing gems and sockets, only show missing gems and sockets for max level characters
 - **Enchants**: Change text size, show missing enchants, only show missing enchants for max level characters, change text color
 - **Durability**: Change text size
+- **Inspect Window**: Choose which information (if any) to display when inspecting member in your party/raid
 - **Character Stats**: Set stat order based on class and specialization
 - **Other Options**: Place item levels on equipment, show embellishments, hide shirt & tabard info, show debugging messages (you should never need to enable this)
 
@@ -48,6 +50,8 @@ You can use the options window to modify all available options. To open the opti
   - This is the same as clicking the **Durability** checkbox in the Options window
 - `/pgv etext`: Toggle showing enchant text in the Character Info window
   - This is the same as clicking the **Show Enchant Text** or **Hide Enchant Text** button in the Character Info window
+- `/pgv inspect`: Toggle showing gear info when inspecting another player in your party or raid
+  - This is the same as clicking the **Show Gear Info on Inspect** checkbox under the **Inspect Window** section of the Options window
 
 ## Planned Updates
 The goal of this AddOn is to provide maximum customization capabilities on the default Blizzard UI. There is much more work to be done to help achieve this, including some of the items listed below. Suggestions and feedback on customization features are always welcome.
