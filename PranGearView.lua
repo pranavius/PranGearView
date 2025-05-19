@@ -509,13 +509,13 @@ local Options = {
         },
         inspectOptions = {
             type = "group",
-            name = "Inspect Window",
+            name = L["Inspect Window"],
             order = 12,
             args = {
                 showOnInspect = {
                     type = "toggle",
-                    name = "Show Info on Inspect",
-                    desc = "Shows information about equipped gear when inspecting another player in your party or raid",
+                    name = L["Show Gear Info on Inspect"],
+                    desc = L["Displays information about equipped gear when inspecting another player in your party or raid"],
                     order = 12.1,
                     width = "full",
                     get = function(item) return AddOn.db.profile[item[#item]] end,
@@ -526,7 +526,7 @@ local Options = {
                 spacer = AddOn.CreateOptionsSpacer(12.2),
                 inspectDescription = {
                     type = "description",
-                    name = ColorText("Choose which information should be displayed when inspecting another player. Displayed information will appear the same way as it would in the Character Info window.", "Info").."\n\n"..ColorText("There is currently an issue with gems showing correctly when inspecting other players where empty sockets are shown instead of the correct gems. This is being actively worked on.", "Druid"),
+                    name = ColorText(L["Choose which information should be displayed when inspecting another player."].." "..L["Colors, size, and other display settings when inspecting a character will follow the same settings as the Character Info window."], "Info"),
                     order = 12.3
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(12.4),
@@ -545,7 +545,7 @@ local Options = {
                 showInspectUpgradeTrack = {
                     type = "toggle",
                     name = L["Show Upgrade Track"],
-                    desc = L["Display upgrade track and progress next to item level"].."\n\n"..ColorText("Only appears if Item Level is also enabled", "Druid"),
+                    desc = L["Display upgrade track and progress next to item level"].."\n\n"..L["Does nothing if the Item Level checkbox is unchecked"],
                     order = 12.6,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -603,7 +603,7 @@ local Options = {
                     name = ColorText(L["Customize secondary & tertiary stat order in the Character Info window by specialization"], "Info"),
                     order = 13.01,
                 },
-                spacer = AddOn.CreateOptionsSpacer(12.02),
+                spacer = AddOn.CreateOptionsSpacer(13.02),
                 specSelect = {
                     type = "select",
                     name = L["Specialization"],
@@ -672,7 +672,7 @@ local Options = {
                         return true
                     end
                 },
-                postSpecSelectSpacer = AddOn.CreateOptionsSpacer(12.06),
+                postSpecSelectSpacer = AddOn.CreateOptionsSpacer(13.06),
                 secondaryStatsHeader = {
                     type = "header",
                     name = L["Secondary Stats"],
@@ -696,7 +696,7 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end
                 },
-                postCritSpacer = AddOn.CreateOptionsSpacer(12.1),
+                postCritSpacer = AddOn.CreateOptionsSpacer(13.1),
                 hasteLabel = {
                     type = "description",
                     name = ColorText(STAT_HASTE, "Info"),
@@ -715,7 +715,7 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end
                 },
-                postHasteSpacer = AddOn.CreateOptionsSpacer(12.13),
+                postHasteSpacer = AddOn.CreateOptionsSpacer(13.13),
                 masteryLabel = {
                     type = "description",
                     name = ColorText(STAT_MASTERY, "Info"),
@@ -734,7 +734,7 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end
                 },
-                postMastSpacer = AddOn.CreateOptionsSpacer(12.16),
+                postMastSpacer = AddOn.CreateOptionsSpacer(13.16),
                 versLabel = {
                     type = "description",
                     name = ColorText(STAT_VERSATILITY, "Info"),
@@ -776,7 +776,7 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end
                 },
-                postLeechSpacer = AddOn.CreateOptionsSpacer(12.22),
+                postLeechSpacer = AddOn.CreateOptionsSpacer(13.22),
                 avoidLabel = {
                     type = "description",
                     name = ColorText(STAT_AVOIDANCE, "Info"),
@@ -795,7 +795,7 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end
                 },
-                postAvoidSpacer = AddOn.CreateOptionsSpacer(12.25),
+                postAvoidSpacer = AddOn.CreateOptionsSpacer(13.25),
                 speedLabel = {
                     type = "description",
                     name = ColorText(STAT_SPEED, "Info"),
@@ -1085,6 +1085,17 @@ local SlashOptions = {
             get = function() return AddOn.db.profile.collapseEnchants end,
             set = function()
                 AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
+                LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                AddOn:HandleEquipmentOrSettingsChange()
+            end
+        },
+        inspect = {
+            type = "toggle",
+            name = "inspect",
+            desc = L["Toggle showing gear info when inspecting another player in your party or raid"],
+            get = function() return AddOn.db.profile.showOnInspect end,
+            set = function()
+                AddOn.db.profile.showOnInspect = not AddOn.db.profile.showOnInspect
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
