@@ -77,7 +77,7 @@ L["Toggle showing gem info"] = "Переключить отображение и
 L["Toggle showing enchant info"] = "Переключить отображение информации о чарах"
 L["Toggle showing durability percentages"] = "Переключить отображение процентов прочности"
 L["Toggle showing enchant text in the Character Info window"] = "Переключить отображение текста чар в окне информации о персонаже"
-L["Toggle showing gear info when inspecting another player in your party or raid"] = "Включить/выключить отображение информации о снаряжении при осмотре другого игрока в вашей группе или рейде"
+L["Toggle showing gear info when inspecting another player in your party or raid"] = "Включить/выключить отображение информации о экипировке при осмотре другого игрока в вашей группе или рейде"
 
 ------------ UI Elements ------------
 L["Show Enchant Text"] = "Показать текст чар"
