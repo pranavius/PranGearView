@@ -49,7 +49,7 @@ function AddOn:SetInspectUpgradeTrackPositionBySlot(slot)
     elseif self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
         slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, 0)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and IsLeftSide == nil then
-        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == _G["InspectMainHandSlot"] and -1 or 1) * 35, 5)
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == _G["InspectMainHandSlot"] and -1 or 1) * 40, 5)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
         slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, IsLeftSide and "RIGHT" or "LEFT", 0, (0.1 * slot.PGVItemLevel:GetHeight()) / 2)
     end
@@ -166,11 +166,8 @@ function AddOn:SetInspectEnchantPositionBySlot(slot)
     local upgradeTrackShown = self.db.profile.showInspectiLvl and self.db.profile.showInspectUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
     local gemsShown = self.db.profile.showInspectGems and slot.PGVGems and slot.PGVGems:IsShown()
 
-    if IsLeftSide == nil and upgradeTrackShown then
-        -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown
-        DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
-        slot.PGVEnchant:SetPoint("CENTER", slot, "TOP", 0, 25)
-    elseif itemLevelShown and IsLeftSide ~= nil and isEnchantableSlot then
+    
+    if itemLevelShown and IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both item level and enchants visible
         DebugPrint("ilvl and enchant visible")
         slot.PGVItemLevel:ClearAllPoints()
@@ -187,8 +184,11 @@ function AddOn:SetInspectEnchantPositionBySlot(slot)
         slot.PGVGems:ClearAllPoints()
         slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
         slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+    elseif IsLeftSide == nil and itemLevelShown then
+        -- Update positioning for main and off-hand slot enchants when item level is shown in default position
+        slot.PGVEnchant:SetPoint(slot == _G["InspectMainHandSlot"] and "BOTTOMRIGHT" or "BOTTOMLEFT", slot.PGVItemLevel, slot == _G["InspectMainHandSlot"] and "TOPRIGHT" or "TOPLEFT", 0, 5)
     elseif IsLeftSide == nil then
-        slot.PGVEnchant:SetPoint(slot == _G["InspectMainHandSlot"] and "RIGHT" or "LEFT", slot, slot == _G["InspectMainHandSlot"] and "TOPRIGHT" or "TOPLEFT", (slot == _G["InspectMainHandSlot"] and -1 or 1) * 15, 25)
+        slot.PGVEnchant:SetPoint(slot == _G["InspectMainHandSlot"] and "RIGHT" or "LEFT", slot, slot == _G["InspectMainHandSlot"] and "TOPRIGHT" or "TOPLEFT", 0, 25)
     else
         slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, 0)
     end

@@ -4,9 +4,11 @@ AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
-function AddOn:UpdateInspectedGearInfo(unitGUID)
-    if not self.db.profile.showOnInspect then
-        DebugPrint("Gear info on inspect disabled")
+function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
+    local showOnInspect = self.db.profile.showOnInspect
+    -- Check for a force update even if the DB value is false (required for toggling inspect visibility via slash command)
+    if not showOnInspect and not forceUpdate then
+        print("Gear info on inspect disabled")
         return
     end
     if not IsInRaid() and not IsInGroup() then
@@ -22,11 +24,17 @@ function AddOn:UpdateInspectedGearInfo(unitGUID)
     if self.db.profile.inspectedUnitGUID ~= unitGUID then
         self.db.profile.inspectedUnitGUID = unitGUID
     end
-    DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
+    print("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
+
+    local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
+    local showInspectUpgradeTrack = showInspectItemLevel and self.db.profile.showInspectUpgradeTrack
+    local showInspectGems = showOnInspect and self.db.profile.showInspectGems
+    local showInspectEnchants = showOnInspect and self.db.profile.showInspectEnchants
+    local showInspectEmbellishments = showOnInspect and self.db.profile.showInspectEmbellishments
     for _, slotName in ipairs(self.InspectInfo.slots) do
         local slot = _G[slotName]
         local slotID = slot:GetID()
-        if self.db.profile.showInspectiLvl then
+        if showInspectItemLevel then
             if not slot.PGVItemLevel then
                 slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -51,7 +59,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID)
         end
 
 
-        if self.db.profile.showInspectiLvl and self.db.profile.showInspectUpgradeTrack then
+        if showInspectUpgradeTrack then
             if not slot.PGVUpgradeTrack then
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -68,7 +76,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID)
             slot.PGVUpgradeTrack:Hide()
         end
 
-        if self.db.profile.showInspectGems then
+        if showInspectGems then
             if not slot.PGVGems then
                 slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -85,7 +93,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID)
             slot.PGVGems:Hide()
         end
 
-        if self.db.profile.showInspectEnchants then
+        if showInspectEnchants then
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -104,10 +112,16 @@ function AddOn:UpdateInspectedGearInfo(unitGUID)
             slot.PGVEnchant:Hide()
         end
 
-        if self.db.profile.showInspectEmbellishments then
+        if showInspectEmbellishments then
             self:ShowEmbellishmentBySlot(slot, true)
         elseif slot.PGVEmbellishmentTexture then
             slot.PGVEmbellishmentTexture:Hide()
+        end
+
+        if self.db.profile.hideShirtTabardInfo and (slot == _G["InspectShirtSlot"] or slot == _G["InspectTabardSlot"]) then
+            if slot.PGVItemLevel then slot.PGVItemLevel:Hide() end
+            if slot.PGVGems then slot.PGVGems:Hide() end
+            if slot.PGVEnchant then slot.PGVEnchant:Hide() end
         end
     end
 end

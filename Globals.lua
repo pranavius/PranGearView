@@ -14,7 +14,7 @@ AddOn.DKEnchantAbbr = {
     Gargoyle = "Garg",
     StoneskinGargoyle = "Stnskn Garg",
     Unending = "Unend",
-    UnendingThirst = "Undend Thirst"
+    UnendingThirst = "Unend Thirst"
 }
 
 AddOn.EnchantTextReplace = {
@@ -28,6 +28,7 @@ AddOn.EnchantTextReplace = {
     { original = "Stormrider", replacement = "" },
     { original = "Stormrider's", replacement = "" },
     { original = "Stonebound", replacement = "Stn" },
+    { original = "Cursed", replacement = "Curs" },
     { original = "Rune", replacement = "" },
     { original = " of", replacement = "" },
     { original = " the", replacement = "" },
@@ -39,6 +40,7 @@ AddOn.EnchantTextReplace = {
     { original = "Speed", replacement = "Spd" },
     { original = "Avoidance", replacement = "Avoid" },
     { original = "Armor", replacement = "Arm" },
+    { original = "Haste", replacement = "Hst" },
     { original = "Damage", replacement = "Dmg" },
     { original = "Mastery", replacement = "Mast" },
     { original = "Critical Strike", replacement = "Crit" },
@@ -64,7 +66,7 @@ AddOn.EnchantTextReplace = {
     { original = "Finesse", replacement = "Fin" },
     { original = "Ingenuity", replacement = "Ing" },
     { original = "Perception", replacement = "Perc" },
-    { original = "Resourcefulness", replacement = "Resource" },
+    { original = "Resourcefulness", replacement = "Rsrc" },
     { original = "Absorption", replacement = "Absorb" },
     { original = "Artistry", replacement = "Art" },
     { original = "Sanguination", replacement = AddOn.DKEnchantAbbr.Sanguination },

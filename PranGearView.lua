@@ -1189,7 +1189,7 @@ function AddOn:HandleEquipmentOrSettingsChange()
     end
     if InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
         DebugPrint("Changed AddOn setting for inspect window, updating inspect gear information")
-        self:UpdateInspectedGearInfo(self.db.profile.inspectedUnitGUID)
+        self:UpdateInspectedGearInfo(self.db.profile.inspectedUnitGUID, true)
     end
 end
 
