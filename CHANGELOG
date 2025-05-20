@@ -1,3 +1,7 @@
+v1.3.1
+Fix minor visual bug with weapon enchant positioning
+Update abbreviations for enchant text
+
 v1.3.0
 Enable option to show gear info when Inspecting another player
 Minor code cleanup and refactoring
