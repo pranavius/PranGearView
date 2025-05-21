@@ -29,6 +29,8 @@ AddOn.EnchantTextReplace = {
     { original = "Stormrider's", replacement = "" },
     { original = "Stonebound", replacement = "Stn" },
     { original = "Cursed", replacement = "Curs" },
+    { original = "Lesser", replacement = "Lssr" },
+    { original = "Greater", replacement = "Grtr" },
     { original = "Rune", replacement = "" },
     { original = " of", replacement = "" },
     { original = " the", replacement = "" },
@@ -77,6 +79,16 @@ AddOn.EnchantTextReplace = {
     { original = "Stoneskin", replacement = AddOn.DKEnchantAbbr.Stoneskin },
     { original = "Gargoyle", replacement = AddOn.DKEnchantAbbr.Gargoyle },
     { original = "Unending", replacement = AddOn.DKEnchantAbbr.Unending },
+    { original = "Twilight", replacement = "Twi" },
+    { original = "Devastation", replacement = "Dev" },
+    { original = "Ritual", replacement = "Rit" },
+    { original = "Twisted", replacement = "Twst" },
+    { original = "Appendage", replacement = "App" },
+    { original = "Gushing", replacement = "Gush" },
+    { original = "Wound", replacement = "Wnd" },
+    { original = "Infinite", replacement = "Inf" },
+    { original = "Stars", replacement = "Star" },
+    { original = "Echoing", replacement = "Echo" },
 }
 
 AddOn.UpgradeTextReplace = {
@@ -195,6 +207,7 @@ AddOn.PGVExpansionInfo = {
         MaxAuxSocketsPerItem = 1,
         MaxEmbellishments = 2,
         EnchantableSlots = {
+            CharacterHeadSlot,
             CharacterBackSlot,
             CharacterChestSlot,
             CharacterWristSlot,
@@ -204,6 +217,7 @@ AddOn.PGVExpansionInfo = {
             CharacterFinger1Slot,
             CharacterMainHandSlot,
             CharacterSecondaryHandSlot,
+            "InspectHeadSlot",
             "InspectBackSlot",
             "InspectChestSlot",
             "InspectWristSlot",
@@ -214,6 +228,7 @@ AddOn.PGVExpansionInfo = {
             "InspectMainHandSlot",
             "InspectSecondaryHandSlot"
         },
+        HeadEnchantAvailable = true,
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false
     }

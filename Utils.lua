@@ -148,13 +148,14 @@ function AddOn:IsSocketableSlot(slot)
                 return true
             end
         end
+    elseif self.IsAuxSocketableSlot(slot) then
+        return true
     else
         DebugPrint(ColorText("SocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
 
--- Currently unused
 function AddOn.IsAuxSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
         for _, gearSlot in ipairs(AddOn.CurrentExpac.AuxSocketableSlots) do
@@ -172,8 +173,11 @@ end
 function AddOn:IsEnchantableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.EnchantableSlots) do
+            -- Condition for checking available head enchants when inspecting another player (Horrific Visions, Amirdrassil, etc.)
+            if gearSlot == "InspectHeadSlot" and slot == _G[gearSlot] then
+                return self.CurrentExpac.HeadEnchantAvailable
             -- Condition for checking available shield/offhand enchants when inspecting another player
-            if gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
+            elseif gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
                 local _, item = self:IsItemEquippedInSlot(slot, true)
                 if item then
                     local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(item:GetItemLink()))
@@ -195,8 +199,11 @@ function AddOn:IsEnchantableSlot(slot)
                 DebugPrint("Inspect Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
                 return true
             end
+            -- Condition for checking available head enchants for current character (Horrific Visions, Amirdrassil, etc.)
+            if slot == gearSlot and slot == CharacterHeadSlot and GetInventoryItemID("player", slot:GetID()) then
+                return self.CurrentExpac.HeadEnchantAvailable
             -- Condition for checking available shield/offhand enchants for current character
-            if slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
+            elseif slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
                 local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
                 local isOffhand = itemClassID == 4 and itemSubclassID == 0
