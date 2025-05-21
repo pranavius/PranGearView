@@ -1,4 +1,5 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
 function AddOn:SetItemLevelPositionBySlot(slot)

@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
-
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 
 AddOn.DKEnchantAbbr = {
@@ -172,7 +172,7 @@ AddOn.InspectInfo = {
     }
 }
 
-AddOn.PGVExpansionInfo = {
+AddOn.ExpansionInfo = {
     TheWarWithin = {
         LevelCap = 80,
         SocketableSlots = {

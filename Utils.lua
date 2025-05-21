@@ -1,8 +1,9 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
-AddOn.CurrentExpac = AddOn.PGVExpansionInfo.TheWarWithin
+AddOn.CurrentExpac = AddOn.ExpansionInfo.TheWarWithin
 
 -- General Utility
 function ColorText(text, color)

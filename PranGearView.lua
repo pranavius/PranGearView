@@ -1,9 +1,11 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
+
 
 local Options = {
     type = "group",
@@ -1182,6 +1184,7 @@ function AddOn:OnInitialize()
     end)
 end
 
+--- Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
 function AddOn:HandleEquipmentOrSettingsChange()
     if PaperDollFrame:IsVisible() then
         DebugPrint("Changed equipped item or AddOn setting, updating gear information")
@@ -1193,6 +1196,7 @@ function AddOn:HandleEquipmentOrSettingsChange()
     end
 end
 
+--- Updates information displayed in the Character Info window
 function AddOn:UpdateEquippedGearInfo()
     if not self.GearSlots then
         DebugPrint("Gear slots table not found")
