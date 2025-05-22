@@ -297,6 +297,11 @@ AddOn.DefaultTankStatOrder = {
     [STAT_BLOCK] = 10
 }
 
+---@class (exact) RaceGender
+---@field Male string The atlas alias for the icon corresponding to a male of the associated race
+---@field Female string The atlas alias for the icon corresponding to a female of the associated race
+
+---@type table<string, RaceGender>
 AddOn.RaceIcons = {
     Human = {
         Male = "RaceIcon128-Human-Male",

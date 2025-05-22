@@ -5,12 +5,27 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local ColorText = AddOn.ColorText
 
--- { name, race, class, color }
+---@class (exact) Credit A table containing information for crediting individuals who contribute to the AddOn
+---@field name string Contributor name
+---@field race string World of Warcraft race & gender they identify with in-game
+---@field class ClassIcons World of Warcraft class they identify with in-game
+---@field color HexColorPresets Color to display the contributor's name in
+
+---A list of individuals who have contributed, directly or indirectly, to the codebase.
+---@see RaceGender
+---@see ClassIcons
+---@see HexColorPresets
+---@type table<number, Credit>
 local contributors = {
     { name = "ZamestoTV", race = AddOn.RaceIcons.NightElf.Male, class = AddOn.ClassIcons.Druid, color = AddOn.HexColorPresets.Druid },
     { name = "Lirfdam", race = AddOn.RaceIcons.Nightborne.Female, class = AddOn.ClassIcons.Mage, color = AddOn.HexColorPresets.Mage }
 }
 
+---A list of individuals who have not contributed code, but have been very helpful in providing feedback and support for the AddOn
+---@see RaceGender
+---@see ClassIcons
+---@see HexColorPresets
+---@type table<number, Credit>
 local specialThanks = {
     { name = "Tusk", race = AddOn.RaceIcons.Pandaren.Male, class = AddOn.ClassIcons.Monk, color = AddOn.HexColorPresets.Monk },
     { name = "Beo", race = AddOn.RaceIcons.Pandaren.Female, class = AddOn.ClassIcons.DemonHunter, color = AddOn.HexColorPresets.DemonHunter },
@@ -21,6 +36,7 @@ local specialThanks = {
     { name = "Grok", race = AddOn.RaceIcons.Orc.Male, class = AddOn.ClassIcons.Warrior, color = AddOn.HexColorPresets.Warrior }
 }
 
+---Generates the Credits section of the AddOn options dynamically based on tables of contributors and special mentions (special thanks)
 function AddOn:BuildCreditsGroup()
     local credits = {
         type = "group",

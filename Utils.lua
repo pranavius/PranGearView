@@ -8,7 +8,7 @@ AddOn.CurrentExpac = AddOn.ExpansionInfo.TheWarWithin
 ---Formats `text` to be displayed in a specific color in-game. If the argument is a valid entry in the `HexColorPresets` table, that value will be used.
 ---Alternatively, a color's hexadecimal code can be provided for the `color` argument instead.
 ---@see HexColorPresets
----@param text string The text to display
+---@param text string|number The text to display
 ---@param color string The color to display the text in.
 ---@return string result A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
 function ColorText(text, color)
@@ -76,9 +76,9 @@ end
 
 ---Converts a hexadecimal code (without the leading '#' character) into its corresponding red, green, and blue decimal values
 ---@param hex string The hex code to convert to RGB values
----@return number red The red value for the color expressed as a decimal between `0` and `255`
----@return number green The green value for the color expressed as a decimal between `0` and `255`
----@return number blue The blue value for the color expressed as a decimal between `0` and `255`
+---@return number|nil red The red value for the color expressed as a decimal between `0` and `255`. Returns `nil` if the supplied hex code is invalid
+---@return number|nil green The green value for the color expressed as a decimal between `0` and `255`. Returns `nil` if the supplied hex code is invalid
+---@return number|nil blue The blue value for the color expressed as a decimal between `0` and `255`. Returns `nil` if the supplied hex code is invalid
 function AddOn.ConvertHexToRGB(hex)
     if tonumber("0x"..hex:sub(1,2)) == nil or tonumber("0x"..hex:sub(3,4)) == nil or tonumber("0x"..hex:sub(5,6)) == nil then
         print(ColorText("Pran Gear View:", "Heirloom"), ColorText(L["Invalid hexadecimal color code provided."], "Error"))
@@ -98,7 +98,7 @@ end
 
 ---Formats `texture` to be displayed in-game using square dimensions
 ---@param texture number the ID for the texture to render
----@param dim number The value to be used for the height & width of the texture
+---@param dim? number The value to be used for the height & width of the texture. Default value is `15`
 ---@return string text A formatted string wrapped in syntax to display `texture`
 function AddOn.GetTextureString(texture, dim)
     local size = 15
@@ -110,7 +110,7 @@ end
 
 ---Formats `atlas` to be displayed in-game using square dimensions. This differs from `GetTextureString` in that atlases use filenames rather than ID numbers to render
 ---@param atlas string the filename or atlas alias for the texture to render
----@param dim number The value to be used for the height & width of the texture
+---@param dim? number The value to be used for the height & width of the texture. Default value is `15`
 ---@return string text A formatted string wrapped in syntax to display `atlas`
 function AddOn.GetTextureAtlasString(atlas, dim)
     local size = 15
@@ -122,7 +122,7 @@ end
 
 ---Creates a blank entry to display a space or create separation between items in the AddOn options menu
 ---@param order number The position of the blank entry in the immediate parent object
----@return table spacer A table entry for showing a blank space between option elements
+---@return { type: "description", name: " ", order: number } spacer A table entry for showing a blank space between option elements
 function AddOn.CreateOptionsSpacer(order)
     return {
         type = "description",
@@ -131,11 +131,14 @@ function AddOn.CreateOptionsSpacer(order)
     }
 end
 
+---@class Slot: Frame
+---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
+
 ---Indicates whether an item is equipped in a particular gear slot or not
----@param slot Frame The gear slot to check for an equipped item
----@param isInspect boolean Whether a player is being inspected or not
+---@param slot Slot The gear slot to check for an equipped item
+---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean hasItem `true` if the slot has an item equipped in it, `false` otherwise
----@return ItemMixin item The equipped item. When `hasItem` is `false`, this is always `nil`
+---@return ItemMixin|nil item The equipped item. When `hasItem` is `false`, this is always `nil`
 function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
@@ -148,9 +151,9 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                     DebugPrint("Matching raid unit found")
                     local itemLink = GetInventoryItemLink(token, slotID)
                     if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-                    return false, nil
                 end
             end
+            return false, nil
         elseif IsInGroup() then
             for i = 1, MAX_PARTY_MEMBERS do
                 local token = "party"..i
@@ -158,30 +161,20 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                     DebugPrint("Matching party unit found")
                     local itemLink = GetInventoryItemLink(token, slotID)
                     if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-                    return false, nil
                 end
             end
-        else -- remove else condition for release (testing only)
-            for _, plate in ipairs(C_NamePlate.GetNamePlates()) do
-                -- use the nameplate token to get item info
-                local token = plate.namePlateUnitToken
-                if UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then
-                        return true, Item:CreateFromItemLink(itemLink)
-                    end
-                    return false, nil
-                end
-            end
+            return false, nil
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
-        return not item:IsItemEmpty(), item
+        return not item:IsItemEmpty(), item:IsItemEmpty() and nil or item
+    -- Disable missing-return for next line since else condition always returns values
+    ---@diagnostic disable-next-line: missing-return
     end
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it
----@param slot Frame The gear slot to check for socketable equipment
+---@param slot Slot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket, `false` otherwise
 function AddOn:IsSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.SocketableSlots then
@@ -200,7 +193,7 @@ function AddOn:IsSocketableSlot(slot)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it via auxillary methods (example: S.A.D. in The War Within)
----@param slot Frame The gear slot to check for socketable equipment
+---@param slot Slot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket via auxillary methods, `false` otherwise
 function AddOn.IsAuxSocketableSlot(slot)
     if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
@@ -217,7 +210,7 @@ function AddOn.IsAuxSocketableSlot(slot)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can be enchanted or not
----@param slot Frame The gear slot to check for enchantable equipment
+---@param slot Slot The gear slot to check for enchantable equipment
 ---@return boolean result `true` if the item can be enchanted, `false` otherwise
 function AddOn:IsEnchantableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.EnchantableSlots then
@@ -229,7 +222,7 @@ function AddOn:IsEnchantableSlot(slot)
             elseif gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
                 local _, item = self:IsItemEquippedInSlot(slot, true)
                 if item then
-                    local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(item:GetItemLink()))
+                    local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(item:GetItemLink()))
                     local isShield = itemClassID == 4 and itemSubclassID == 6
                     local isOffhand = itemClassID == 4 and itemSubclassID == 0
                     if isShield and self.CurrentExpac.ShieldEnchantAvailable then
@@ -253,7 +246,7 @@ function AddOn:IsEnchantableSlot(slot)
                 return self.CurrentExpac.HeadEnchantAvailable
             -- Check for available shield or off-hand enchants for current character
             elseif slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
-                local itemClassID, itemSubclassID = select(6, GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
+                local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
                 local isOffhand = itemClassID == 4 and itemSubclassID == 0
                 if isShield and self.CurrentExpac.ShieldEnchantAvailable then
@@ -279,7 +272,7 @@ function AddOn:IsEnchantableSlot(slot)
 end
 
 ---Indicates whether a gear slot is positioned to the left of the character model in the default Character Info/Inspect windows or not
----@param slot Frame The gear slot to check
+---@param slot Slot The gear slot to check
 ---@param isInspect boolean Whether a player is being inspected or not
 ---@return boolean|nil result Returns `nil` if the slot is for a weapon or off-hand item, `true` if the slot is to the left of the character model, and `false` otherwise
 function AddOn:GetSlotIsLeftSide(slot, isInspect)
