@@ -2,6 +2,7 @@ local addonName, AddOn = ...
 ---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 
+---@enum DKEnchantAbbr
 AddOn.DKEnchantAbbr = {
     Razorice = "Razorice",
     Sanguination = "Sang",
@@ -100,6 +101,7 @@ AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Myth ", replacement = "M" }
 }
 
+---@enum HexColorPresets
 AddOn.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
@@ -234,6 +236,7 @@ AddOn.ExpansionInfo = {
     }
 }
 
+---@enum SpecOptions
 AddOn.SpecOptions = {
     [250] = "Blood",
     [251] = "Frost",
@@ -276,6 +279,7 @@ AddOn.SpecOptions = {
     [73] = "Protection",
 }
 
+---@enum DefaultStatOrder
 AddOn.DefaultStatOrder = {
     [STAT_CRITICAL_STRIKE] = 1,
     [STAT_HASTE] = 2,
@@ -286,6 +290,7 @@ AddOn.DefaultStatOrder = {
     [STAT_SPEED] = 7
 }
 
+---@enum DefaultTankStatOrder
 AddOn.DefaultTankStatOrder = {
     [STAT_DODGE] = 8,
     [STAT_PARRY] = 9,
@@ -395,6 +400,7 @@ AddOn.RaceIcons = {
     }
 }
 
+---@enum ClassIcons
 AddOn.ClassIcons = {
     DeathKnight = "ClassIcon-DeathKnight",
     DemonHunter = "ClassIcon-DemonHunter",
