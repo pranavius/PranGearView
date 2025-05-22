@@ -24,7 +24,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     if self.db.profile.inspectedUnitGUID ~= unitGUID then
         self.db.profile.inspectedUnitGUID = unitGUID
     end
-    print("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
+    DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
 
     local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
     local showInspectUpgradeTrack = showInspectItemLevel and self.db.profile.showInspectUpgradeTrack

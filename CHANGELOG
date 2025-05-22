@@ -1,3 +1,6 @@
+v1.3.2
+Fix inspect debugging statement appearing without debug mode enabled
+
 v1.3.1
 Add head, wrist, and waist as socketable slots
 Add abbreviations for Horrific Visions Revisited head enchants
