@@ -95,8 +95,8 @@ function AddOn.ConvertHexToRGB(hex)
         return nil, nil, nil
     end
     return tonumber("0x"..hex:sub(1,2)) / 255,
-           tonumber("0x"..hex:sub(3,4)) / 255,
-           tonumber("0x"..hex:sub(5,6)) / 255
+        tonumber("0x"..hex:sub(3,4)) / 255,
+        tonumber("0x"..hex:sub(5,6)) / 255
 end
 
 ---Utility function to round numbers
@@ -316,4 +316,32 @@ function AddOn:GetSlotIsLeftSide(slot, isInspect)
     else
         return slot.IsLeftSide
     end
+end
+
+---Determines the minimum and maximum item levels from equipped items for a character
+---@param isInspect? boolean Whether a player is being inspected or not
+---@return number min Minimum item level from all equipped gear
+---@return number max Maximum item level from all equipped gear
+function AddOn:GetMinMaxItemLevelsFromGear(isInspect)
+    local slots = AddOn.GearSlots
+    ---@cast slots table<number, any>
+    if isInspect then slots = AddOn.InspectInfo.slots end
+
+    local allItemLevels = {}
+    for _, slot in ipairs(slots) do
+        local checkedSlot = slot
+        ---@cast checkedSlot Slot
+        if isInspect then checkedSlot = _G[slot] end
+        local hasItem, item = self:IsItemEquippedInSlot(checkedSlot, isInspect)
+        if hasItem then
+            local itemLevel = item:GetCurrentItemLevel()
+            -- Ignore shirts and tabards
+            local isShirtOrTabard = slot == CharacterShirtSlot or slot == CharacterTabardSlot or slot == "InspectShirtSlot" or slot == "InspectTabardSlot"
+            if itemLevel > 0 and not isShirtOrTabard then allItemLevels[slot:GetID()] = itemLevel end
+        end
+    end
+
+    self.CompressTable(allItemLevels)
+    return math.min(unpack(allItemLevels)),
+        math.max(unpack(allItemLevels))
 end

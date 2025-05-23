@@ -15,7 +15,16 @@ function AddOn:GetItemLevelBySlot(slot, isInspect)
         local itemLevel = item:GetCurrentItemLevel()
         if itemLevel > 0 then -- positive value indicates item info has loaded
             local iLvlText = tostring(itemLevel)
-            if self.db.profile.useQualityColorForILvl then
+            if self.db.profile.useShadowLightStyleForILvl then
+                local minILvl, maxILvl = AddOn:GetMinMaxItemLevelsFromGear(isInspect)
+                if itemLevel == minILvl then
+                    iLvlText = ColorText(iLvlText, "DeathKnight")
+                elseif itemLevel == maxILvl then
+                    iLvlText = ColorText(iLvlText, "Uncommon")
+                else
+                    iLvlText = ColorText(iLvlText, "Druid")
+                end
+            elseif self.db.profile.useQualityColorForILvl then
                 local qualityHex = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
                 iLvlText = "|c"..qualityHex..iLvlText.."|r"
             elseif self.db.profile.useClassColorForILvl then

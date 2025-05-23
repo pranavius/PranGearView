@@ -120,6 +120,7 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useClassColorForILvl = false
+                            AddOn.db.profile.useShadowLightStyleForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -136,6 +137,24 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
+                            AddOn.db.profile.useShadowLightStyleForILvl = false
+                            AddOn.db.profile.useCustomColorForILvl = false
+                        end
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showiLvl end
+                },
+                useShadowLightStyleForILvl = {
+                    type = "toggle",
+                    name = "Use S&L Colors",
+                    desc = "Color highest item level in |cFF1EFF00green|r, lowest item level in |cFFC41E3Ared|r, and the rest in |cFFFF7C0Aorange|r.\n\nThis color scheme follows a similar pattern to the |cFFFFD100Shadow & Light|r plugin for |cFFFFD100ElvUI|r",
+                    order = 8.061,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        if val then
+                            AddOn.db.profile.useQualityColorForILvl = false
+                            AddOn.db.profile.useClassColorForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -154,6 +173,7 @@ local Options = {
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
                             AddOn.db.profile.useClassColorForILvl = false
+                            AddOn.db.profile.useShadowLightStyleForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
@@ -1011,6 +1031,7 @@ local Defaults = {
         iLvlScale = 1,
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
+        useShadowLightStyleForILvl = false,
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
         upgradeTrackScale = 1,
