@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView
+---@class PranGearView : AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
