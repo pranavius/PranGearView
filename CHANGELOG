@@ -1,3 +1,7 @@
+v1.3.3
+Fix bug for alignment of enchant and socket on some equipped items
+Code cleanup and documentation
+
 v1.3.2
 Fix inspect debugging statement appearing without debug mode enabled
 
