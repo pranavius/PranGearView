@@ -36,7 +36,7 @@ L["Debug Mode"] = "Debug Mode"
 
 L["Choose information to show in the Character Info window"] = "Choose information to show in the Character Info window"
 L["Display item levels for equipped items"] = "Display item levels for equipped items"
-L["Display upgrade track and progress"] = "Display upgrade track and progress"
+L["Display upgrade track and progress for equipped items"] = "Display upgrade track and progress for equipped items"
 L["Display gem and socket information for equipped items"] = "Display gem and socket information for equipped items"
 L["Display enchant information for equipped items"] = "Display enchant information for equipped items"
 L["Display durability percentages for equipped items"] = "Display durability percentages for equipped items"

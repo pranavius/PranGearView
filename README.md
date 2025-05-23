@@ -2,7 +2,7 @@
 *A lightweight, customizable way to view your equipped gear*
 
 ## Highlights
-- Allows for a wide range of text color and size customization
+- Allows for a wide range of text customization (size, color, outline, and more to come!)
 - Lets you know when items are missing sockets, gems, and enchants
 - Can show gear information when inspecting players in your party or raid
 - Provides an interface for customizing the order of secondary and tertiary stats under the *Enchancements* category based on class and specialization
@@ -25,15 +25,16 @@ You can use the options window to modify all available options. To open the opti
 
 ### Options Window
 - **Item Level**: Display item levels for equipped items
+- **Upgrade Track**: Display upgrade tracks for eqipped items
 - **Gems**: Display gem and socket information for equipped items
 - **Enchants**: Display enchant information for equipped items
 - **Durability**: Display durability percentages for equipped items
 
 #### Customization Options
-- **Item Level**: Change text size and color
-- **Upgrade Track**: Change text size and color
+- **Item Level**: Change text size, outline, and color
+- **Upgrade Track**: Change text size, outline, and color
 - **Gems**: Change icon size, show missing gems and sockets, only show missing gems and sockets for max level characters
-- **Enchants**: Change text size, show missing enchants, only show missing enchants for max level characters, change text color
+- **Enchants**: Change text size, text outline, show missing enchants, only show missing enchants for max level characters, change text color
 - **Durability**: Change text size
 - **Inspect Window**: Choose which information (if any) to display when inspecting members in your party/raid
 - **Character Stats**: Set stat order based on class and specialization

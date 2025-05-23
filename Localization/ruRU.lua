@@ -36,7 +36,7 @@ L["Debug Mode"] = "Режим отладки"
 
 L["Choose information to show in the Character Info window"] = "Выберите информацию для отображения в окне информации о персонаже"
 L["Display item levels for equipped items"] = "Отображать уровни предметов для экипированных предметов"
-L["Display upgrade track and progress"] = "Отображать путь улучшения и прогресс"
+L["Display upgrade track and progress for equipped items"] = "Отображать путь улучшения и прогресс для экипированных предметов"
 L["Display gem and socket information for equipped items"] = "Отображать информацию о самоцветах и гнездах для экипированных предметов"
 L["Display enchant information for equipped items"] = "Отображать информацию о чарах для экипированных предметов"
 L["Display durability percentages for equipped items"] = "Отображать проценты прочности для экипированных предметов"
