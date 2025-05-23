@@ -201,9 +201,9 @@ end
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it via auxillary methods (example: S.A.D. in The War Within)
 ---@param slot Slot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket via auxillary methods, `false` otherwise
-function AddOn.IsAuxSocketableSlot(slot)
-    if AddOn.CurrentExpac and AddOn.CurrentExpac.AuxSocketableSlots then
-        for _, gearSlot in ipairs(AddOn.CurrentExpac.AuxSocketableSlots) do
+function AddOn:IsAuxSocketableSlot(slot)
+    if self.CurrentExpac and self.CurrentExpac.AuxSocketableSlots then
+        for _, gearSlot in ipairs(self.CurrentExpac.AuxSocketableSlots) do
             if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
                 DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable (aux)")
                 return true
