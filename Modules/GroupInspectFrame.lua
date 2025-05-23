@@ -1,9 +1,13 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
+---Updates displayed info in the Inspect window when AddOn settings are changed or a new character is inspected
+---@param unitGUID string The Globally Unique Identifier (GUID) for the character being inspected
+---@param forceUpdate? boolean Whether or not to force an update to the information displayed
 function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     local showOnInspect = self.db.profile.showOnInspect
     -- Check for a force update even if the DB value is false (required for toggling inspect visibility via slash command)
@@ -32,6 +36,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     local showInspectEnchants = showOnInspect and self.db.profile.showInspectEnchants
     local showInspectEmbellishments = showOnInspect and self.db.profile.showInspectEmbellishments
     for _, slotName in ipairs(self.InspectInfo.slots) do
+        ---@type Slot
         local slot = _G[slotName]
         local slotID = slot:GetID()
         if showInspectItemLevel then
@@ -40,6 +45,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             end
             -- Outline text when placed on the gear icon
             local iFont, iSize = slot.PGVItemLevel:GetFont()
+            ---@cast iFont string
             if self.db.profile.iLvlOnItem then
                 slot.PGVItemLevel:SetFont(iFont, iSize, "THICKOUTLINE")
             else
@@ -98,6 +104,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
             local eFont, eSize = slot.PGVEnchant:GetFont()
+            ---@cast eFont string
             slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
             slot.PGVEnchant:Hide()
             local enchTextScale = 0.9

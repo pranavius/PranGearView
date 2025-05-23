@@ -1,9 +1,11 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
 local DebugPrint = AddOn.DebugPrint
 
--- Retrieves acceptable values for stat order dropdowns
+---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
+---@return table<number, number> options A table of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     local options = {}
@@ -13,12 +15,17 @@ function AddOn:GetStatOrderValuesHandler()
     return options
 end
 
+---Retrieves the current order for a stat based on currently chosen specialization in the Character Stats options group
+---@param item string The stat to retrieve current order for
+---@return number order The order of a stat as per the database
 function AddOn:GetStatOrderHandler(item)
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     return self.db.profile.customSpecStatOrders[specID][item[#item]]
 end
 
--- handles setting all stat order options
+---Handles setting changes to stat order options
+---@param item any The stat to modify the display order for, typically a `string` containing the name of the key in the database table
+---@param val any The value to set in the database for the stat defined by `item`
 function AddOn:SetStatOrderHandler(item, val)
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     local currentOrder = self.db.profile.customSpecStatOrders[specID][item[#item]]
@@ -32,13 +39,19 @@ function AddOn:SetStatOrderHandler(item, val)
     end
 end
 
--- Returns specialization ID and role for the logged-in character
+---Returns specialization ID and role for the logged-in character
+---@return number specID The specialization ID for the currently logged in character
+---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
+---@see SpecOptions for a list of specializations and their IDs
 function AddOn:GetCharacterCurrentSpecIDAndRole()
     local specIndex = GetSpecialization()
     local specID, _, _, _, role = GetSpecializationInfo(specIndex)
     return specID, role
 end
 
+---Initializes a stat order entry in the database for the specialization defined by `selectedSpecID`.
+---@param selectedSpecID? number The specialization ID to update the database format
+---@param reset? boolean `true` if stat order is being reset to default values, `false` otherwise
 function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     local specID, role
     if selectedSpecID then
@@ -58,7 +71,10 @@ function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     end
 end
 
--- Returns specialization ID and role for the chosen spec whenever it is changed in the options menu
+---Returns specialization ID and role for the chosen spec whenever it is changed in the options menu
+---@return number specID The specialization ID for the currently logged in character
+---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
+---@see SpecOptions for a list of specializations and their IDs
 function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     local specID, role
     if self.db.profile.lastSelectedSpecID then
@@ -70,6 +86,7 @@ function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     return specID, role
 end
 
+---Reorders stats in the Character Info window based on the custom order defined in the Character Stats options
 function AddOn:ReorderStatFramesBySpec()
     local specID = self:GetCharacterCurrentSpecIDAndRole()
     local statFrames = {}

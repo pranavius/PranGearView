@@ -1,18 +1,22 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
+---Fetches and formats the item level for an item in the defined gear slot (if one exists)
+---@param slot Slot The gear slot to get item level for
+---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:GetItemLevelBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem then
         local itemLevel = item:GetCurrentItemLevel()
         if itemLevel > 0 then -- positive value indicates item info has loaded
-            local iLvlText = itemLevel
+            local iLvlText = tostring(itemLevel)
             if self.db.profile.useQualityColorForILvl then
-                local qualityHex = select(4, GetItemQualityColor(item:GetItemQuality()))
+                local qualityHex = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
                 iLvlText = "|c"..qualityHex..iLvlText.."|r"
             elseif self.db.profile.useClassColorForILvl then
                 local classFile = select(2, UnitClass("player"))
@@ -32,6 +36,9 @@ function AddOn:GetItemLevelBySlot(slot, isInspect)
     end
 end
 
+---Fetches and formats the upgrade track for an item in the defined gear slot (if one exists)
+---@param slot Slot The gear slot to get item level for
+---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem then
@@ -40,9 +47,8 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
-                -- Tooltip data type 42 is upgrade track
-                if ttdata and ttdata.type and ttdata.type == 42 then
-                    -- Displays past-season upgrade tracks in Gray
+                if ttdata and ttdata.type and ttdata.type == self.TooltipDataType.UpgradeTrack then
+                    -- Displays past-season upgrade tracks in gray
                     upgradeColor = ttdata.leftColor:GenerateHexColorNoAlpha()
                     local upgradeText = ttdata.leftText
                     for _, repl in pairs(self.UpgradeTextReplace) do
@@ -63,7 +69,7 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
                 if self.db.profile.useCustomColorForUpgradeTrack then
                     upgradeColor = self.db.profile.upgradeTrackCustomColor
                 else
-                    upgradeColor = select(4, GetItemQualityColor(item:GetItemQuality()))
+                    upgradeColor = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
                     upgradeColor = upgradeColor:sub(3)
                 end
             end
@@ -73,6 +79,10 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
     end
 end
 
+---Fetches and formats the gems currently socketed for an item in the defined gear slot (if one exists).
+---If sockets are empty/can be addded to the item and the option to show missing sockets is enabled, these will also be indicated in the formatted text.
+---@param slot Slot The gear slot to get gem information for
+---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:GetGemsBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem then
@@ -82,8 +92,7 @@ function AddOn:GetGemsBySlot(slot, isInspect)
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
-                -- Tooltip data type 3 is gem
-                if ttdata and ttdata.type and ttdata.type == 3 then
+                if ttdata and ttdata.type and ttdata.type == self.TooltipDataType.Gem then
                     -- Socketed item will have gemIcon variable
                     if ttdata.gemIcon and IsLeftSide then
                         DebugPrint("Found Gem Icon on left side slot:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, self.GetTextureString(ttdata.gemIcon))
@@ -123,6 +132,10 @@ function AddOn:GetGemsBySlot(slot, isInspect)
     end
 end
 
+---Fetches and formats the enchant details for an item in the defined gear slot (if one exists).
+---If an item that can be enchanted isn't and the option to show missing enchants is enabled, this will also be indicated in the formatted text.
+---@param slot Slot The gear slot to get gem information for
+---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:GetEnchantmentBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem then
@@ -130,8 +143,7 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
-                -- Tooltip data type 15 is enchant
-                if ttdata and ttdata.type and ttdata.type == 15 then
+                if ttdata and ttdata.type and ttdata.type == self.TooltipDataType.Enchant then
                     DebugPrint("Item in slot", ColorText(slot:GetID(), "Heirloom"), "is enchanted")
                     local enchText = ttdata.leftText
                     DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
@@ -195,6 +207,8 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
     end
 end
 
+---Fetches and formats the durability percentage for an item in the defined gear slot (if one exists).
+---@param slot Slot The gear slot to get durability information for
 function AddOn:ShowDurabilityBySlot(slot)
     local hasItem = self:IsItemEquippedInSlot(slot)
     if hasItem then
@@ -205,6 +219,7 @@ function AddOn:ShowDurabilityBySlot(slot)
             end
             slot.PGVDurability:Hide()
             local dFont, dSize = slot.PGVDurability:GetFont()
+            ---@cast dFont string
             slot.PGVDurability:SetFont(dFont, dSize, "OUTLINE")
             local durTextScale = 0.9
             if self.db.profile.durabilityScale and self.db.profile.durabilityScale > 0 then
@@ -236,6 +251,9 @@ function AddOn:ShowDurabilityBySlot(slot)
     end
 end
 
+---Fetches and formats embellishment details for an item in the defined gear slot (if one exists and is embellished)
+---@param slot Slot The gear slot to get gem information for
+---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
     if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)

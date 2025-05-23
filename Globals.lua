@@ -1,7 +1,8 @@
 local addonName, AddOn = ...
-
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 
+---@enum DKEnchantAbbr
 AddOn.DKEnchantAbbr = {
     Razorice = "Razorice",
     Sanguination = "Sang",
@@ -17,6 +18,11 @@ AddOn.DKEnchantAbbr = {
     UnendingThirst = "Unend Thirst"
 }
 
+---@class TextReplacement
+---@field original string The original text to search for when abbreviating text
+---@field replacement string The abbreviation for the original text
+
+---@type table<number, TextReplacement>
 AddOn.EnchantTextReplace = {
     { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
     { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
@@ -91,6 +97,7 @@ AddOn.EnchantTextReplace = {
     { original = "Echoing", replacement = "Echo" },
 }
 
+---@type table<number, TextReplacement>
 AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Explorer ", replacement = "E" },
     { original = "Upgrade Level: Adventurer ", replacement = "A" },
@@ -100,6 +107,7 @@ AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Myth ", replacement = "M" }
 }
 
+---@enum HexColorPresets
 AddOn.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
@@ -147,6 +155,10 @@ AddOn.GearSlots = {
     CharacterSecondaryHandSlot
 }
 
+---@class InspectInfo
+---@field slots table<number, string> A list of all slot names when inspecting a character
+---@field leftSideSlots table<number, string> A list of all slots that appear on the left side of the character model when inspecting a character
+---@field bottomSlots table<number, string> A list of all slots that appear on the bottom of the character model when inspecting a character
 AddOn.InspectInfo = {
     slots = {
         "InspectHeadSlot",
@@ -184,7 +196,21 @@ AddOn.InspectInfo = {
     }
 }
 
-AddOn.PGVExpansionInfo = {
+---@class ExpansionDetails
+---@field LevelCap number The maximum reachable level for the expansion
+---@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+---@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in The War Within). Slots can be defined as either a Frame or string containing the name of a frame.
+---@field MaxSocketsPerItem number The maximum number of sockets an item can have
+---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
+---@field EnchantableSlots table<number, any> A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+---@field HeadEnchantAvailable boolean Indicates whether or not a head enchant from the expansion is currently available in-game
+---@field ShieldEnchantAvailable boolean Indicates whether or not a shield enchant from the expansion is currently available in-game
+---@field OffhandEnchantAvailable boolean Indicates whether or not an off-hand enchant from the expansion is currently available in-game
+
+---@type table<string, ExpansionDetails>
+---@see Frame for generic definition along without common functions and variables available for all Frames
+---@see InspectInfo for a list of Frame names available when the Inspect window is open
+AddOn.ExpansionInfo = {
     TheWarWithin = {
         LevelCap = 80,
         SocketableSlots = {
@@ -234,6 +260,7 @@ AddOn.PGVExpansionInfo = {
     }
 }
 
+---@enum SpecOptions
 AddOn.SpecOptions = {
     [250] = "Blood",
     [251] = "Frost",
@@ -276,6 +303,7 @@ AddOn.SpecOptions = {
     [73] = "Protection",
 }
 
+---@enum DefaultStatOrder
 AddOn.DefaultStatOrder = {
     [STAT_CRITICAL_STRIKE] = 1,
     [STAT_HASTE] = 2,
@@ -286,12 +314,26 @@ AddOn.DefaultStatOrder = {
     [STAT_SPEED] = 7
 }
 
+---@enum DefaultTankStatOrder
 AddOn.DefaultTankStatOrder = {
     [STAT_DODGE] = 8,
     [STAT_PARRY] = 9,
     [STAT_BLOCK] = 10
 }
 
+---@enum TooltipDataType
+AddOn.TooltipDataType = {
+    UpgradeTrack = 42,
+    Gem = 3,
+    Enchant = 15,
+
+}
+
+---@class (exact) RaceGender
+---@field Male string The atlas alias for the icon corresponding to a male of the associated race
+---@field Female string The atlas alias for the icon corresponding to a female of the associated race
+
+---@type table<string, RaceGender>
 AddOn.RaceIcons = {
     Human = {
         Male = "RaceIcon128-Human-Male",
@@ -395,6 +437,7 @@ AddOn.RaceIcons = {
     }
 }
 
+---@enum ClassIcons
 AddOn.ClassIcons = {
     DeathKnight = "ClassIcon-DeathKnight",
     DemonHunter = "ClassIcon-DemonHunter",
