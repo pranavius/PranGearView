@@ -71,24 +71,25 @@ function AddOn:SetGemsPositionBySlot(slot)
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local upgradeTrackShown = slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local isMainHand = slot == CharacterMainHandSlot
 
     -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
-    if itemLevelShownOnItem and slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
-    elseif self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown then
-        slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
+    if itemLevelShownOnItem and upgradeTrackShown and slot.IsLeftSide == nil then
+        slot.PGVGems:SetPoint(isMainHand and "RIGHT" or "LEFT", slot.PGVUpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+    elseif itemLevelShownOnItem and slot.IsLeftSide == nil then
+        slot.PGVGems:SetPoint("CENTER", slot, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
     elseif itemLevelShownOnItem and upgradeTrackShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", slot.IsLeftSide and 1 or -1, 0)
     elseif itemLevelShownOnItem then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
-    elseif itemLevelShown and slot.IsLeftSide == nil and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
+    elseif itemLevelShown and upgradeTrackShown and slot.IsLeftSide == nil then
+        slot.PGVGems:SetPoint(isMainHand and "RIGHT" or "LEFT", slot.PGVUpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
     elseif itemLevelShown and slot.IsLeftSide == nil then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 0, 0)
+        slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 1, 0)
     elseif itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", slot.IsLeftSide and 1 or -1, 0)
     elseif itemLevelShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", slot.IsLeftSide and 1 or -1, 0)
     elseif slot.IsLeftSide == nil then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
     else
@@ -104,23 +105,24 @@ function AddOn:SetInspectGemsPositionBySlot(slot)
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local upgradeTrackShown = slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local isMainHand = slot == _G["InspectMainHandSlot"]
 
-    if itemLevelShownOnItem and IsLeftSide == nil and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
+    if itemLevelShownOnItem and upgradeTrackShown and IsLeftSide == nil then
+        slot.PGVGems:SetPoint(isMainHand and "RIGHT" or "LEFT", slot.PGVUpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
     elseif itemLevelShownOnItem and IsLeftSide == nil then
-        slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
+        slot.PGVGems:SetPoint("CENTER", slot, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
     elseif itemLevelShownOnItem and upgradeTrackShown then
-        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, IsLeftSide and "RIGHT" or "LEFT", 0, -1)
+        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, IsLeftSide and "RIGHT" or "LEFT", IsLeftSide and 1 or -1, 0)
     elseif itemLevelShownOnItem then
         slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, 0)
-    elseif IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
-    elseif IsLeftSide == nil and itemLevelShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 0, 0)
+    elseif itemLevelShown and upgradeTrackShown and IsLeftSide == nil then
+        slot.PGVGems:SetPoint(isMainHand and "RIGHT" or "LEFT", slot.PGVUpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+    elseif itemLevelShown and IsLeftSide == nil then
+        slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 1, 0)
     elseif itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, IsLeftSide and "RIGHT" or "LEFT", 0, -1)
+        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, IsLeftSide and "RIGHT" or "LEFT", IsLeftSide and 1 or -1, 0)
     elseif itemLevelShown then
-        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, IsLeftSide and "RIGHT" or "LEFT", IsLeftSide and 1 or -1, 0)
     elseif IsLeftSide == nil then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
     else
