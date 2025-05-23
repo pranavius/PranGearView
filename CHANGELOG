@@ -1,3 +1,6 @@
+v1.4.0
+Reduce space before and after gems when displaying
+
 v1.3.3
 Fix bug for alignment of enchant and socket on some equipped items
 Code cleanup and documentation
