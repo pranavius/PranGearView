@@ -7,28 +7,29 @@ AddOn.CurrentExpac = AddOn.ExpansionInfo.TheWarWithin
 
 ---Formats `text` to be displayed in a specific color in-game. If the argument is a valid entry in the `HexColorPresets` table, that value will be used.
 ---Alternatively, a color's hexadecimal code can be provided for the `color` argument instead.
----@see HexColorPresets for a list of predefined colors such as class colors, item quality, etc.
 ---@param text string|number The text to display
 ---@param color string The color to display the text in.
 ---@return string result A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
-function ColorText(text, color)
+---@see HexColorPresets for a list of predefined colors such as class colors, item quality, etc.
+function AddOn.ColorText(text, color)
     if AddOn.HexColorPresets[color] then
         return "|cFF"..AddOn.HexColorPresets[color]..text.."|r"
     end
 
     return "|cFF"..color..text.."|r"
 end
-AddOn.ColorText = ColorText
 
 ---Prints the desired text if the AddOn is in debugging mode. This is just a wrapper around the standard `print` function.
----@see print
 ---@vararg string|number
-function DebugPrint(...)
+---@see print
+function AddOn.DebugPrint(...)
     if AddOn.db.profile.debug then
 		print(ColorText("[PGV Debug]", "Heirloom"), ...)
 	end
 end
-AddOn.DebugPrint = DebugPrint
+
+local ColorText = AddOn.ColorText
+local DebugPrint = AddOn.DebugPrint
 
 ---Prints the contents of a Lua table as key-value pairs if the AddOn is in debugging mode.
 ---@param tbl table The table to print key-value pairs for
@@ -190,7 +191,7 @@ function AddOn:IsSocketableSlot(slot)
                 return true
             end
         end
-    elseif self.IsAuxSocketableSlot(slot) then
+    elseif self:IsAuxSocketableSlot(slot) then
         return true
     else
         DebugPrint(ColorText("SocketableSlots not found in expansion info table", "Error"))
