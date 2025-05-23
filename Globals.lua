@@ -453,3 +453,15 @@ AddOn.ClassIcons = {
     Warlock = "ClassIcon-Warlock",
     Warrior = "ClassIcon-Warrior"
 }
+
+---@class OutlineOption
+---@field key string The localization key for the dropdown option
+---@field value string The value for text outline to pass to `SetFont()`
+
+---@type table<number, OutlineOption>
+AddOn.OutlineOptions = {
+    { key = "None", value = "" },
+    { key = "Monochrome", value = "MONOCHROME" },
+    { key = "Regular", value = "OUTLINE" },
+    { key = "Thick", value = "THICKOUTLINE" },
+}

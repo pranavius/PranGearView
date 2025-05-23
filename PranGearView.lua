@@ -103,6 +103,32 @@ local Options = {
                         end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
+                smallSpacer = AddOn.CreateOptionsSpacer(8.011, 0.25),
+                iLvlOutline = {
+                    type = "select",
+                    name = "Outline",
+                    desc = "The outline style to add to item level text".."\n\n".."|cFFFFD100Does nothing if the |cFFFFFFFFAlternate Item Level Placement |cFFFFD100checkbox is checked|r",
+                    order = 8.012,
+                    values = function()
+                        local options = {}
+                        for _, option in ipairs(AddOn.OutlineOptions) do
+                            options[option.value] = option.key
+                        end
+                        return options
+                    end,
+                    get = function(item)
+                        if not AddOn.db.profile[item[#item]] then
+                            AddOn.db.profile[item[#item]] = ""
+                        end
+
+                        return AddOn.db.profile[item[#item]]
+                    end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
+                },
                 spacer = AddOn.CreateOptionsSpacer(8.02),
                 iLvlColorOptionsDesc = {
                     type = "description",
@@ -261,6 +287,32 @@ local Options = {
                         end,
                     disabled = function() return not AddOn.db.profile.showUpgradeTrack end
                 },
+                smallSpacer = AddOn.CreateOptionsSpacer(9.011, 0.25),
+                upgradeTrackOutline = {
+                    type = "select",
+                    name = "Outline",
+                    desc = "The outline style to add to upgrade track text",
+                    order = 9.012,
+                    values = function()
+                        local options = {}
+                        for _, option in ipairs(AddOn.OutlineOptions) do
+                            options[option.value] = option.key
+                        end
+                        return options
+                    end,
+                    get = function(item)
+                        if not AddOn.db.profile[item[#item]] then
+                            AddOn.db.profile[item[#item]] = ""
+                        end
+
+                        return AddOn.db.profile[item[#item]]
+                    end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
+                },
                 spacer = AddOn.CreateOptionsSpacer(9.02),
                 useCustomColorForUpgradeTrack = {
                     type = "toggle",
@@ -416,6 +468,32 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function() return not AddOn.db.profile.showEnchants end
+                },
+                smallSpacer = AddOn.CreateOptionsSpacer(11.011, 0.25),
+                enchantOutline = {
+                    type = "select",
+                    name = "Outline",
+                    desc = "The outline style to add to enchant text",
+                    order = 11.012,
+                    values = function()
+                        local options = {}
+                        for _, option in ipairs(AddOn.OutlineOptions) do
+                            options[option.value] = option.key
+                        end
+                        return options
+                    end,
+                    get = function(item)
+                        if not AddOn.db.profile[item[#item]] then
+                            AddOn.db.profile[item[#item]] = "OUTLINE"
+                        end
+
+                        return AddOn.db.profile[item[#item]]
+                    end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
                 },
                 spacer = AddOn.CreateOptionsSpacer(11.02),
                 showMissingEnchants = {
@@ -1029,22 +1107,25 @@ local Defaults = {
         inspectedUnitGUID = nil,
         debug = false,
         iLvlScale = 1,
+        iLvlOutline = "",
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
         useShadowLightStyleForILvl = false,
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
         upgradeTrackScale = 1,
+        upgradeTrackOutline = "",
         upgradeTrackCustomColor = AddOn.HexColorPresets.Priest,
         gemScale = 1,
         showMissingGems = true,
         missingGemsMaxLevelOnly = true,
         enchScale = 1,
-        durabilityScale = 1,
-        useCustomColorForEnchants = false,
-        enchCustomColor = AddOn.HexColorPresets.Uncommon,
+        enchantOutline = "OUTLINE",
         showMissingEnchants = true,
         missingEnchantsMaxLevelOnly = true,
+        useCustomColorForEnchants = false,
+        enchCustomColor = AddOn.HexColorPresets.Uncommon,
+        durabilityScale = 1,
         lastSelectedSpecID = nil,
         showOnInspect = false,
         showInspectiLvl = true,
@@ -1236,7 +1317,7 @@ function AddOn:OnInitialize()
     end)
 end
 
---- Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
+---Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
 function AddOn:HandleEquipmentOrSettingsChange()
     if PaperDollFrame:IsVisible() then
         DebugPrint("Changed equipped item or AddOn setting, updating gear information")
@@ -1248,7 +1329,7 @@ function AddOn:HandleEquipmentOrSettingsChange()
     end
 end
 
---- Updates information displayed in the Character Info window
+---Updates information displayed in the Character Info window
 function AddOn:UpdateEquippedGearInfo()
     if not self.GearSlots then
         DebugPrint("Gear slots table not found")
@@ -1262,12 +1343,12 @@ function AddOn:UpdateEquippedGearInfo()
             if not slot.PGVItemLevel then
                 slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
             end
-            -- Outline text when placed on the gear icon
             local iFont, iSize = slot.PGVItemLevel:GetFont()
             if self.db.profile.iLvlOnItem then
+                -- Outline text when placed on the gear icon ignoring any selected outline option
                 slot.PGVItemLevel:SetFont(iFont, iSize, "THICKOUTLINE")
             else
-                slot.PGVItemLevel:SetFont(iFont, iSize, "")
+                slot.PGVItemLevel:SetFont(iFont, iSize, self.db.profile.iLvlOutline)
             end
             slot.PGVItemLevel:Hide()
             local iLvlTextScale = 1
@@ -1286,6 +1367,8 @@ function AddOn:UpdateEquippedGearInfo()
             if not slot.PGVUpgradeTrack then
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
+            local uFont, uSize = slot.PGVUpgradeTrack:GetFont()
+            slot.PGVUpgradeTrack:SetFont(uFont, uSize, self.db.profile.upgradeTrackOutline)
             slot.PGVUpgradeTrack:Hide()
             local upgradeTrackTextScale = 0.9
             if self.db.profile.upgradeTrackScale and self.db.profile.upgradeTrackScale > 0 then
@@ -1321,7 +1404,7 @@ function AddOn:UpdateEquippedGearInfo()
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
             local eFont, eSize = slot.PGVEnchant:GetFont()
-            slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
+            slot.PGVEnchant:SetFont(eFont, eSize, self.db.profile.enchantOutline)
             slot.PGVEnchant:Hide()
             local enchTextScale = 0.9
             if self.db.profile.enchScale and self.db.profile.enchScale > 0 then

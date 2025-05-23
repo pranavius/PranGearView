@@ -132,12 +132,14 @@ end
 
 ---Creates a blank entry to display a space or create separation between items in the AddOn options menu
 ---@param order number The position of the blank entry in the immediate parent object
----@return { type: "description", name: " ", order: number } spacer A table entry for showing a blank space between option elements
-function AddOn.CreateOptionsSpacer(order)
+---@param width? number A specified width for the spacer if a full line is not desired
+---@return { type: "description", name: " ", order: number, width: number? } spacer A table entry for showing a blank space between option elements
+function AddOn.CreateOptionsSpacer(order, width)
     return {
         type = "description",
         name = " ",
-        order = order
+        order = order,
+        width = width
     }
 end
 
@@ -318,8 +320,7 @@ function AddOn:GetSlotIsLeftSide(slot, isInspect)
     end
 end
 
----Determines the minimum and maximum item levels from equipped items for a character
----@param isInspect? boolean Whether a player is being inspected or not
+---@param isInspect? boolean
 ---@return number min Minimum item level from all equipped gear
 ---@return number max Maximum item level from all equipped gear
 function AddOn:GetMinMaxItemLevelsFromGear(isInspect)
