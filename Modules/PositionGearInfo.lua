@@ -37,13 +37,13 @@ function AddOn:SetUpgradeTrackPositionBySlot(slot)
     slot.PGVUpgradeTrack:ClearAllPoints()
 
     if self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
-        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 35, 5)
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 40, 5)
     elseif self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
         slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and slot.IsLeftSide == nil then
-        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 35, 5)
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == CharacterMainHandSlot and -1 or 1) * 40, 5)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
-        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, (0.1 * slot.PGVItemLevel:GetHeight()) / 2)
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
     end
 end
 
@@ -54,13 +54,13 @@ function AddOn:SetInspectUpgradeTrackPositionBySlot(slot)
     slot.PGVUpgradeTrack:ClearAllPoints()
 
     if self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and IsLeftSide == nil then
-        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == _G["InspectMainHandSlot"] and -1 or 1) * 35, 5)
+        slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == _G["InspectMainHandSlot"] and -1 or 1) * 40, 5)
     elseif self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
         slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, 0)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() and IsLeftSide == nil then
         slot.PGVUpgradeTrack:SetPoint("CENTER", slot, "BOTTOM", (slot == _G["InspectMainHandSlot"] and -1 or 1) * 40, 5)
     elseif slot.PGVItemLevel and slot.PGVItemLevel:IsShown() then
-        slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, IsLeftSide and "RIGHT" or "LEFT", 0, (0.1 * slot.PGVItemLevel:GetHeight()) / 2)
+        slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, IsLeftSide and "RIGHT" or "LEFT", 0, 0)
     end
 end
 
@@ -68,23 +68,25 @@ end
 ---@param slot Slot The gear slot to set gems position for
 function AddOn:SetGemsPositionBySlot(slot)
     slot.PGVGems:ClearAllPoints()
-    local itemLevelShown = slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local upgradeTrackShown = slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
 
-    if self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
+    -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
+    if itemLevelShownOnItem and slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
+        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
     elseif self.db.profile.iLvlOnItem and slot.IsLeftSide == nil and itemLevelShown then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
-    elseif self.db.profile.iLvlOnItem and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, -1)
-    elseif self.db.profile.iLvlOnItem and itemLevelShown then
+    elseif itemLevelShownOnItem and upgradeTrackShown then
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
+    elseif itemLevelShownOnItem then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, 0)
-    elseif slot.IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
-    elseif slot.IsLeftSide == nil and itemLevelShown then
+    elseif itemLevelShown and slot.IsLeftSide == nil and upgradeTrackShown then
+        slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, 0)
+    elseif itemLevelShown and slot.IsLeftSide == nil then
         slot.PGVGems:SetPoint("LEFT", slot.PGVItemLevel, "RIGHT", 0, 0)
     elseif itemLevelShown and upgradeTrackShown then
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, -1)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
     elseif itemLevelShown then
         slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot.PGVItemLevel, slot.IsLeftSide and "RIGHT" or "LEFT", 0, 0)
     elseif slot.IsLeftSide == nil then
@@ -99,16 +101,17 @@ end
 function AddOn:SetInspectGemsPositionBySlot(slot)
     local IsLeftSide = self:GetSlotIsLeftSide(slot, true)
     slot.PGVGems:ClearAllPoints()
-    local itemLevelShown = slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
+    local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local upgradeTrackShown = slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
 
-    if self.db.profile.iLvlOnItem and IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
+    if itemLevelShownOnItem and IsLeftSide == nil and upgradeTrackShown then
         slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
-    elseif self.db.profile.iLvlOnItem and IsLeftSide == nil and itemLevelShown then
+    elseif itemLevelShownOnItem and IsLeftSide == nil then
         slot.PGVGems:SetPoint("CENTER", slot, "TOP", 0, 10)
-    elseif self.db.profile.iLvlOnItem and itemLevelShown and upgradeTrackShown then
+    elseif itemLevelShownOnItem and upgradeTrackShown then
         slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot.PGVUpgradeTrack, IsLeftSide and "RIGHT" or "LEFT", 0, -1)
-    elseif self.db.profile.iLvlOnItem and itemLevelShown then
+    elseif itemLevelShownOnItem then
         slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, 0)
     elseif IsLeftSide == nil and itemLevelShown and upgradeTrackShown then
         slot.PGVGems:SetPoint("LEFT", slot.PGVUpgradeTrack, "RIGHT", 0, -1)
@@ -130,7 +133,7 @@ end
 function AddOn:SetEnchantPositionBySlot(slot)
     slot.PGVEnchant:ClearAllPoints()
 
-    local isSocketableSlot = self:IsSocketableSlot(slot)
+    local isSocketableSlot = self:IsSocketableSlot(slot) or self:IsAuxSocketableSlot(slot)
     local isEnchantableSlot = self:IsEnchantableSlot(slot)
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
@@ -150,19 +153,19 @@ function AddOn:SetEnchantPositionBySlot(slot)
         -- Adjust positioning for slots that have both item level and enchants visible
         DebugPrint("ilvl and enchant visible")
         slot.PGVItemLevel:ClearAllPoints()
-        slot.PGVItemLevel:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
-        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+        slot.PGVItemLevel:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot.PGVItemLevel:GetHeight() / 1.5)
+        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot.PGVItemLevel:GetHeight() / 1.5) * -1)
     elseif itemLevelShownOnItem and upgradeTrackShown and slot.IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both upgrade track and enchants visible
         DebugPrint("upgrade track and enchant visible in slot", slot:GetID())
         slot.PGVUpgradeTrack:ClearAllPoints()
-        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
-        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+        slot.PGVUpgradeTrack:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot.PGVUpgradeTrack:GetHeight() / 1.5)
+        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot.PGVUpgradeTrack:GetHeight() / 1.5) * -1)
     elseif (not self.db.profile.showiLvl or itemLevelShownOnItem) and gemsShown and slot.IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
         -- Adjust positioning for slots that have both gems and enchants visible
         slot.PGVGems:ClearAllPoints()
-        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
-        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+        slot.PGVGems:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, slot.PGVGems:GetHeight() / 1.5)
+        slot.PGVEnchant:SetPoint(slot.IsLeftSide and "LEFT" or "RIGHT", slot, slot.IsLeftSide and "RIGHT" or "LEFT", (slot.IsLeftSide and 1 or -1) * 10, (slot.PGVGems:GetHeight() / 1.5) * -1)
     elseif slot.IsLeftSide == nil then
         slot.PGVEnchant:SetPoint(slot == CharacterMainHandSlot and "RIGHT" or "LEFT", slot, slot == CharacterMainHandSlot and "TOPRIGHT" or "TOPLEFT", 0, 25)
     else
@@ -176,7 +179,7 @@ function AddOn:SetInspectEnchantPositionBySlot(slot)
     local IsLeftSide = self:GetSlotIsLeftSide(slot, true)
     slot.PGVEnchant:ClearAllPoints()
 
-    local isSocketableSlot = self:IsSocketableSlot(slot)
+    local isSocketableSlot = self:IsSocketableSlot(slot) or self:IsAuxSocketableSlot(slot)
     local isEnchantableSlot = self:IsEnchantableSlot(slot)
     local itemLevelShown = self.db.profile.showInspectiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showInspectiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
@@ -188,19 +191,19 @@ function AddOn:SetInspectEnchantPositionBySlot(slot)
         -- Adjust positioning for slots that have both item level and enchants visible
         DebugPrint("ilvl and enchant visible")
         slot.PGVItemLevel:ClearAllPoints()
-        slot.PGVItemLevel:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
-        slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+        slot.PGVItemLevel:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot.PGVItemLevel:GetHeight() / 1.5)
+        slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot.PGVItemLevel:GetHeight() / 1.5) * -1)
     elseif itemLevelShownOnItem and upgradeTrackShown and IsLeftSide ~= nil and isEnchantableSlot then
         -- Adjust positioning for slots that have both upgrade track and enchants visible
         DebugPrint("upgrade track and enchant visible in slot", slot:GetID())
         slot.PGVUpgradeTrack:ClearAllPoints()
-        slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
-        slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+        slot.PGVUpgradeTrack:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot.PGVUpgradeTrack:GetHeight() / 1.5)
+        slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot.PGVUpgradeTrack:GetHeight() / 1.5) * -1)
     elseif (not self.db.profile.showInspectiLvl or itemLevelShownOnItem) and gemsShown and IsLeftSide ~= nil and isSocketableSlot and isEnchantableSlot then
         -- Adjust positioning for slots that have both gems and enchants visible
         slot.PGVGems:ClearAllPoints()
-        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot:GetHeight() / 4)
-        slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot:GetHeight() / 4) * -1)
+        slot.PGVGems:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, slot.PGVGems:GetHeight() / 1.5)
+        slot.PGVEnchant:SetPoint(IsLeftSide and "LEFT" or "RIGHT", slot, IsLeftSide and "RIGHT" or "LEFT", (IsLeftSide and 1 or -1) * 10, (slot.PGVGems:GetHeight() / 1.5) * -1)
     elseif IsLeftSide == nil and itemLevelShown then
         -- Update positioning for main and off-hand slot enchants when item level is shown in default position
         slot.PGVEnchant:SetPoint(slot == _G["InspectMainHandSlot"] and "BOTTOMRIGHT" or "BOTTOMLEFT", slot.PGVItemLevel, slot == _G["InspectMainHandSlot"] and "TOPRIGHT" or "TOPLEFT", 0, 5)
