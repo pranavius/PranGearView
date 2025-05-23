@@ -8,6 +8,7 @@ L["Upgrade Track"] = "Путь улучшения"
 L["Gems"] = "Самоцветы"
 L["Enchants"] = "Чары"
 L["Durability"] = "Прочность"
+L["Embellishments"] = "Украшения"
 L["Reset"] = "Сброс"
 L["Font Scale"] = "Масштаб шрифта"
 L["Use Item Quality Color"] = "Использовать цвет качества предмета"
@@ -72,7 +73,8 @@ L["You should never need to enable this"] = "Вам никогда не прид
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Открыть окно настроек аддона"
-L["Toggle showing item level info"] = "Переключить отображение информации об уровне предмета"
+L["Toggle showing item level"] = "Переключить отображение уровне предмета"
+L["Toggle showing upgrade track"] = "Переключить отображение путь улучшения"
 L["Toggle showing gem info"] = "Переключить отображение информации о самоцветах"
 L["Toggle showing enchant info"] = "Переключить отображение информации о чарах"
 L["Toggle showing durability percentages"] = "Переключить отображение процентов прочности"

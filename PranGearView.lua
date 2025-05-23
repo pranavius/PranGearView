@@ -241,12 +241,13 @@ local Options = {
                         end,
                     disabled = function() return not AddOn.db.profile.showUpgradeTrack end
                 },
+                spacer = AddOn.CreateOptionsSpacer(9.02),
                 useCustomColorForUpgradeTrack = {
                     type = "toggle",
                     name = L["Use Custom Color"],
                     width = "full",
                     desc = L["Customize upgrade track color for current season items"],
-                    order = 9.02,
+                    order = 9.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -254,11 +255,15 @@ local Options = {
                     end,
                     disabled = function() return not AddOn.db.profile.showUpgradeTrack end
                 },
-                spacerFour = AddOn.CreateOptionsSpacer(8.16),
+                customColorDesc = {
+                    type = "description",
+                    name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
+                    order = 9.04
+                },
                 upgradeTrackCustomColor = {
                     type = "color",
                     name = L["Choose a Color"],
-                    order = 9.03,
+                    order = 9.05,
                     hasAlpha = false,
                     get = function(item)
                         if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
@@ -271,13 +276,13 @@ local Options = {
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 },
                 upgradeTrackCustomColorHex = {
                     type = "input",
                     name = "",
                     width = "half",
-                    order = 9.04,
+                    order = 9.06,
                     get = function()
                         if not AddOn.db.profile.upgradeTrackCustomColor then
                             AddOn.db.profile.upgradeTrackCustomColor = AddOn.HexColorPresets.Priest
@@ -298,7 +303,7 @@ local Options = {
                     type = "execute",
                     name = L["Reset"],
                     width = "half",
-                    order = 9.05,
+                    order = 9.07,
                     func = function()
                         AddOn.db.profile.upgradeTrackCustomColor = AddOn.HexColorPresets.Priest
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -560,8 +565,8 @@ local Options = {
                 },
                 showInspectUpgradeTrack = {
                     type = "toggle",
-                    name = L["Show Upgrade Track"],
-                    desc = L["Display upgrade track and progress next to item level"].."\n\n"..L["Does nothing if the Item Level checkbox is unchecked"],
+                    name = L["Upgrade Track"],
+                    desc = L["Display upgrade track and progress next to item level"],
                     order = 13.6,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -596,7 +601,7 @@ local Options = {
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
-                    name = L["Show Embellishments"],
+                    name = L["Embellishments"],
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
                     order = 13.9,
@@ -1049,10 +1054,21 @@ local SlashOptions = {
         ilvl = {
             type = "toggle",
             name = "ilvl",
-            desc = L["Toggle showing item level info"],
+            desc = L["Toggle showing item level"],
             get = function() return AddOn.db.profile.showiLvl end,
 	        set = function()
                 AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
+                LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                AddOn:HandleEquipmentOrSettingsChange()
+            end
+        },
+        track = {
+            type = "toggle",
+            name = "track",
+            desc = L["Toggle showing upgrade track"],
+            get = function() return AddOn.db.profile.showUpgradeTrack end,
+	        set = function()
+                AddOn.db.profile.showUpgradeTrack = not AddOn.db.profile.showUpgradeTrack
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end

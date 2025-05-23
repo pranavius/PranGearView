@@ -8,6 +8,7 @@ L["Upgrade Track"] = "Upgrade Track"
 L["Gems"] = "Gems"
 L["Enchants"] = "Enchants"
 L["Durability"] = "Durability"
+L["Embellishments"] = "Embellishments"
 L["Reset"] = "Reset"
 L["Font Scale"] = "Font Scale"
 L["Use Item Quality Color"] = "Use Item Quality Color"
@@ -72,7 +73,8 @@ L["You should never need to enable this"] = "You should never need to enable thi
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Open the AddOn options window"
-L["Toggle showing item level info"] = "Toggle showing item level info"
+L["Toggle showing item level"] = "Toggle showing item level"
+L["Toggle showing upgrade track"] = "Toggle showing upgrade track"
 L["Toggle showing gem info"] = "Toggle showing gem info"
 L["Toggle showing enchant info"] = "Toggle showing enchant info"
 L["Toggle showing durability percentages"] = "Toggle showing durability percentages"
