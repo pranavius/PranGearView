@@ -65,6 +65,16 @@ function AddOn.CompressTable(tbl)
     end
 end
 
+---@param tbl table Table to count entries for
+---@return number count The number of entries in `tbl`
+function AddOn.GetTableSize(tbl)
+    local count = 0
+    for k in pairs(tbl) do
+        count = count + 1
+    end
+    return count
+end
+
 ---Converts color values for red, green, and blue into their corresponding hexadecimal code
 ---@param r number The red value for the color expressed as a decimal between `0` and `255`
 ---@param g number The green value for the color expressed as a decimal between `0` and `255`
@@ -170,6 +180,19 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                 end
             end
             return false, {}
+        elseif self.db.profile.debug then
+            -- Only works for local development when necessary condition is commented out
+            for _, plate in ipairs(C_NamePlate.GetNamePlates()) do
+                -- use the nameplate token to get item info
+                local token = plate.namePlateUnitToken
+                if UnitGUID(token) == self.db.profile.inspectedUnitGUID then
+                    local itemLink = GetInventoryItemLink(token, slotID)
+                    if itemLink then
+                        return true, Item:CreateFromItemLink(itemLink)
+                    end
+                    return false, {}
+                end
+            end
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
@@ -227,7 +250,7 @@ function AddOn:IsEnchantableSlot(slot)
             -- Check for available shield or off-hand enchants when inspecting another player
             elseif gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
                 local _, item = self:IsItemEquippedInSlot(slot, true)
-                if item then
+                if self.GetTableSize(item) > 0 then
                     local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(item:GetItemLink()))
                     local isShield = itemClassID == 4 and itemSubclassID == 6
                     local isOffhand = itemClassID == 4 and itemSubclassID == 0

@@ -61,10 +61,6 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
         end
 
         if upgradeTrackText ~= "" then
-            local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
-            if IsLeftSide ~= nil and IsLeftSide then upgradeTrackText = " "..upgradeTrackText
-            elseif IsLeftSide ~= nil then upgradeTrackText = upgradeTrackText.." "
-            end
             if upgradeColor:lower() ~= self.HexColorPresets.PrevSeasonGear:lower() then
                 if self.db.profile.useCustomColorForUpgradeTrack then
                     upgradeColor = self.db.profile.upgradeTrackCustomColor
