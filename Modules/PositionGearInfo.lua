@@ -2,6 +2,8 @@ local addonName, AddOn = ...
 ---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
+---Set item level text position in the Character Info window
+---@param slot Slot The gear slot to set item level position for
 function AddOn:SetItemLevelPositionBySlot(slot)
     slot.PGVItemLevel:ClearAllPoints()
 
@@ -14,6 +16,8 @@ function AddOn:SetItemLevelPositionBySlot(slot)
     end
 end
 
+---Set item level text position in the Inspect window
+---@param slot Slot The gear slot to set item level position for
 function AddOn:SetInspectItemLevelPositionBySlot(slot)
     local IsLeftSide = self:GetSlotIsLeftSide(slot, true)
     slot.PGVItemLevel:ClearAllPoints()
@@ -27,6 +31,8 @@ function AddOn:SetInspectItemLevelPositionBySlot(slot)
     end
 end
 
+---Set upgrade track text position in the Character Info window
+---@param slot Slot The gear slot to set upgrade tracks position for
 function AddOn:SetUpgradeTrackPositionBySlot(slot)
     slot.PGVUpgradeTrack:ClearAllPoints()
 
@@ -41,6 +47,8 @@ function AddOn:SetUpgradeTrackPositionBySlot(slot)
     end
 end
 
+---Set upgrade track text position in the Inspect window
+---@param slot Slot The gear slot to set upgrade tracks position for
 function AddOn:SetInspectUpgradeTrackPositionBySlot(slot)
     local IsLeftSide = self:GetSlotIsLeftSide(slot, true)
     slot.PGVUpgradeTrack:ClearAllPoints()
@@ -56,6 +64,8 @@ function AddOn:SetInspectUpgradeTrackPositionBySlot(slot)
     end
 end
 
+---Set gems text position in the Character Info window
+---@param slot Slot The gear slot to set gems position for
 function AddOn:SetGemsPositionBySlot(slot)
     slot.PGVGems:ClearAllPoints()
     local itemLevelShown = slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
@@ -84,6 +94,8 @@ function AddOn:SetGemsPositionBySlot(slot)
     end
 end
 
+---Set gems text position in the Inspect window
+---@param slot Slot The gear slot to set gems position for
 function AddOn:SetInspectGemsPositionBySlot(slot)
     local IsLeftSide = self:GetSlotIsLeftSide(slot, true)
     slot.PGVGems:ClearAllPoints()
@@ -113,6 +125,8 @@ function AddOn:SetInspectGemsPositionBySlot(slot)
     end
 end
 
+---Set enchant text position in the Character Info window
+---@param slot Slot The gear slot to set enchant position for
 function AddOn:SetEnchantPositionBySlot(slot)
     slot.PGVEnchant:ClearAllPoints()
 
@@ -156,6 +170,8 @@ function AddOn:SetEnchantPositionBySlot(slot)
     end
 end
 
+---Set enchant text position in the Inspect window
+---@param slot Slot The gear slot to set enchant position for
 function AddOn:SetInspectEnchantPositionBySlot(slot)
     local IsLeftSide = self:GetSlotIsLeftSide(slot, true)
     slot.PGVEnchant:ClearAllPoints()

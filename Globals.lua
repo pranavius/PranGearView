@@ -18,6 +18,11 @@ AddOn.DKEnchantAbbr = {
     UnendingThirst = "Unend Thirst"
 }
 
+---@class TextReplacement
+---@field original string The original text to search for when abbreviating text
+---@field replacement string The abbreviation for the original text
+
+---@type table<number, TextReplacement>
 AddOn.EnchantTextReplace = {
     { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
     { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
@@ -92,6 +97,7 @@ AddOn.EnchantTextReplace = {
     { original = "Echoing", replacement = "Echo" },
 }
 
+---@type table<number, TextReplacement>
 AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Explorer ", replacement = "E" },
     { original = "Upgrade Level: Adventurer ", replacement = "A" },
@@ -149,6 +155,10 @@ AddOn.GearSlots = {
     CharacterSecondaryHandSlot
 }
 
+---@class InspectInfo
+---@field slots table<number, string> A list of all slot names when inspecting a character
+---@field leftSideSlots table<number, string> A list of all slots that appear on the left side of the character model when inspecting a character
+---@field bottomSlots table<number, string> A list of all slots that appear on the bottom of the character model when inspecting a character
 AddOn.InspectInfo = {
     slots = {
         "InspectHeadSlot",
@@ -186,6 +196,20 @@ AddOn.InspectInfo = {
     }
 }
 
+---@class ExpansionDetails
+---@field LevelCap number The maximum reachable level for the expansion
+---@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+---@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in The War Within). Slots can be defined as either a Frame or string containing the name of a frame.
+---@field MaxSocketsPerItem number The maximum number of sockets an item can have
+---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
+---@field EnchantableSlots table<number, any> A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+---@field HeadEnchantAvailable boolean Indicates whether or not a head enchant from the expansion is currently available in-game
+---@field ShieldEnchantAvailable boolean Indicates whether or not a shield enchant from the expansion is currently available in-game
+---@field OffhandEnchantAvailable boolean Indicates whether or not an off-hand enchant from the expansion is currently available in-game
+
+---@type table<string, ExpansionDetails>
+---@see Frame for generic definition along without common functions and variables available for all Frames
+---@see InspectInfo for a list of Frame names available when the Inspect window is open
 AddOn.ExpansionInfo = {
     TheWarWithin = {
         LevelCap = 80,
@@ -295,6 +319,14 @@ AddOn.DefaultTankStatOrder = {
     [STAT_DODGE] = 8,
     [STAT_PARRY] = 9,
     [STAT_BLOCK] = 10
+}
+
+---@enum TooltipDataType
+AddOn.TooltipDataType = {
+    UpgradeTrack = 42,
+    Gem = 3,
+    Enchant = 15,
+
 }
 
 ---@class (exact) RaceGender

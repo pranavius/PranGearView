@@ -7,7 +7,7 @@ AddOn.CurrentExpac = AddOn.ExpansionInfo.TheWarWithin
 
 ---Formats `text` to be displayed in a specific color in-game. If the argument is a valid entry in the `HexColorPresets` table, that value will be used.
 ---Alternatively, a color's hexadecimal code can be provided for the `color` argument instead.
----@see HexColorPresets
+---@see HexColorPresets for a list of predefined colors such as class colors, item quality, etc.
 ---@param text string|number The text to display
 ---@param color string The color to display the text in.
 ---@return string result A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
@@ -42,7 +42,7 @@ function AddOn.DebugTable(tbl)
     end
 end
 
----Removes gaps in indicies of a table if values are `nil`
+---Removes gaps in indicies of a table if values are `nil`. This modifies the `table` provided in the `tbl` argument and does not return a new one.
 ---@param tbl table The table to compress indicies for
 function AddOn.CompressTable(tbl)
     -- collect all numeric indices
@@ -133,12 +133,18 @@ end
 
 ---@class Slot: Frame
 ---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
+---@field PGVItemLevel? FontString
+---@field PGVUpgradeTrack? FontString
+---@field PGVGems? FontString
+---@field PGVEnchant? FontString
+---@field PGVDurability? FontString
+---@field PGVEmbellishmentTexture? Texture
 
 ---Indicates whether an item is equipped in a particular gear slot or not
 ---@param slot Slot The gear slot to check for an equipped item
 ---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean hasItem `true` if the slot has an item equipped in it, `false` otherwise
----@return ItemMixin|nil item The equipped item. When `hasItem` is `false`, this is always `nil`
+---@return ItemMixin item The equipped item. When `hasItem` is `false`, this is always an empty table
 function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
@@ -153,7 +159,7 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                     if itemLink then return true, Item:CreateFromItemLink(itemLink) end
                 end
             end
-            return false, nil
+            return false, {}
         elseif IsInGroup() then
             for i = 1, MAX_PARTY_MEMBERS do
                 local token = "party"..i
@@ -163,11 +169,11 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                     if itemLink then return true, Item:CreateFromItemLink(itemLink) end
                 end
             end
-            return false, nil
+            return false, {}
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
-        return not item:IsItemEmpty(), item:IsItemEmpty() and nil or item
+        return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
     -- Disable missing-return for next line since else condition always returns values
     ---@diagnostic disable-next-line: missing-return
     end
@@ -273,7 +279,7 @@ end
 
 ---Indicates whether a gear slot is positioned to the left of the character model in the default Character Info/Inspect windows or not
 ---@param slot Slot The gear slot to check
----@param isInspect boolean Whether a player is being inspected or not
+---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean|nil result Returns `nil` if the slot is for a weapon or off-hand item, `true` if the slot is to the left of the character model, and `false` otherwise
 function AddOn:GetSlotIsLeftSide(slot, isInspect)
     if isInspect then

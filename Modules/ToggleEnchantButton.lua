@@ -22,6 +22,8 @@ button:SetHighlightFontObject("GameFontHighlight")
 
 AddOn.PGVToggleEnchantButton = button
 
+---Updates the text shown on the enchant text toggling button in the Character Info window
+---@param text string The text that should appear on the button
 function AddOn.PGVToggleEnchantButton:UpdateText(text)
     self:GetFontString():SetText(text)
 end
