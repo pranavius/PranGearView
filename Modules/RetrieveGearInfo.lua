@@ -15,7 +15,16 @@ function AddOn:GetItemLevelBySlot(slot, isInspect)
         local itemLevel = item:GetCurrentItemLevel()
         if itemLevel > 0 then -- positive value indicates item info has loaded
             local iLvlText = tostring(itemLevel)
-            if self.db.profile.useQualityColorForILvl then
+            if self.db.profile.useShadowLightStyleForILvl then
+                local minILvl, maxILvl = AddOn:GetMinMaxItemLevelsFromGear(isInspect)
+                if itemLevel == minILvl then
+                    iLvlText = ColorText(iLvlText, "DeathKnight")
+                elseif itemLevel == maxILvl then
+                    iLvlText = ColorText(iLvlText, "Uncommon")
+                else
+                    iLvlText = ColorText(iLvlText, "Druid")
+                end
+            elseif self.db.profile.useQualityColorForILvl then
                 local qualityHex = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
                 iLvlText = "|c"..qualityHex..iLvlText.."|r"
             elseif self.db.profile.useClassColorForILvl then
@@ -61,10 +70,6 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
         end
 
         if upgradeTrackText ~= "" then
-            local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
-            if IsLeftSide ~= nil and IsLeftSide then upgradeTrackText = " "..upgradeTrackText
-            elseif IsLeftSide ~= nil then upgradeTrackText = upgradeTrackText.." "
-            end
             if upgradeColor:lower() ~= self.HexColorPresets.PrevSeasonGear:lower() then
                 if self.db.profile.useCustomColorForUpgradeTrack then
                     upgradeColor = self.db.profile.upgradeTrackCustomColor
@@ -96,18 +101,18 @@ function AddOn:GetGemsBySlot(slot, isInspect)
                     -- Socketed item will have gemIcon variable
                     if ttdata.gemIcon and IsLeftSide then
                         DebugPrint("Found Gem Icon on left side slot:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, self.GetTextureString(ttdata.gemIcon))
-                        gemText = gemText..(existingSocketCount > 0 and "" or " ")..self.GetTextureString(ttdata.gemIcon)
+                        gemText = gemText..self.GetTextureString(ttdata.gemIcon)
                     elseif ttdata.gemIcon then
                         DebugPrint("Found Gem Icon:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, self.GetTextureString(ttdata.gemIcon))
-                        gemText = self.GetTextureString(ttdata.gemIcon)..(existingSocketCount > 0 and "" or " ")..gemText
+                        gemText = self.GetTextureString(ttdata.gemIcon)..gemText
                     -- The two conditions below indicate that there is an empty socket on the item
                     elseif IsLeftSide then
                         DebugPrint("Empty socket found in slot on left side:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString(458977))
                         -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
-                        gemText = gemText..(existingSocketCount > 0 and "" or " ")..self.GetTextureString(458977)
+                        gemText = gemText..self.GetTextureString(458977)
                     else
                         DebugPrint("Empty socket found in slot:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString(458977))
-                        gemText = self.GetTextureString(458977)..(existingSocketCount > 0 and "" or " ")..gemText
+                        gemText = self.GetTextureString(458977)..gemText
                     end
                     existingSocketCount = existingSocketCount + 1
                 end
@@ -121,7 +126,7 @@ function AddOn:GetGemsBySlot(slot, isInspect)
             if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
                 for i = 1, self.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
                     DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
-                    gemText = IsLeftSide and gemText..(existingSocketCount > 0 and "" or " ")..self.GetTextureAtlasString("Socket-Prismatic-Closed") or self.GetTextureAtlasString("Socket-Prismatic-Closed")..(existingSocketCount > 0 and "" or " ")..gemText
+                    gemText = IsLeftSide and gemText..self.GetTextureAtlasString("Socket-Prismatic-Closed") or self.GetTextureAtlasString("Socket-Prismatic-Closed")..gemText
                 end
             end
         end

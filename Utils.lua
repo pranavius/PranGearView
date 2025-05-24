@@ -66,6 +66,16 @@ function AddOn.CompressTable(tbl)
     end
 end
 
+---@param tbl table Table to count entries for
+---@return number count The number of entries in `tbl`
+function AddOn.GetTableSize(tbl)
+    local count = 0
+    for k in pairs(tbl) do
+        count = count + 1
+    end
+    return count
+end
+
 ---Converts color values for red, green, and blue into their corresponding hexadecimal code
 ---@param r number The red value for the color expressed as a decimal between `0` and `255`
 ---@param g number The green value for the color expressed as a decimal between `0` and `255`
@@ -86,8 +96,8 @@ function AddOn.ConvertHexToRGB(hex)
         return nil, nil, nil
     end
     return tonumber("0x"..hex:sub(1,2)) / 255,
-           tonumber("0x"..hex:sub(3,4)) / 255,
-           tonumber("0x"..hex:sub(5,6)) / 255
+        tonumber("0x"..hex:sub(3,4)) / 255,
+        tonumber("0x"..hex:sub(5,6)) / 255
 end
 
 ---Utility function to round numbers
@@ -123,12 +133,14 @@ end
 
 ---Creates a blank entry to display a space or create separation between items in the AddOn options menu
 ---@param order number The position of the blank entry in the immediate parent object
----@return { type: "description", name: " ", order: number } spacer A table entry for showing a blank space between option elements
-function AddOn.CreateOptionsSpacer(order)
+---@param width? number A specified width for the spacer if a full line is not desired
+---@return { type: "description", name: " ", order: number, width: number? } spacer A table entry for showing a blank space between option elements
+function AddOn.CreateOptionsSpacer(order, width)
     return {
         type = "description",
         name = " ",
-        order = order
+        order = order,
+        width = width
     }
 end
 
@@ -171,6 +183,19 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                 end
             end
             return false, {}
+        elseif self.db.profile.debug then
+            -- Only works for local development when necessary condition is commented out
+            for _, plate in ipairs(C_NamePlate.GetNamePlates()) do
+                -- use the nameplate token to get item info
+                local token = plate.namePlateUnitToken
+                if UnitGUID(token) == self.db.profile.inspectedUnitGUID then
+                    local itemLink = GetInventoryItemLink(token, slotID)
+                    if itemLink then
+                        return true, Item:CreateFromItemLink(itemLink)
+                    end
+                    return false, {}
+                end
+            end
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
@@ -228,7 +253,7 @@ function AddOn:IsEnchantableSlot(slot)
             -- Check for available shield or off-hand enchants when inspecting another player
             elseif gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
                 local _, item = self:IsItemEquippedInSlot(slot, true)
-                if item then
+                if self.GetTableSize(item) > 0 then
                     local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(item:GetItemLink()))
                     local isShield = itemClassID == 4 and itemSubclassID == 6
                     local isOffhand = itemClassID == 4 and itemSubclassID == 0
@@ -294,4 +319,31 @@ function AddOn:GetSlotIsLeftSide(slot, isInspect)
     else
         return slot.IsLeftSide
     end
+end
+
+---@param isInspect? boolean
+---@return number min Minimum item level from all equipped gear
+---@return number max Maximum item level from all equipped gear
+function AddOn:GetMinMaxItemLevelsFromGear(isInspect)
+    local slots = AddOn.GearSlots
+    ---@cast slots table<number, any>
+    if isInspect then slots = AddOn.InspectInfo.slots end
+
+    local allItemLevels = {}
+    for _, slot in ipairs(slots) do
+        local checkedSlot = slot
+        ---@cast checkedSlot Slot
+        if isInspect then checkedSlot = _G[slot] end
+        local hasItem, item = self:IsItemEquippedInSlot(checkedSlot, isInspect)
+        if hasItem then
+            local itemLevel = item:GetCurrentItemLevel()
+            -- Ignore shirts and tabards
+            local isShirtOrTabard = slot == CharacterShirtSlot or slot == CharacterTabardSlot or slot == "InspectShirtSlot" or slot == "InspectTabardSlot"
+            if itemLevel > 0 and not isShirtOrTabard then allItemLevels[slot:GetID()] = itemLevel end
+        end
+    end
+
+    self.CompressTable(allItemLevels)
+    return math.min(unpack(allItemLevels)),
+        math.max(unpack(allItemLevels))
 end

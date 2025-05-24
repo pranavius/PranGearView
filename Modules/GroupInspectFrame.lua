@@ -31,7 +31,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
 
     local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
-    local showInspectUpgradeTrack = showInspectItemLevel and self.db.profile.showInspectUpgradeTrack
+    local showInspectUpgradeTrack = self.db.profile.showInspectUpgradeTrack
     local showInspectGems = showOnInspect and self.db.profile.showInspectGems
     local showInspectEnchants = showOnInspect and self.db.profile.showInspectEnchants
     local showInspectEmbellishments = showOnInspect and self.db.profile.showInspectEmbellishments
