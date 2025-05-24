@@ -15,7 +15,7 @@ function AddOn:GetItemLevelBySlot(slot, isInspect)
         local itemLevel = item:GetCurrentItemLevel()
         if itemLevel > 0 then -- positive value indicates item info has loaded
             local iLvlText = tostring(itemLevel)
-            if self.db.profile.useShadowLightStyleForILvl then
+            if self.db.profile.useILevelAddOnStyleForILvl then
                 local minILvl, maxILvl = AddOn:GetMinMaxItemLevelsFromGear(isInspect)
                 if itemLevel == minILvl then
                     iLvlText = ColorText(iLvlText, "DeathKnight")

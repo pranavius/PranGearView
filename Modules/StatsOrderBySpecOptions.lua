@@ -42,7 +42,7 @@ end
 ---Returns specialization ID and role for the logged-in character
 ---@return number specID The specialization ID for the currently logged in character
 ---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
----@see SpecOptions for a list of specializations and their IDs
+---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetCharacterCurrentSpecIDAndRole()
     local specIndex = GetSpecialization()
     local specID, _, _, _, role = GetSpecializationInfo(specIndex)
@@ -74,7 +74,7 @@ end
 ---Returns specialization ID and role for the chosen spec whenever it is changed in the options menu
 ---@return number specID The specialization ID for the currently logged in character
 ---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
----@see SpecOptions for a list of specializations and their IDs
+---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     local specID, role
     if self.db.profile.lastSelectedSpecID then

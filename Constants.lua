@@ -19,8 +19,8 @@ AddOn.DKEnchantAbbr = {
 }
 
 ---@class TextReplacement
----@field original string The original text to search for when abbreviating text
----@field replacement string The abbreviation for the original text
+---@field original string The localization key for the original text to search for when abbreviating text
+---@field replacement string The localization key for the abbreviation for the original text
 
 ---A list of tables containing text replacement patterns for enchants
 ---@type table<number, TextReplacement>
@@ -262,8 +262,8 @@ AddOn.ExpansionInfo = {
     }
 }
 
----@enum SpecOptions
-AddOn.SpecOptions = {
+---@enum SpecOptionKeys
+AddOn.SpecOptionKeys = {
     [250] = "Blood",
     [251] = "Frost",
     [252] = "Unholy",

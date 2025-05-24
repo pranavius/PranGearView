@@ -146,7 +146,7 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useShadowLightStyleForILvl = false
+                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -163,17 +163,17 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
-                            AddOn.db.profile.useShadowLightStyleForILvl = false
+                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
-                useShadowLightStyleForILvl = {
+                useILevelAddOnStyleForILvl = {
                     type = "toggle",
-                    name = L["Use S&L Colors"],
-                    desc = L["Color highest item level in green, lowest item level in red, and the rest in orange."].."\n\n"..L["This color scheme follows a similar pattern to the Shadow & Light plugin for ElvUI"],
+                    name = L["Use iLevel AddOn Colors"],
+                    desc = L["Color highest item level in green, lowest item level in red, and the rest in orange."].."\n\n"..L["This color scheme follows a similar pattern to the iLevel AddOn"],
                     order = 9.09,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -199,7 +199,7 @@ local Options = {
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
                             AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useShadowLightStyleForILvl = false
+                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
@@ -730,10 +730,10 @@ local Options = {
                     values = function()
                         local options = {}
                         local specID = AddOn:GetCharacterCurrentSpecIDAndRole()
-                        if not AddOn.SpecOptions[specID] then
+                        if not AddOn.SpecOptionKeys[specID] then
                             options[0] = ""
                         end
-                        for id, spec in pairs(AddOn.SpecOptions) do
+                        for id, spec in pairs(AddOn.SpecOptionKeys) do
                             local classFile = select(6, GetSpecializationInfoByID(id))
                             options[id] = "|A:classicon-"..classFile..":15:15|a "..spec
                         end
@@ -745,7 +745,7 @@ local Options = {
                         end
 
                         local specID = AddOn:GetCharacterCurrentSpecIDAndRole()
-                        if AddOn.SpecOptions[specID] then
+                        if AddOn.SpecOptionKeys[specID] then
                             return specID
                         else
                             return 0
@@ -1110,7 +1110,7 @@ local Defaults = {
         iLvlOutline = "",
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
-        useShadowLightStyleForILvl = false,
+        useILevelAddOnStyleForILvl = false,
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
         upgradeTrackScale = 1,
@@ -1307,7 +1307,7 @@ function AddOn:OnInitialize()
     -- it shows the character's current specialization options by default
     SettingsPanel:SetScript("OnShow", function()
         local specID = AddOn.GetCharacterCurrentSpecIDAndRole(AddOn)
-        if AddOn.SpecOptions[specID] and specID ~= AddOn.db.profile.lastSelectedSpecID then
+        if AddOn.SpecOptionKeys[specID] and specID ~= AddOn.db.profile.lastSelectedSpecID then
             AddOn.db.profile.lastSelectedSpecID = specID
         else
             AddOn.db.profile.lastSelectedSpecID = nil

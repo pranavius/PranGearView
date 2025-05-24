@@ -21,7 +21,7 @@ Localization\enUS.lua
 Localization\enGB.lua
 Localization\ptBR.lua
 Localization\ruRU.lua
-Globals.lua
+Constants.lua
 Utils.lua
 Modules\ToggleEnchantButton.lua
 Modules\StatsOrderBySpecOptions.lua
