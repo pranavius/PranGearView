@@ -1,11 +1,11 @@
 local addonName, AddOn = ...
----@class PranGearView
+---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
 local DebugPrint = AddOn.DebugPrint
 
 ---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
----@return table<number, number> options A table of the order in which options should appear in the dropdown
+---@return table<number, number> options A list of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     local options = {}
@@ -42,7 +42,7 @@ end
 ---Returns specialization ID and role for the logged-in character
 ---@return number specID The specialization ID for the currently logged in character
 ---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
----@see SpecOptions for a list of specializations and their IDs
+---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetCharacterCurrentSpecIDAndRole()
     local specIndex = GetSpecialization()
     local specID, _, _, _, role = GetSpecializationInfo(specIndex)
@@ -74,7 +74,7 @@ end
 ---Returns specialization ID and role for the chosen spec whenever it is changed in the options menu
 ---@return number specID The specialization ID for the currently logged in character
 ---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
----@see SpecOptions for a list of specializations and their IDs
+---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     local specID, role
     if self.db.profile.lastSelectedSpecID then

@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView
+---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 
 ---@enum DKEnchantAbbr
@@ -19,9 +19,10 @@ AddOn.DKEnchantAbbr = {
 }
 
 ---@class TextReplacement
----@field original string The original text to search for when abbreviating text
----@field replacement string The abbreviation for the original text
+---@field original string The localization key for the original text to search for when abbreviating text
+---@field replacement string The localization key for the abbreviation for the original text
 
+---A list of tables containing text replacement patterns for enchants
 ---@type table<number, TextReplacement>
 AddOn.EnchantTextReplace = {
     { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
@@ -97,6 +98,7 @@ AddOn.EnchantTextReplace = {
     { original = "Echoing", replacement = "Echo" },
 }
 
+---A list of tables containing text replacement patterns for upgrade tracks
 ---@type table<number, TextReplacement>
 AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Explorer ", replacement = "E" },
@@ -198,8 +200,8 @@ AddOn.InspectInfo = {
 
 ---@class ExpansionDetails
 ---@field LevelCap number The maximum reachable level for the expansion
----@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
----@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in The War Within). Slots can be defined as either a Frame or string containing the name of a frame.
+---@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+---@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 ---@field MaxSocketsPerItem number The maximum number of sockets an item can have
 ---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
 ---@field EnchantableSlots table<number, any> A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
@@ -260,8 +262,8 @@ AddOn.ExpansionInfo = {
     }
 }
 
----@enum SpecOptions
-AddOn.SpecOptions = {
+---@enum SpecOptionKeys
+AddOn.SpecOptionKeys = {
     [250] = "Blood",
     [251] = "Frost",
     [252] = "Unholy",
