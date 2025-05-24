@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView
+---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 
 ---@enum DKEnchantAbbr
