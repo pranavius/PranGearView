@@ -2,6 +2,8 @@ local addonName, AddOn = ...
 ---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
+local DebugPrint = AddOn.DebugPrint
+
 ---Set item level text position in the Character Info window
 ---@param slot Slot The gear slot to set item level position for
 function AddOn:SetItemLevelPositionBySlot(slot)

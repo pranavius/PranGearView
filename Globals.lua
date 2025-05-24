@@ -22,6 +22,7 @@ AddOn.DKEnchantAbbr = {
 ---@field original string The original text to search for when abbreviating text
 ---@field replacement string The abbreviation for the original text
 
+---A list of tables containing text replacement patterns for enchants
 ---@type table<number, TextReplacement>
 AddOn.EnchantTextReplace = {
     { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
@@ -97,6 +98,7 @@ AddOn.EnchantTextReplace = {
     { original = "Echoing", replacement = "Echo" },
 }
 
+---A list of tables containing text replacement patterns for upgrade tracks
 ---@type table<number, TextReplacement>
 AddOn.UpgradeTextReplace = {
     { original = "Upgrade Level: Explorer ", replacement = "E" },
@@ -198,8 +200,8 @@ AddOn.InspectInfo = {
 
 ---@class ExpansionDetails
 ---@field LevelCap number The maximum reachable level for the expansion
----@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
----@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in The War Within). Slots can be defined as either a Frame or string containing the name of a frame.
+---@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+---@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 ---@field MaxSocketsPerItem number The maximum number of sockets an item can have
 ---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
 ---@field EnchantableSlots table<number, any> A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.

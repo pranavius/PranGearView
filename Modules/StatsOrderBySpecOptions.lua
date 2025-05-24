@@ -5,7 +5,7 @@ AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local DebugPrint = AddOn.DebugPrint
 
 ---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
----@return table<number, number> options A table of the order in which options should appear in the dropdown
+---@return table<number, number> options A list of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     local options = {}

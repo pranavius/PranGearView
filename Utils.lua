@@ -19,6 +19,8 @@ function AddOn.ColorText(text, color)
     return "|cFF"..color..text.."|r"
 end
 
+local ColorText = AddOn.ColorText
+
 ---Prints the desired text if the AddOn is in debugging mode. This is just a wrapper around the standard `print` function.
 ---@vararg string|number
 ---@see print
@@ -27,8 +29,6 @@ function AddOn.DebugPrint(...)
 		print(ColorText("[PGV Debug]", "Heirloom"), ...)
 	end
 end
-
-local ColorText = AddOn.ColorText
 local DebugPrint = AddOn.DebugPrint
 
 ---Prints the contents of a Lua table as key-value pairs if the AddOn is in debugging mode.

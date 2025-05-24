@@ -1,24 +1,3 @@
-# BuildCharacterFrame
-
-
-```lua
-function BuildCharacterFrame()
-```
-
-
----
-
-# CloseSpecialWindows
-
-
-```lua
-function CloseSpecialWindows()
-  -> boolean
-```
-
-
----
-
 # Credit
 
 ## class
@@ -69,7 +48,7 @@ World of Warcraft race & gender they identify with in-game
 table<number, any>
 ```
 
-A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in The War Within). Slots can be defined as either a Frame or string containing the name of a frame.
+A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 
 ## EnchantableSlots
 
@@ -141,7 +120,7 @@ Indicates whether or not a shield enchant from the expansion is currently availa
 table<number, any>
 ```
 
-A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 
 
 ---
@@ -183,6 +162,29 @@ A list of all slot names when inspecting a character
 
 ---
 
+# OutlineOption
+
+## key
+
+
+```lua
+string
+```
+
+The localization key for the dropdown option
+
+## value
+
+
+```lua
+string
+```
+
+The value for text outline to pass to `SetFont()`
+
+
+---
+
 # PranGearView
 
 ## BuildCreditsGroup
@@ -219,7 +221,7 @@ Alternatively, a color's hexadecimal code can be provided for the `color` argume
 
 @*return* `result` — A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
 
-See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#110#9) for a list of predefined colors such as class colors, item quality, etc.
+See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#112#9) for a list of predefined colors such as class colors, item quality, etc.
 
 ## CompressTable
 
@@ -274,13 +276,15 @@ Converts color values for red, green, and blue into their corresponding hexadeci
 
 
 ```lua
-function PranGearView.CreateOptionsSpacer(order: number)
-  -> spacer: { type: "description", name: " ", order: number }
+function PranGearView.CreateOptionsSpacer(order: number, width?: number)
+  -> spacer: { type: "description", name: " ", order: number, width: number? }
 ```
 
 Creates a blank entry to display a space or create separation between items in the AddOn options menu
 
 @*param* `order` — The position of the blank entry in the immediate parent object
+
+@*param* `width` — A specified width for the spacer if a full line is not desired
 
 @*return* `spacer` — A table entry for showing a blank space between option elements
 
@@ -340,6 +344,8 @@ enum DefaultTankStatOrder
 { [number]: TextReplacement }
 ```
 
+A list of tables containing text replacement patterns for enchants
+
 ## ExpansionInfo
 
 
@@ -349,7 +355,7 @@ table
 
 See:
   * ~Frame~ for generic definition along without common functions and variables available for all Frames
-  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#158#10) for a list of Frame names available when the Inspect window is open
+  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#160#10) for a list of Frame names available when the Inspect window is open
 
 ## GearSlots
 
@@ -373,7 +379,7 @@ Returns specialization ID and role for the logged-in character
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptions](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#263#9) for a list of specializations and their IDs
+See: [SpecOptions](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#265#9) for a list of specializations and their IDs
 
 ## GetEnchantmentBySlot
 
@@ -416,6 +422,19 @@ Fetches and formats the item level for an item in the defined gear slot (if one 
 
 @*param* `isInspect` — Whether or not a character is currently being inspected
 
+## GetMinMaxItemLevelsFromGear
+
+
+```lua
+(method) PranGearView:GetMinMaxItemLevelsFromGear(isInspect?: boolean)
+  -> min: number
+  2. max: number
+```
+
+@*return* `min` — Minimum item level from all equipped gear
+
+@*return* `max` — Maximum item level from all equipped gear
+
 ## GetSlotIsLeftSide
 
 
@@ -447,7 +466,7 @@ Returns specialization ID and role for the chosen spec whenever it is changed in
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptions](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#263#9) for a list of specializations and their IDs
+See: [SpecOptions](file:///Users/pranavchary/Documents/repos/PranGearView/Globals.lua#265#9) for a list of specializations and their IDs
 
 ## GetStatOrderHandler
 
@@ -473,7 +492,19 @@ Retrieves the current order for a stat based on currently chosen specialization 
 
 Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
 
-@*return* `options` — A table of the order in which options should appear in the dropdown
+@*return* `options` — A list of the order in which options should appear in the dropdown
+
+## GetTableSize
+
+
+```lua
+function PranGearView.GetTableSize(tbl: table)
+  -> count: number
+```
+
+@*param* `tbl` — Table to count entries for
+
+@*return* `count` — The number of entries in `tbl`
 
 ## GetTextureAtlasString
 
@@ -527,7 +558,7 @@ Fetches and formats the upgrade track for an item in the defined gear slot (if o
 (method) PranGearView:HandleEquipmentOrSettingsChange()
 ```
 
- Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
+Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
 
 ## HexColorPresets
 
@@ -622,6 +653,13 @@ Indicates whether an item equipped in a particular gear slot can have a gem sock
 
 ```lua
 (method) PranGearView:OnInitialize()
+```
+
+## OutlineOptions
+
+
+```lua
+{ [number]: OutlineOption }
 ```
 
 ## PGVToggleEnchantButton
@@ -807,7 +845,7 @@ enum TooltipDataType
 (method) PranGearView:UpdateEquippedGearInfo()
 ```
 
- Updates information displayed in the Character Info window
+Updates information displayed in the Character Info window
 
 ## UpdateInspectedGearInfo
 
@@ -828,6 +866,8 @@ Updates displayed info in the Inspect window when AddOn settings are changed or 
 ```lua
 { [number]: TextReplacement }
 ```
+
+A list of tables containing text replacement patterns for upgrade tracks
 
 ## db
 
@@ -966,14 +1006,14 @@ unknown
 # _G
 
 
----
-
-# _G
-
-
 ```lua
 _G
 ```
+
+
+---
+
+# _G
 
 
 ---
@@ -5204,14 +5244,14 @@ Returns a copy of this string with all lowercase letters changed to uppercase.
 # table
 
 
-```lua
-tablelib
-```
-
-
 ---
 
 # table
+
+
+```lua
+tablelib
+```
 
 
 ---
