@@ -133,13 +133,23 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         end
     end
 
-    if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
-        InspectPaperDollItemsFrame.PGVAverageItemLevel = InspectPaperDollItemsFrame:CreateFontString("PGVAverageItemLevel", "OVERLAY", "GameTooltipHeader")
+    if self.db.profile.showInspectAvgILvl then
+       if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
+            InspectPaperDollItemsFrame.PGVAverageItemLevel = InspectPaperDollItemsFrame:CreateFontString("PGVAverageItemLevel", "OVERLAY", "GameTooltipHeader")
+        end
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
+        local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
+        ---@cast token string
+        local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
+        local classFile = select(2, UnitClass(token))
+        local classHexWithAlpha = select(4, GetClassColor(classFile))
+        if self.db.profile.includeAvgText then
+            itemLevelText = L["Avg"]..": "..itemLevelText
+        end
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetFormattedText("|c"..classHexWithAlpha..itemLevelText.."|r")
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:Show()
+    elseif InspectPaperDollItemsFrame.PGVAverageItemLevel then
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
     end
-    InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
-    local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
-    ---@cast token string
-    local classFile = select(2, UnitClass(token))
-    local classHexWithAlpha = select(4, GetClassColor(classFile))
-    InspectPaperDollItemsFrame.PGVAverageItemLevel:SetFormattedText("|c"..classHexWithAlpha..L["Avg"]..": "..C_PaperDollInfo.GetInspectItemLevel(token).."|r")
 end

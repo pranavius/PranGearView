@@ -35,6 +35,8 @@ AddOn.EnchantTextReplace = {
     { original = "Stormrider", replacement = "" },
     { original = "Stormrider's", replacement = "" },
     { original = "Stonebound", replacement = "Stn" },
+    { original = "Fiery", replacement = "Fire" },
+    { original = "Resolve", replacement = "Res" },
     { original = "Cursed", replacement = "Curs" },
     { original = "Lesser", replacement = "Lssr" },
     { original = "Greater", replacement = "Grtr" },
