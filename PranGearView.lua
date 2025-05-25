@@ -675,7 +675,7 @@ local Options = {
                     end,
                     disabled = function() return not AddOn.db.profile.showOnInspect end
                 },
-                includeAvgText = {
+                includeAvgLabel = {
                     type = "toggle",
                     name = L["Include \"Avg\" Label"],
                     desc = L["Adds the text \"Avg: \" before the average item level."].."\n\n"..L["This can help easily identify the average item level when there is a lot of information shown in the Inspect window."],
@@ -1154,7 +1154,7 @@ local Defaults = {
         lastSelectedSpecID = nil,
         showOnInspect = false,
         showInspectAvgILvl = true,
-        includeAvgText = false,
+        includeAvgLabel = false,
         showInspectiLvl = true,
         showInspectUpgradeTrack = true,
         showInspectGems = true,

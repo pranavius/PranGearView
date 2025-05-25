@@ -157,6 +157,16 @@ A list of all slot names when inspecting a character
 
 ---
 
+# InspectPaperDollItemsFrame.PGVAverageItemLevel
+
+
+```lua
+unknown
+```
+
+
+---
+
 # LuaLS
 
 
@@ -221,7 +231,7 @@ Alternatively, a color's hexadecimal code can be provided for the `color` argume
 
 @*return* `result` — A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
 
-See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#112#9) for a list of predefined colors such as class colors, item quality, etc.
+See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#114#9) for a list of predefined colors such as class colors, item quality, etc.
 
 ## CompressTable
 
@@ -355,7 +365,7 @@ table
 
 See:
   * ~Frame~ for generic definition along without common functions and variables available for all Frames
-  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#160#10) for a list of Frame names available when the Inspect window is open
+  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#162#10) for a list of Frame names available when the Inspect window is open
 
 ## GearSlots
 
@@ -379,7 +389,7 @@ Returns specialization ID and role for the logged-in character
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#265#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#267#9) for a list of specializations and their IDs
 
 ## GetEnchantmentBySlot
 
@@ -422,19 +432,6 @@ Fetches and formats the item level for an item in the defined gear slot (if one 
 
 @*param* `isInspect` — Whether or not a character is currently being inspected
 
-## GetMinMaxItemLevelsFromGear
-
-
-```lua
-(method) PranGearView:GetMinMaxItemLevelsFromGear(isInspect?: boolean)
-  -> min: number
-  2. max: number
-```
-
-@*return* `min` — Minimum item level from all equipped gear
-
-@*return* `max` — Maximum item level from all equipped gear
-
 ## GetSlotIsLeftSide
 
 
@@ -466,7 +463,7 @@ Returns specialization ID and role for the chosen spec whenever it is changed in
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#265#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#267#9) for a list of specializations and their IDs
 
 ## GetStatOrderHandler
 

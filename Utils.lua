@@ -162,12 +162,11 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
         DebugPrint("Inspected unit GUID:", self.db.profile.inspectedUnitGUID)
-        if UnitGUID(InspectFrame.unit) == self.db.profile.inspectedUnitGUID then
-            local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
-            ---@cast token string
-            local itemLink = GetInventoryItemLink(token, slotID)
-            if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-        end
+        local token = InspectFrame.unit
+        if UnitGUID(InspectFrame.unit) ~= self.db.profile.inspectedUnitGUID then token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID) end
+        ---@cast token string
+        local itemLink = GetInventoryItemLink(token, slotID)
+        if itemLink then return true, Item:CreateFromItemLink(itemLink) end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
         return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
@@ -289,31 +288,4 @@ function AddOn:GetSlotIsLeftSide(slot, isInspect)
     else
         return slot.IsLeftSide
     end
-end
-
----@param isInspect? boolean
----@return number min Minimum item level from all equipped gear
----@return number max Maximum item level from all equipped gear
-function AddOn:GetMinMaxItemLevelsFromGear(isInspect)
-    local slots = AddOn.GearSlots
-    ---@cast slots table<number, any>
-    if isInspect then slots = AddOn.InspectInfo.slots end
-
-    local allItemLevels = {}
-    for _, slot in ipairs(slots) do
-        local checkedSlot = slot
-        ---@cast checkedSlot Slot
-        if isInspect then checkedSlot = _G[slot] end
-        local hasItem, item = self:IsItemEquippedInSlot(checkedSlot, isInspect)
-        if hasItem then
-            local itemLevel = item:GetCurrentItemLevel()
-            -- Ignore shirts and tabards
-            local isShirtOrTabard = slot == CharacterShirtSlot or slot == CharacterTabardSlot or slot == "InspectShirtSlot" or slot == "InspectTabardSlot"
-            if itemLevel > 0 and not isShirtOrTabard then allItemLevels[checkedSlot:GetID()] = itemLevel end
-        end
-    end
-
-    self.CompressTable(allItemLevels)
-    return math.min(unpack(allItemLevels)),
-        math.max(unpack(allItemLevels))
 end

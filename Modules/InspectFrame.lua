@@ -134,17 +134,19 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     end
 
     if self.db.profile.showInspectAvgILvl then
-       if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
+        if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
             InspectPaperDollItemsFrame.PGVAverageItemLevel = InspectPaperDollItemsFrame:CreateFontString("PGVAverageItemLevel", "OVERLAY", "GameTooltipHeader")
         end
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
         local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
         ---@cast token string
+        DebugPrint("Inspected unit token for average item level:", ColorText(token, "Heirloom"))
         local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
         local classFile = select(2, UnitClass(token))
         local classHexWithAlpha = select(4, GetClassColor(classFile))
-        if self.db.profile.includeAvgText then
+        if self.db.profile.includeAvgLabel then
+            DebugPrint("Include \"Avg: \" label")
             itemLevelText = L["Avg"]..": "..itemLevelText
         end
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetFormattedText("|c"..classHexWithAlpha..itemLevelText.."|r")
