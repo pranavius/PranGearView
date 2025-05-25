@@ -1,3 +1,8 @@
+v1.4.1
+Enable inspecting players outside party or raid
+Rename S&L item level coloring option to Item Level Gradient
+Improve Gradient color scheme
+
 v1.4.0
 Enable Upgrade Track to be shown independent of item level in both Character Info and Inspect windows
 Add an option to color item levels by highest/lowest values similar to the Shadow & Light plugin for ElvUI

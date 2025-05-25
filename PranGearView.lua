@@ -146,7 +146,7 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
+                            AddOn.db.profile.useGradientColorsForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -163,17 +163,17 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
-                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
+                            AddOn.db.profile.useGradientColorsForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
-                useILevelAddOnStyleForILvl = {
+                useGradientColorsForILvl = {
                     type = "toggle",
-                    name = L["Use iLevel AddOn Colors"],
-                    desc = L["Color highest item level in green, lowest item level in red, and the rest in orange."].."\n\n"..L["This color scheme follows a similar pattern to the iLevel AddOn"],
+                    name = L["Use Item Level Gradient"],
+                    desc = L["Color highest item level in green, lowest item level in red, and the rest in orange."].."\n\n"..L["This color scheme follows a similar pattern to the Shadow & Light plugin for ElvUI"],
                     order = 9.09,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -199,7 +199,7 @@ local Options = {
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
                             AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
+                            AddOn.db.profile.useGradientColorsForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
@@ -649,6 +649,30 @@ local Options = {
                     order = 14.03
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(14.04),
+                showInspectAvgILvl = {
+                    type = "toggle",
+                    name = "Average Item Level",
+                    desc = "Display average item level",
+                    order = 14.05,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                },
+                includeAvgText = {
+                    type = "toggle",
+                    name = "Include \"Avg\" Text",
+                    desc = "Adds \"Avg\" before the average item level",
+                    order = 14.06,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showOnInspect or not AddOn.db.profile.showInspectAvgILvl end
+                },
                 showInspectiLvl = {
                     type = "toggle",
                     name = L["Item Level"],
@@ -1110,7 +1134,7 @@ local Defaults = {
         iLvlOutline = "",
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
-        useILevelAddOnStyleForILvl = false,
+        useGradientColorsForILvl = false,
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
         upgradeTrackScale = 1,
@@ -1128,6 +1152,8 @@ local Defaults = {
         durabilityScale = 1,
         lastSelectedSpecID = nil,
         showOnInspect = false,
+        showInspectAvgILvl = true,
+        includeAvgText = false,
         showInspectiLvl = true,
         showInspectUpgradeTrack = true,
         showInspectGems = true,
