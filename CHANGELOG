@@ -1,7 +1,10 @@
 v1.4.1
 Enable inspecting players outside party or raid
-Rename S&L item level coloring option to Item Level Gradient
-Improve Gradient color scheme
+Rename "Use S&L Colors" item level coloring option to "Use Item Level Gradient"
+Update Item Level Gradient coloring logic
+Moved Alternate Item Level Placement option to Item Level section
+Added missing abbreviation for Authority of Fiery Resolve enchant
+Updated dependency Libaries
 
 v1.4.0
 Enable Upgrade Track to be shown independent of item level in both Character Info and Inspect windows
