@@ -1295,6 +1295,7 @@ function AddOn:OnInitialize()
 
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
+            -- print(GetAverageItemLevel())
             self:UpdateEquippedGearInfo()
         end
     end)

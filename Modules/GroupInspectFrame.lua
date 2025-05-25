@@ -29,6 +29,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         self.db.profile.inspectedUnitGUID = unitGUID
     end
     DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
+    -- C_PaperDollInfo.GetInspectItemLevel("target")
 
     local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
     local showInspectUpgradeTrack = self.db.profile.showInspectUpgradeTrack
