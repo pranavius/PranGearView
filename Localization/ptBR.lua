@@ -79,7 +79,6 @@ L["This can help easily identify the average item level when there is a lot of i
 L["Avg"] = "Méd"
 L["Customize secondary & tertiary stat order in the Character Info window by specialization"] = "Customiza a ordem de atributos secundário e terciário na janela de informação do personagem por especialização"
 L["Display item levels on top of equipment icons"] = "Mostre o nível dos itens no topo do icone de equipamento"
-L["Does nothing if the Item Level checkbox is unchecked"] = "|cFFffd100Não faz nada se a caixa de seleção do |cFFffffffNível do item |cFFffd100 estiver desmarcada|r"
 L["Show a green star in the top-left corner of embellished equipment"] = "Mostre uma estrela verde no canto de cima a esquerda do equipamento embelezado"
 L["Hide information for equipped shirt & tabard"] = "Esconda informações para camisa e tabardo equipado"
 L["Display debugging messages in the default chat window"] = "Mostre as mensagens de depuração na janela de bate papo padrão"

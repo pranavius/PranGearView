@@ -79,7 +79,6 @@ L["This can help easily identify the average item level when there is a lot of i
 L["Avg"] = "Средн"
 L["Customize secondary & tertiary stat order in the Character Info window by specialization"] = "Настроить порядок вторичных и третичных характеристик в окне информации о персонаже по специализации"
 L["Display item levels on top of equipment icons"] = "Отображать уровни предметов поверх значков экипировки"
-L["Does nothing if the Item Level checkbox is unchecked"] = "|cFFffd100Не действует, если флажок |cFFffffffУровень предмета|cFFffd100 не установлен|r"
 L["Show a green star in the top-left corner of embellished equipment"] = "Показывать зеленую звезду в верхнем левом углу украшенной экипировки"
 L["Hide information for equipped shirt & tabard"] = "Скрывать информацию о надетых рубашке и накидке"
 L["Display debugging messages in the default chat window"] = "Отображать отладочные сообщения в окне чата по умолчанию"

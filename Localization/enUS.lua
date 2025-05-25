@@ -79,7 +79,6 @@ L["This can help easily identify the average item level when there is a lot of i
 L["Avg"] = "Avg"
 L["Customize secondary & tertiary stat order in the Character Info window by specialization"] = "Customize secondary & tertiary stat order in the Character Info window by specialization"
 L["Display item levels on top of equipment icons"] = "Display item levels on top of equipment icons"
-L["Does nothing if the Item Level checkbox is unchecked"] = "|cFFffd100Does nothing if the |cFFffffffItem Level |cFFffd100checkbox is unchecked|r"
 L["Show a green star in the top-left corner of embellished equipment"] = "Show a green star in the top-left corner of embellished equipment"
 L["Hide information for equipped shirt & tabard"] = "Hide information for equipped shirt & tabard"
 L["Display debugging messages in the default chat window"] = "Display debugging messages in the default chat window"
