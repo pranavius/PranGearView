@@ -68,7 +68,7 @@ L["Hide missing enchant info for characters under the level cap"] = "Hide missin
 L["Enchant quality symbol is not affected by the custom color option"] = "Enchant quality symbol is not affected by the custom color option"
 L["Customize enchant text color"] = "Customize enchant text color"
 L["Durability always hidden at 100%"] = "Durability always hidden at 100%"
-L["Displays information about equipped gear when inspecting another player in your party or raid"] = "Displays information about equipped gear when inspecting another player in your party or raid"
+L["Displays information about equipped gear when inspecting another player"] = "Displays information about equipped gear when inspecting another player"
 L["Choose which information should be displayed when inspecting another player."] = "Choose which information should be displayed when inspecting another player."
 L["Colors, size, and other display settings when inspecting a character will follow the same settings as the Character Info window."] = "Colors, size, and other display settings when inspecting a character will follow the same settings as the Character Info window."
 L["Customize secondary & tertiary stat order in the Character Info window by specialization"] = "Customize secondary & tertiary stat order in the Character Info window by specialization"
@@ -87,7 +87,7 @@ L["Toggle showing gem info"] = "Toggle showing gem info"
 L["Toggle showing enchant info"] = "Toggle showing enchant info"
 L["Toggle showing durability percentages"] = "Toggle showing durability percentages"
 L["Toggle showing enchant text in the Character Info window"] = "Toggle showing enchant text in the Character Info window"
-L["Toggle showing gear info when inspecting another player in your party or raid"] = "Toggle showing gear info when inspecting another player in your party or raid"
+L["Toggle showing gear info when inspecting another player"] = "Toggle showing gear info when inspecting another player"
 
 ------------ UI Elements ------------
 L["Show Enchant Text"] = "Show Enchant Text"

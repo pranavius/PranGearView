@@ -68,7 +68,7 @@ L["Hide missing enchant info for characters under the level cap"] = "Esconder in
 L["Enchant quality symbol is not affected by the custom color option"] = "Símbolo de qualidade de encantamento não é afetado pela opção de cor customizada"
 L["Customize enchant text color"] = "Customiza a cor do texto de encantamento"
 L["Durability always hidden at 100%"] = "Durabilidade sempre escondida com 100%"
-L["Displays information about equipped gear when inspecting another player in your party or raid"] = "Mostrar informação sobre equipamento equipado quando inspecionar outro jogador no seu grupo ou raide"
+L["Displays information about equipped gear when inspecting another player"] = "Mostrar informação sobre equipamento equipado quando inspecionar outro jogador"
 L["Choose which information should be displayed when inspecting another player."] = "Escolha qual informação será mostrada quando inspecionar outro jogador."
 L["Colors, size, and other display settings when inspecting a character will follow the same settings as the Character Info window."] = "Cores, tamanhos e outras configurações de display quando inspecionando um personagem seguirão as mesmas configurações de uma janela de informação de personagem."
 L["Customize secondary & tertiary stat order in the Character Info window by specialization"] = "Customiza a ordem de atributos secundário e terciário na janela de informação do personagem por especialização"
@@ -87,7 +87,7 @@ L["Toggle showing gem info"] = "Alterar a exibição de informação da gema"
 L["Toggle showing enchant info"] = "Alterar a exibição de informação do encantamento"
 L["Toggle showing durability percentages"] = "Alterar a exibição de informação de porcentagens de durabilidade"
 L["Toggle showing enchant text in the Character Info window"] = "Alterar a exibição de texto de encantamento na janela de informação de personagem"
-L["Toggle showing gear info when inspecting another player in your party or raid"] = "Trocar a exibição de informação de equipamento quando inspecionando outro jogador no seu grupo ou raide"
+L["Toggle showing gear info when inspecting another player"] = "Trocar a exibição de informação de equipamento quando inspecionando outro jogador"
 
 ------------ UI Elements ------------
 L["Show Enchant Text"] = "Mostrar texto de encantamento"

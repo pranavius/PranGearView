@@ -634,7 +634,7 @@ local Options = {
                 showOnInspect = {
                     type = "toggle",
                     name = L["Show Gear Info on Inspect"],
-                    desc = L["Displays information about equipped gear when inspecting another player in your party or raid"],
+                    desc = L["Displays information about equipped gear when inspecting another player"],
                     order = 14.01,
                     width = "full",
                     get = function(item) return AddOn.db.profile[item[#item]] end,
@@ -1227,7 +1227,7 @@ local SlashOptions = {
         inspect = {
             type = "toggle",
             name = "inspect",
-            desc = L["Toggle showing gear info when inspecting another player in your party or raid"],
+            desc = L["Toggle showing gear info when inspecting another player"],
             get = function() return AddOn.db.profile.showOnInspect end,
             set = function()
                 AddOn.db.profile.showOnInspect = not AddOn.db.profile.showOnInspect
@@ -1295,13 +1295,14 @@ function AddOn:OnInitialize()
 
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
-            -- print(GetAverageItemLevel())
             self:UpdateEquippedGearInfo()
         end
     end)
 
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
+        -- TODO: Implement showing item level with 0-2 decimal places based on AddOn Option
+        -- CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%.2f", GetAverageItemLevel())
     end)
 
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
