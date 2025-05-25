@@ -15,8 +15,8 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         print("Gear info on inspect disabled")
         return
     end
-    if not IsInRaid() and not IsInGroup() then
-        DebugPrint("Not in raid or party")
+    if not IsInRaid() and not IsInGroup() and (InspectFrame.unit and UnitGUID(InspectFrame.unit)) ~= unitGUID then
+        DebugPrint("Cannot find inspected unit")
         return
     end
     if not self.InspectInfo or not self.InspectInfo.slots then
