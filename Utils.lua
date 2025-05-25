@@ -163,42 +163,10 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     if isInspect then
         DebugPrint("Inspected unit GUID:", self.db.profile.inspectedUnitGUID)
         if UnitGUID(InspectFrame.unit) == self.db.profile.inspectedUnitGUID then
+            local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
+            ---@cast token string
             local itemLink = GetInventoryItemLink(token, slotID)
             if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-        end
-        if IsInRaid() then
-            local numRaidMembers = GetNumGroupMembers()
-            for i = 1, numRaidMembers do
-                local token = "raid"..i
-                if UnitExists(token) and UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    DebugPrint("Matching raid unit found")
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-                end
-            end
-            return false, {}
-        elseif IsInGroup() then
-            for i = 1, MAX_PARTY_MEMBERS do
-                local token = "party"..i
-                if UnitExists(token) and UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    DebugPrint("Matching party unit found")
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-                end
-            end
-            return false, {}
-        elseif self.db.profile.debug then
-            -- Only works for local development when necessary condition is commented out
-            for _, plate in ipairs(C_NamePlate.GetNamePlates()) do
-                -- use the nameplate token to get item info
-                local token = plate.namePlateUnitToken
-                if UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then
-                        return true, Item:CreateFromItemLink(itemLink)
-                    end
-                end
-            end
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
