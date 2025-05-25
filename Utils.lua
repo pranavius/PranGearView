@@ -199,14 +199,12 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                     end
                 end
             end
-            return false, {}
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
         return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
-    -- Disable missing-return for next line since else condition always returns values
-    ---@diagnostic disable-next-line: missing-return
     end
+    return false, {}
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it
