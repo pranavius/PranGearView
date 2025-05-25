@@ -162,6 +162,10 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
         DebugPrint("Inspected unit GUID:", self.db.profile.inspectedUnitGUID)
+        if UnitGUID(InspectFrame.unit) == self.db.profile.inspectedUnitGUID then
+            local itemLink = GetInventoryItemLink(token, slotID)
+            if itemLink then return true, Item:CreateFromItemLink(itemLink) end
+        end
         if IsInRaid() then
             local numRaidMembers = GetNumGroupMembers()
             for i = 1, numRaidMembers do
@@ -193,16 +197,14 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
                     if itemLink then
                         return true, Item:CreateFromItemLink(itemLink)
                     end
-                    return false, {}
                 end
             end
         end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
         return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
-    -- Disable missing-return for next line since else condition always returns values
-    ---@diagnostic disable-next-line: missing-return
     end
+    return false, {}
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it
@@ -339,7 +341,7 @@ function AddOn:GetMinMaxItemLevelsFromGear(isInspect)
             local itemLevel = item:GetCurrentItemLevel()
             -- Ignore shirts and tabards
             local isShirtOrTabard = slot == CharacterShirtSlot or slot == CharacterTabardSlot or slot == "InspectShirtSlot" or slot == "InspectTabardSlot"
-            if itemLevel > 0 and not isShirtOrTabard then allItemLevels[slot:GetID()] = itemLevel end
+            if itemLevel > 0 and not isShirtOrTabard then allItemLevels[checkedSlot:GetID()] = itemLevel end
         end
     end
 
