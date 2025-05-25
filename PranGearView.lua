@@ -32,7 +32,7 @@ local Options = {
         showUpgradeTrack = {
             type = "toggle",
             name = L["Upgrade Track"],
-            desc = L["Display upgrade track and progress"],
+            desc = L["Display upgrade track and progress for equipped items"],
             order = 4,
             get = function(item) return AddOn.db.profile[item[#item]] end,
             set = function(item, val)
@@ -130,23 +130,37 @@ local Options = {
                     disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
                 },
                 spacer = AddOn.CreateOptionsSpacer(9.04),
+                iLvlOnItem = {
+                    type = "toggle",
+                    name = L["Alternate Item Level Placement"],
+                    width = "full",
+                    desc = L["Display item levels on top of equipment icons"],
+                    order = 9.05,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showiLvl end
+                },
+                spacerTwo = AddOn.CreateOptionsSpacer(9.06),
                 iLvlColorOptionsDesc = {
                     type = "description",
                     name = ColorText(L["Item levels shown in white when no color options are selected"], "Info"),
-                    order = 9.05
+                    order = 9.07
                 },
-                spacerTwo = AddOn.CreateOptionsSpacer(9.06),
+                spacerThree = AddOn.CreateOptionsSpacer(9.08),
                 useQualityColorForILvl = {
                     type = "toggle",
                     name = L["Use Item Quality Color"],
                     desc = L["Color item levels based on item quality"],
-                    order = 9.07,
+                    order = 9.09,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
+                            AddOn.db.profile.useGradientColorsForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -157,24 +171,24 @@ local Options = {
                     type = "toggle",
                     name = L["Use Class Color"],
                     desc = L["Color item levels based on the character's class"],
-                    order = 9.08,
+                    order = 9.1,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
-                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
+                            AddOn.db.profile.useGradientColorsForILvl = false
                             AddOn.db.profile.useCustomColorForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showiLvl end
                 },
-                useILevelAddOnStyleForILvl = {
+                useGradientColorsForILvl = {
                     type = "toggle",
-                    name = L["Use iLevel AddOn Colors"],
-                    desc = L["Color highest item level in green, lowest item level in red, and the rest in orange."].."\n\n"..L["This color scheme follows a similar pattern to the iLevel AddOn"],
-                    order = 9.09,
+                    name = L["Use Item Level Gradient"],
+                    desc = L["Color highest item level in green, lowest item level in red, and the rest in yellow."].."\n\n"..L["This color scheme follows a similar pattern to the Shadow & Light plugin for ElvUI"],
+                    order = 9.11,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -192,14 +206,14 @@ local Options = {
                     name = L["Use Custom Color"],
                     width = "full",
                     desc = L["Customize item level color"],
-                    order = 9.1,
+                    order = 9.12,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
                         if val then
                             AddOn.db.profile.useQualityColorForILvl = false
                             AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useILevelAddOnStyleForILvl = false
+                            AddOn.db.profile.useGradientColorsForILvl = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
@@ -208,12 +222,12 @@ local Options = {
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
-                    order = 9.11
+                    order = 9.13
                 },
                 iLvlCustomColor = {
                     type = "color",
                     name = L["Choose a Color"],
-                    order = 9.12,
+                    order = 9.14,
                     hasAlpha = false,
                     get = function(item)
                         if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
@@ -232,7 +246,7 @@ local Options = {
                     type = "input",
                     name = "",
                     width = "half",
-                    order = 9.13,
+                    order = 9.15,
                     get = function()
                         if not AddOn.db.profile.iLvlCustomColor then
                             AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
@@ -253,7 +267,7 @@ local Options = {
                     type = "execute",
                     name = L["Reset"],
                     width = "half",
-                    order = 9.14,
+                    order = 9.16,
                     func = function()
                         AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -634,7 +648,7 @@ local Options = {
                 showOnInspect = {
                     type = "toggle",
                     name = L["Show Gear Info on Inspect"],
-                    desc = L["Displays information about equipped gear when inspecting another player in your party or raid"],
+                    desc = L["Displays information about equipped gear when inspecting another player"],
                     order = 14.01,
                     width = "full",
                     get = function(item) return AddOn.db.profile[item[#item]] end,
@@ -649,11 +663,35 @@ local Options = {
                     order = 14.03
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(14.04),
+                showInspectAvgILvl = {
+                    type = "toggle",
+                    name = L["Average Item Level"],
+                    desc = L["Display average item level in the character's class color"],
+                    order = 14.05,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                },
+                includeAvgLabel = {
+                    type = "toggle",
+                    name = L["Include \"Avg\" Label"],
+                    desc = L["Adds the text \"Avg: \" before the average item level."].."\n\n"..L["This can help easily identify the average item level when there is a lot of information shown in the Inspect window."],
+                    order = 14.06,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showOnInspect or not AddOn.db.profile.showInspectAvgILvl end
+                },
                 showInspectiLvl = {
                     type = "toggle",
                     name = L["Item Level"],
                     desc = L["Display item levels for equipped items"],
-                    order = 14.05,
+                    order = 14.07,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -664,8 +702,8 @@ local Options = {
                 showInspectUpgradeTrack = {
                     type = "toggle",
                     name = L["Upgrade Track"],
-                    desc = L["Display upgrade track and progress next to item level"],
-                    order = 14.06,
+                    desc = L["Display upgrade track and progress for equipped items"],
+                    order = 14.08,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -677,7 +715,7 @@ local Options = {
                     type = "toggle",
                     name = L["Gems"],
                     desc = L["Display gem and socket information for equipped items"],
-                    order = 14.07,
+                    order = 14.09,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -689,7 +727,7 @@ local Options = {
                     type = "toggle",
                     name = L["Enchants"],
                     desc = L["Display enchant information for equipped items"].."\n\n".."Enchant text is always shown when inspecting another player",
-                    order = 14.08,
+                    order = 14.1,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -702,7 +740,7 @@ local Options = {
                     name = L["Embellishments"],
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
-                    order = 14.09,
+                    order = 14.11,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1045,19 +1083,6 @@ local Options = {
             name = L["Other Options"],
             order = 16,
             args = {
-                iLvlOnItem = {
-                    type = "toggle",
-                    name = L["Alternate Item Level Placement"],
-                    width = "full",
-                    desc = L["Display item levels on top of equipment icons"].."\n\n"..L["Does nothing if the Item Level checkbox is unchecked"],
-                    order = 16.01,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
-                        AddOn:HandleEquipmentOrSettingsChange()
-                    end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
-                },
                 showEmbellishments = {
                     type = "toggle",
                     name = L["Show Embellishments"],
@@ -1110,7 +1135,7 @@ local Defaults = {
         iLvlOutline = "",
         useQualityColorForILvl = true,
         useClassColorForILvl = false,
-        useILevelAddOnStyleForILvl = false,
+        useGradientColorsForILvl = false,
         useCustomColorForILvl = false,
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
         upgradeTrackScale = 1,
@@ -1128,6 +1153,8 @@ local Defaults = {
         durabilityScale = 1,
         lastSelectedSpecID = nil,
         showOnInspect = false,
+        showInspectAvgILvl = true,
+        includeAvgLabel = false,
         showInspectiLvl = true,
         showInspectUpgradeTrack = true,
         showInspectGems = true,
@@ -1227,7 +1254,7 @@ local SlashOptions = {
         inspect = {
             type = "toggle",
             name = "inspect",
-            desc = L["Toggle showing gear info when inspecting another player in your party or raid"],
+            desc = L["Toggle showing gear info when inspecting another player"],
             get = function() return AddOn.db.profile.showOnInspect end,
             set = function()
                 AddOn.db.profile.showOnInspect = not AddOn.db.profile.showOnInspect
@@ -1301,6 +1328,8 @@ function AddOn:OnInitialize()
 
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
+        -- TODO: Implement showing item level with 0-2 decimal places based on AddOn Option
+        -- CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%.2f", GetAverageItemLevel())
     end)
 
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that

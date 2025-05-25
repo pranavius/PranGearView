@@ -3,7 +3,7 @@
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/PaperDollInfoFrame/UI-EquipmentManager-Toggle
 ## Author: pranavius
-## Version: 1.4.0
+## Version: 1.4.1
 ## SavedVariables: PranGearViewDB
 ## X-Flavor: retail
 ## X-Category: Class
@@ -27,6 +27,6 @@ Modules\ToggleEnchantButton.lua
 Modules\StatsOrderBySpecOptions.lua
 Modules\RetrieveGearInfo.lua
 Modules\PositionGearInfo.lua
-Modules\GroupInspectFrame.lua
+Modules\InspectFrame.lua
 Modules\Credits.lua
 PranGearView.lua

@@ -1,6 +1,7 @@
 local addonName, AddOn = ...
 ---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
@@ -130,5 +131,27 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             if slot.PGVGems then slot.PGVGems:Hide() end
             if slot.PGVEnchant then slot.PGVEnchant:Hide() end
         end
+    end
+
+    if self.db.profile.showInspectAvgILvl then
+        if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
+            InspectPaperDollItemsFrame.PGVAverageItemLevel = InspectPaperDollItemsFrame:CreateFontString("PGVAverageItemLevel", "OVERLAY", "GameTooltipHeader")
+        end
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
+        local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
+        ---@cast token string
+        DebugPrint("Inspected unit token for average item level:", ColorText(token, "Heirloom"))
+        local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
+        local classFile = select(2, UnitClass(token))
+        local classHexWithAlpha = select(4, GetClassColor(classFile))
+        if self.db.profile.includeAvgLabel then
+            DebugPrint("Include \"Avg: \" label")
+            itemLevelText = L["Avg"]..": "..itemLevelText
+        end
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetFormattedText("|c"..classHexWithAlpha..itemLevelText.."|r")
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:Show()
+    elseif InspectPaperDollItemsFrame.PGVAverageItemLevel then
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
     end
 end

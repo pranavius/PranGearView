@@ -162,44 +162,11 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
         DebugPrint("Inspected unit GUID:", self.db.profile.inspectedUnitGUID)
-        if UnitGUID(InspectFrame.unit) == self.db.profile.inspectedUnitGUID then
-            local itemLink = GetInventoryItemLink(token, slotID)
-            if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-        end
-        if IsInRaid() then
-            local numRaidMembers = GetNumGroupMembers()
-            for i = 1, numRaidMembers do
-                local token = "raid"..i
-                if UnitExists(token) and UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    DebugPrint("Matching raid unit found")
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-                end
-            end
-            return false, {}
-        elseif IsInGroup() then
-            for i = 1, MAX_PARTY_MEMBERS do
-                local token = "party"..i
-                if UnitExists(token) and UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    DebugPrint("Matching party unit found")
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then return true, Item:CreateFromItemLink(itemLink) end
-                end
-            end
-            return false, {}
-        elseif self.db.profile.debug then
-            -- Only works for local development when necessary condition is commented out
-            for _, plate in ipairs(C_NamePlate.GetNamePlates()) do
-                -- use the nameplate token to get item info
-                local token = plate.namePlateUnitToken
-                if UnitGUID(token) == self.db.profile.inspectedUnitGUID then
-                    local itemLink = GetInventoryItemLink(token, slotID)
-                    if itemLink then
-                        return true, Item:CreateFromItemLink(itemLink)
-                    end
-                end
-            end
-        end
+        local token = InspectFrame.unit
+        if UnitGUID(InspectFrame.unit) ~= self.db.profile.inspectedUnitGUID then token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID) end
+        ---@cast token string
+        local itemLink = GetInventoryItemLink(token, slotID)
+        if itemLink then return true, Item:CreateFromItemLink(itemLink) end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
         return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
@@ -321,31 +288,4 @@ function AddOn:GetSlotIsLeftSide(slot, isInspect)
     else
         return slot.IsLeftSide
     end
-end
-
----@param isInspect? boolean
----@return number min Minimum item level from all equipped gear
----@return number max Maximum item level from all equipped gear
-function AddOn:GetMinMaxItemLevelsFromGear(isInspect)
-    local slots = AddOn.GearSlots
-    ---@cast slots table<number, any>
-    if isInspect then slots = AddOn.InspectInfo.slots end
-
-    local allItemLevels = {}
-    for _, slot in ipairs(slots) do
-        local checkedSlot = slot
-        ---@cast checkedSlot Slot
-        if isInspect then checkedSlot = _G[slot] end
-        local hasItem, item = self:IsItemEquippedInSlot(checkedSlot, isInspect)
-        if hasItem then
-            local itemLevel = item:GetCurrentItemLevel()
-            -- Ignore shirts and tabards
-            local isShirtOrTabard = slot == CharacterShirtSlot or slot == CharacterTabardSlot or slot == "InspectShirtSlot" or slot == "InspectTabardSlot"
-            if itemLevel > 0 and not isShirtOrTabard then allItemLevels[checkedSlot:GetID()] = itemLevel end
-        end
-    end
-
-    self.CompressTable(allItemLevels)
-    return math.min(unpack(allItemLevels)),
-        math.max(unpack(allItemLevels))
 end
