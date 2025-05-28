@@ -8,13 +8,8 @@ AddOn.DKEnchantAbbr = {
     Sanguination = "Sang",
     Spellwarding = "Spellward",
     Apocalypse = "Apoc",
-    Fallen = "Fall",
-    Crusader = "Crus",
     FallenCrusader = "Fall Crus",
-    Stoneskin = "Stnskn",
-    Gargoyle = "Garg",
     StoneskinGargoyle = "Stnskn Garg",
-    Unending = "Unend",
     UnendingThirst = "Unend Thirst"
 }
 
@@ -23,27 +18,66 @@ AddOn.DKEnchantAbbr = {
 ---@field replacement string The localization key for the abbreviation for the original text
 
 ---A list of tables containing text replacement patterns for enchants
----@type table<number, TextReplacement>
-AddOn.EnchantTextReplace = {
+---@type TextReplacement[]
+AddOn.EnchantTextReplacementKeysmentKeys = {
     { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
     { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
     { original = "Enchanted: ", replacement = "" },
-    { original = "Chant", replacement = "" },
-    { original = "Whisper", replacement = "" },
-    { original = "Council", replacement = "" },
-    { original = "Council's", replacement = "" },
-    { original = "Stormrider", replacement = "" },
-    { original = "Stormrider's", replacement = "" },
-    { original = "Stonebound", replacement = "Stn" },
-    { original = "Fiery", replacement = "Fire" },
-    { original = "Resolve", replacement = "Res" },
-    { original = "Cursed", replacement = "Curs" },
-    { original = "Lesser", replacement = "Lssr" },
-    { original = "Greater", replacement = "Grtr" },
-    { original = "Rune", replacement = "" },
-    { original = " of", replacement = "" },
-    { original = " the", replacement = "" },
-    { original = "'s", replacement = "" },
+    { original = "Radiant Critical Strike", replacement = "Rad Crit" },
+    { original = "Radiant Haste", replacement = "Rad Hst" },
+    { original = "Radiant Mastery", replacement = "Rad Mast" },
+    { original = "Radiant Versatility", replacement = "Rad Vers" },
+    { original = "Cursed Critical Strike", replacement = "Curs Crit" },
+    { original = "Cursed Haste", replacement = "Curs Hst" },
+    { original = "Cursed Mastery", replacement = "Curs Mast" },
+    { original = "Cursed Versatility", replacement = "Curs Vers" },
+    { original = "Whisper of Armored Avoidance", replacement = "Arm Avoid" },
+    { original = "Whisper of Armored Leech", replacement = "Arm Leech" },
+    { original = "Whisper of Armored Speed", replacement = "Arm Spd" },
+    { original = "Whisper of Silken Avoidance", replacement = "Silk Avoid" },
+    { original = "Whisper of Silken Leech", replacement = "Silk Leech" },
+    { original = "Whisper of Silken Speed", replacement = "Silk Spd" },
+    { original = "Chant of Armored Avoidance", replacement = "Arm Avoid" },
+    { original = "Chant of Armored Leech", replacement = "Arm Leech" },
+    { original = "Chant of Armored Speed", replacement = "Arm Spd" },
+    { original = "Scout's March", replacement = "Sco March" },
+    { original = "Defenders's March", replacement = "Def March" },
+    { original = "Cavalry's March", replacement = "Cav March" },
+    { original = "Stormrider's Agility", replacement = "Agi" },
+    { original = "Council's Intellect", replacement = "Int" },
+    { original = "Crystalline Radiance", replacement = "Crys Rad" },
+    { original = "Oathsworn's Strength", replacement = "Oath Str" },
+    { original = "Chant of Winged Grace", replacement = "Wing Grc" },
+    { original = "Chant of Leeching Fangs", replacement = "Leech Fang" },
+    { original = "Chant of Burrowing Rapidity", replacement = "Burr Rap" },
+    { original = "Authority of Air", replacement = "Auth Air" },
+    { original = "Authority of Fiery Resolve", replacement = "Fire Res" },
+    { original = "Authority of Radiant Power", replacement = "Rad Pow" },
+    { original = "Authority of the Depths", replacement = "Auth Deps" },
+    { original = "Authority of Storms", replacement = "Auth Storm" },
+    { original = "Oathsworn's Tenacity", replacement = "Oath Ten" },
+    { original = "Stonebound Artistry", replacement = "Stn Art" },
+    { original = "Stormrider's Fury", replacement = "Fury" },
+    { original = "Council's Guile", replacement = "Guile" },
+    { original = "Lesser Twilight Devastation", replacement = "Lssr Twi Dev" },
+    { original = "Greater Twilight Devastation", replacement = "Grtr Twi Dev" },
+    { original = "Lesser Void Ritual", replacement = "Lssr Void Rit" },
+    { original = "Greater Void Ritual", replacement = "Grtr Void Rit" },
+    { original = "Lesser Twisted Appendage", replacement = "Lssr Twst App" },
+    { original = "Greater Twisted Appendage", replacement = "Grtr Twst App" },
+    { original = "Lesser Echoing Void", replacement = "Lssr Echo Void" },
+    { original = "Greater Echoing Void", replacement = "Grtr Echo Void" },
+    { original = "Lesser Gushing Wound", replacement = "Lssr Gush Wnd" },
+    { original = "Greater Gushing Wound", replacement = "Grtr Gush Wnd" },
+    { original = "Lesser Infinite Stars", replacement = "Lssr Inf Star" },
+    { original = "Greater Infinite Stars", replacement = "Grtr Inf Star" },
+    { original = "Rune of the Fallen Crusader", replacement = AddOn.DKEnchantAbbr.FallenCrusader },
+    { original = "Rune of Razorice", replacement = AddOn.DKEnchantAbbr.Razorice },
+    { original = "Rune of Sanguination", replacement = AddOn.DKEnchantAbbr.Sanguination },
+    { original = "Rune of Spellwarding", replacement = AddOn.DKEnchantAbbr.Spellwarding },
+    { original = "Rune of the Apocalypse", replacement = AddOn.DKEnchantAbbr.Apocalypse },
+    { original = "Rune of the Stoneskin Gargoyle", replacement = AddOn.DKEnchantAbbr.StoneskinGargoyle },
+    { original = "Rune of Unending Thirst", replacement = AddOn.DKEnchantAbbr.UnendingThirst },
     { original = "Stamina", replacement = "Stam" },
     { original = "Intellect", replacement = "Int" },
     { original = "Strength", replacement = "Str" },
@@ -56,59 +90,24 @@ AddOn.EnchantTextReplace = {
     { original = "Mastery", replacement = "Mast" },
     { original = "Critical Strike", replacement = "Crit" },
     { original = "Versatility", replacement = "Vers" },
-    { original = "Cavalry", replacement = "Cav" },
-    { original = "Defender", replacement = "Def" },
-    { original = "Defense", replacement = "Def" },
-    { original = "Scout", replacement = "Sco" },
-    { original = "Authority", replacement = "Auth" },
-    { original = "Crystalline", replacement = "Crys" },
-    { original = "Radiance", replacement = "Rad" },
-    { original = "Radiant", replacement = "Rad" },
-    { original = "Power", replacement = "Pwr" },
-    { original = "Oathsworn", replacement = "Oath" },
-    { original = "Oathsworn's", replacement = "Oath" },
-    { original = "Tenacity", replacement = "Ten" },
-    { original = "Winged", replacement = "Wing" },
-    { original = "Burrowing", replacement = "Burr" },
-    { original = "Rapidity", replacement = "Rap" },
-    { original = "Leeching", replacement = "Leech" },
-    { original = "Silken", replacement = "Silk" },
     { original = "Deftness", replacement = "Deft" },
     { original = "Finesse", replacement = "Fin" },
     { original = "Ingenuity", replacement = "Ing" },
     { original = "Perception", replacement = "Perc" },
     { original = "Resourcefulness", replacement = "Rsrc" },
     { original = "Absorption", replacement = "Absorb" },
-    { original = "Artistry", replacement = "Art" },
-    { original = "Sanguination", replacement = AddOn.DKEnchantAbbr.Sanguination },
-    { original = "Spellwarding", replacement = AddOn.DKEnchantAbbr.Spellwarding },
-    { original = "Apocalypse", replacement = AddOn.DKEnchantAbbr.Apocalypse },
-    { original = "Fallen", replacement = AddOn.DKEnchantAbbr.Fallen },
-    { original = "Crusader", replacement = AddOn.DKEnchantAbbr.Crusader },
-    { original = "Stoneskin", replacement = AddOn.DKEnchantAbbr.Stoneskin },
-    { original = "Gargoyle", replacement = AddOn.DKEnchantAbbr.Gargoyle },
-    { original = "Unending", replacement = AddOn.DKEnchantAbbr.Unending },
-    { original = "Twilight", replacement = "Twi" },
-    { original = "Devastation", replacement = "Dev" },
-    { original = "Ritual", replacement = "Rit" },
-    { original = "Twisted", replacement = "Twst" },
-    { original = "Appendage", replacement = "App" },
-    { original = "Gushing", replacement = "Gush" },
-    { original = "Wound", replacement = "Wnd" },
-    { original = "Infinite", replacement = "Inf" },
-    { original = "Stars", replacement = "Star" },
-    { original = "Echoing", replacement = "Echo" },
 }
 
 ---A list of tables containing text replacement patterns for upgrade tracks
----@type table<number, TextReplacement>
-AddOn.UpgradeTextReplace = {
-    { original = "Upgrade Level: Explorer ", replacement = "E" },
-    { original = "Upgrade Level: Adventurer ", replacement = "A" },
-    { original = "Upgrade Level: Veteran ", replacement = "V" },
-    { original = "Upgrade Level: Champion ", replacement = "C" },
-    { original = "Upgrade Level: Hero ", replacement = "H" },
-    { original = "Upgrade Level: Myth ", replacement = "M" }
+---@type TextReplacement[]
+AddOn.UpgradeTextReplacementKeys = {
+    { original = "Upgrade Level: ", replacement = "" },
+    { original = "Explorer ", replacement = "E" },
+    { original = "Adventurer ", replacement = "A" },
+    { original = "Veteran ", replacement = "V" },
+    { original = "Champion ", replacement = "C" },
+    { original = "Hero ", replacement = "H" },
+    { original = "Myth ", replacement = "M" }
 }
 
 ---@enum HexColorPresets
@@ -160,9 +159,9 @@ AddOn.GearSlots = {
 }
 
 ---@class InspectInfo
----@field slots table<number, string> A list of all slot names when inspecting a character
----@field leftSideSlots table<number, string> A list of all slots that appear on the left side of the character model when inspecting a character
----@field bottomSlots table<number, string> A list of all slots that appear on the bottom of the character model when inspecting a character
+---@field slots string[] A list of all slot names when inspecting a character
+---@field leftSideSlots string[] A list of all slots that appear on the left side of the character model when inspecting a character
+---@field bottomSlots string[] A list of all slots that appear on the bottom of the character model when inspecting a character
 AddOn.InspectInfo = {
     slots = {
         "InspectHeadSlot",
@@ -202,11 +201,11 @@ AddOn.InspectInfo = {
 
 ---@class ExpansionDetails
 ---@field LevelCap number The maximum reachable level for the expansion
----@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
----@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+---@field SocketableSlots any[] A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+---@field AuxSocketableSlots any[] A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 ---@field MaxSocketsPerItem number The maximum number of sockets an item can have
 ---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
----@field EnchantableSlots table<number, any> A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+---@field EnchantableSlots any[] A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
 ---@field HeadEnchantAvailable boolean Indicates whether or not a head enchant from the expansion is currently available in-game
 ---@field ShieldEnchantAvailable boolean Indicates whether or not a shield enchant from the expansion is currently available in-game
 ---@field OffhandEnchantAvailable boolean Indicates whether or not an off-hand enchant from the expansion is currently available in-game
@@ -462,7 +461,7 @@ AddOn.ClassIcons = {
 ---@field key string The localization key for the dropdown option
 ---@field value string The value for text outline to pass to `SetFont()`
 
----@type table<number, OutlineOption>
+---@type OutlineOption[]
 AddOn.OutlineOptions = {
     { key = "None", value = "" },
     { key = "Monochrome", value = "MONOCHROME" },

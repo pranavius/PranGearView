@@ -771,9 +771,9 @@ local Options = {
                         if not AddOn.SpecOptionKeys[specID] then
                             options[0] = ""
                         end
-                        for id, spec in pairs(AddOn.SpecOptionKeys) do
+                        for id, specKey in pairs(AddOn.SpecOptionKeys) do
                             local classFile = select(6, GetSpecializationInfoByID(id))
-                            options[id] = "|A:classicon-"..classFile..":15:15|a "..spec
+                            options[id] = "|A:classicon-"..classFile..":15:15|a "..L[specKey]
                         end
                         return options
                     end,
