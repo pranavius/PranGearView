@@ -57,9 +57,7 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
                     -- Displays past-season upgrade tracks in gray
                     upgradeColor = ttdata.leftColor:GenerateHexColorNoAlpha()
                     local upgradeText = ttdata.leftText
-                    for _, repl in pairs(self.UpgradeTextReplacementKeys) do
-                        upgradeText = upgradeText:gsub(L[repl.original], L[repl.replacement])
-                    end
+                    upgradeText = self:AbbreviateText(upgradeText, self.UpgradeTextReplacements)
                     upgradeTrackText = upgradeText
                     DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
                 end
@@ -149,9 +147,9 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                     DebugPrint("Item in slot", ColorText(slot:GetID(), "Heirloom"), "is enchanted")
                     local enchText = ttdata.leftText
                     DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
-                    for _, repl in pairs(self.EnchantTextReplacementKeys) do
-                        enchText = enchText:gsub(L[repl.original], L[repl.replacement])
-                    end
+                    enchText = self:AbbreviateText(enchText, self.EnchantTextReplacements)
+                    -- Perform locale replacements specific to ptBR to further shorten and fix some abbreviations
+                    if GetLocale() == "ptBR" then enchText = self:AbbreviateText(enchText, self.ptbrEnchantTextReplacements) end
                     -- Trim enchant text to remove leading and trailing whitespace
                     -- strtrim is a Blizzard-provided global utility function
                     enchText = strtrim(enchText)
@@ -161,19 +159,19 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                     -- If DK enchant, set texture based on the icon shown for each enchant in Runeforging
                     if not texture then
                         local textureID
-                        if enchText == L[self.DKEnchantAbbr.Razorice] then
+                        if enchText == self.DKEnchantAbbr.Razorice then
                             textureID = 135842 -- Interface/Icons/Spell_Frost_FrostArmor
-                        elseif enchText == L[self.DKEnchantAbbr.Sanguination] then
+                        elseif enchText == self.DKEnchantAbbr.Sanguination then
                             textureID = 1778226 -- Interface/Icons/Ability_Argus_DeathFod
-                        elseif enchText == L[self.DKEnchantAbbr.Spellwarding] then
+                        elseif enchText == self.DKEnchantAbbr.Spellwarding then
                             textureID = 425952 -- Interface/Icons/Spell_Fire_TwilightFireward
-                        elseif enchText == L[self.DKEnchantAbbr.Apocalypse] then
+                        elseif enchText == self.DKEnchantAbbr.Apocalypse then
                             textureID = 237535 -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
-                        elseif enchText == L[self.DKEnchantAbbr.FallenCrusader] then
+                        elseif enchText == self.DKEnchantAbbr.FallenCrusader then
                             textureID = 135957 -- Interface/Icons/Spell_Holy_RetributionAura
-                        elseif enchText == L[self.DKEnchantAbbr.StoneskinGargoyle] then
+                        elseif enchText == self.DKEnchantAbbr.StoneskinGargoyle then
                             textureID = 237480 -- Interface/Icons/Inv_Sword_130
-                        elseif enchText == L[self.DKEnchantAbbr.UnendingThirst] then
+                        elseif enchText == self.DKEnchantAbbr.UnendingThirst then
                             textureID = 3163621 -- Interface/Icons/Spell_NZInsanity_Bloodthirst
                         else
                             textureID = 628564 -- Interface/Scenarios/ScenarioIcon-Check

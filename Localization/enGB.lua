@@ -235,6 +235,9 @@ L["Critical Strike"] = STAT_CRITICAL_STRIKE
 L["Crit"] = "Crit"
 L["Versatility"] = STAT_VERSATILITY
 L["Vers"] = "Vers"
+L["Block"] = STAT_BLOCK
+L["Parry"] = STAT_PARRY
+L["Dodge"] = STAT_DODGE
 L["Deftness"] = ITEM_MOD_DEFTNESS_SHORT
 L["Deft"] = "Deft"
 L["Finesse"] = ITEM_MOD_FINESSE_SHORT
@@ -250,12 +253,12 @@ L["Absorption"] = "Absorption"
 L["Absorb"] = "Absorb"
 --- Upgrade Tracks ---
 L["Upgrade Level: "] = "Upgrade Level: "
-L["Explorer"] = "Explorer"
-L["Adventurer"] = "Adventurer"
-L["Veteran"] = "Veteran"
-L["Champion"] = "Champion"
-L["Hero"] = "Hero"
-L["Myth"] = "Myth"
+L["Explorer "] = "Explorer "
+L["Adventurer "] = "Adventurer "
+L["Veteran "] = "Veteran "
+L["Champion "] = "Champion "
+L["Hero "] = "Hero "
+L["Myth "] = "Myth "
 
 ------------ Character Specializations ------------
 L["Blood"] = "Blood"
