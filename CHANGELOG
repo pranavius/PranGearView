@@ -1,3 +1,10 @@
+**v1.4.3**
+- Fix a number of bugs present in `ptBR` locale for displaying upgrade track and enchant text
+- Fix a bug that causes an error to occur when a profile gets reset
+- Fixe some typos
+- Minor code cleanup
+- Update code documentation
+
 **v1.4.2**
 - Add missing embed dependency
 

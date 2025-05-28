@@ -45,7 +45,7 @@ World of Warcraft race & gender they identify with in-game
 
 
 ```lua
-table<number, any>
+any[]
 ```
 
 A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
@@ -54,7 +54,7 @@ A list of gear slots that can have a gem socket added to it via auxillary method
 
 
 ```lua
-table<number, any>
+any[]
 ```
 
 A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
@@ -117,7 +117,7 @@ Indicates whether or not a shield enchant from the expansion is currently availa
 
 
 ```lua
-table<number, any>
+any[]
 ```
 
 A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
@@ -131,7 +131,7 @@ A list of gear slots that can have a gem socket added to it in the expansion. Sl
 
 
 ```lua
-table<number, string>
+string[]
 ```
 
 A list of all slots that appear on the bottom of the character model when inspecting a character
@@ -140,7 +140,7 @@ A list of all slots that appear on the bottom of the character model when inspec
 
 
 ```lua
-table<number, string>
+string[]
 ```
 
 A list of all slots that appear on the left side of the character model when inspecting a character
@@ -149,7 +149,7 @@ A list of all slots that appear on the left side of the character model when ins
 
 
 ```lua
-table<number, string>
+string[]
 ```
 
 A list of all slot names when inspecting a character
@@ -197,6 +197,22 @@ The value for text outline to pass to `SetFont()`
 
 # PranGearView
 
+## AbbreviateText
+
+
+```lua
+(method) PranGearView:AbbreviateText(text: string, replacementTable: TextReplacement[])
+  -> abbreviation: string
+```
+
+Abbreviates `text` using the provided `replacementTable`
+
+@*param* `text` — The text to abbreviate
+
+@*param* `replacementTable` — A table containing mappings for how to replace text
+
+@*return* `abbreviation` — The abbreviated version of `text` as per the entries in `replacementTable`
+
 ## BuildCreditsGroup
 
 
@@ -231,7 +247,7 @@ Alternatively, a color's hexadecimal code can be provided for the `color` argume
 
 @*return* `result` — A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
 
-See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#114#9) for a list of predefined colors such as class colors, item quality, etc.
+See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#124#9) for a list of predefined colors such as class colors, item quality, etc.
 
 ## CompressTable
 
@@ -347,11 +363,11 @@ enum DefaultStatOrder
 enum DefaultTankStatOrder
 ```
 
-## EnchantTextReplace
+## EnchantTextReplacements
 
 
 ```lua
-{ [number]: TextReplacement }
+TextReplacement[]
 ```
 
 A list of tables containing text replacement patterns for enchants
@@ -365,7 +381,7 @@ table
 
 See:
   * ~Frame~ for generic definition along without common functions and variables available for all Frames
-  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#162#10) for a list of Frame names available when the Inspect window is open
+  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#172#10) for a list of Frame names available when the Inspect window is open
 
 ## GearSlots
 
@@ -389,7 +405,7 @@ Returns specialization ID and role for the logged-in character
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#267#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#277#9) for a list of specializations and their IDs
 
 ## GetEnchantmentBySlot
 
@@ -463,7 +479,7 @@ Returns specialization ID and role for the chosen spec whenever it is changed in
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#267#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#277#9) for a list of specializations and their IDs
 
 ## GetStatOrderHandler
 
@@ -484,7 +500,7 @@ Retrieves the current order for a stat based on currently chosen specialization 
 
 ```lua
 (method) PranGearView:GetStatOrderValuesHandler()
-  -> options: table<number, number>
+  -> options: number[]
 ```
 
 Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
@@ -656,7 +672,7 @@ Indicates whether an item equipped in a particular gear slot can have a gem sock
 
 
 ```lua
-{ [number]: OutlineOption }
+OutlineOption[]
 ```
 
 ## PGVToggleEnchantButton
@@ -857,11 +873,11 @@ Updates displayed info in the Inspect window when AddOn settings are changed or 
 
 @*param* `forceUpdate` — Whether or not to force an update to the information displayed
 
-## UpgradeTextReplace
+## UpgradeTextReplacements
 
 
 ```lua
-{ [number]: TextReplacement }
+TextReplacement[]
 ```
 
 A list of tables containing text replacement patterns for upgrade tracks
@@ -874,6 +890,16 @@ unknown
 ```
 
  Load database
+
+## ptbrEnchantTextReplacements
+
+
+```lua
+TextReplacement[]
+```
+
+A list of tables containing text replacement patterns for enchants that are specific to the ptBR locale.
+Intended for replacement after language-agnostic replacements are completed
 
 
 ---
