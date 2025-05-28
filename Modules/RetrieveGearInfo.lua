@@ -57,9 +57,7 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
                     -- Displays past-season upgrade tracks in gray
                     upgradeColor = ttdata.leftColor:GenerateHexColorNoAlpha()
                     local upgradeText = ttdata.leftText
-                    for _, repl in pairs(self.UpgradeTextReplace) do
-                        upgradeText = upgradeText:gsub(repl.original, repl.replacement)
-                    end
+                    upgradeText = self:AbbreviateText(upgradeText, self.UpgradeTextReplacements)
                     upgradeTrackText = upgradeText
                     DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
                 end
@@ -149,9 +147,9 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                     DebugPrint("Item in slot", ColorText(slot:GetID(), "Heirloom"), "is enchanted")
                     local enchText = ttdata.leftText
                     DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
-                    for _, repl in pairs(self.EnchantTextReplace) do
-                        enchText = enchText:gsub(repl.original, repl.replacement)
-                    end
+                    enchText = self:AbbreviateText(enchText, self.EnchantTextReplacements)
+                    -- Perform locale replacements specific to ptBR to further shorten and fix some abbreviations
+                    if GetLocale() == "ptBR" then enchText = self:AbbreviateText(enchText, self.ptbrEnchantTextReplacements) end
                     -- Trim enchant text to remove leading and trailing whitespace
                     -- strtrim is a Blizzard-provided global utility function
                     enchText = strtrim(enchText)

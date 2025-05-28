@@ -289,3 +289,17 @@ function AddOn:GetSlotIsLeftSide(slot, isInspect)
         return slot.IsLeftSide
     end
 end
+
+---Abbreviates `text` using the provided `replacementTable`
+---@param text string The text to abbreviate
+---@param replacementTable TextReplacement[] A table containing mappings for how to replace text
+---@return string abbreviation The abbreviated version of `text` as per the entries in `replacementTable`
+function AddOn:AbbreviateText(text, replacementTable)
+    if not text then return "" end
+    if self.GetTableSize(replacementTable) == 0 then return text end
+    local abbreviation = text
+    for _, repl in pairs(replacementTable) do
+        abbreviation = abbreviation:gsub(repl.original, repl.replacement)
+    end
+    return abbreviation
+end

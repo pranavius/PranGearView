@@ -15,7 +15,7 @@ local ColorText = AddOn.ColorText
 ---@see RaceGender
 ---@see ClassIcons
 ---@see HexColorPresets
----@type table<number, Credit>
+---@type Credit[]
 local contributors = {
     { name = "ZamestoTV", race = AddOn.RaceIcons.NightElf.Male, class = AddOn.ClassIcons.Druid, color = AddOn.HexColorPresets.Druid },
     { name = "Lirfdam", race = AddOn.RaceIcons.Nightborne.Female, class = AddOn.ClassIcons.Mage, color = AddOn.HexColorPresets.Mage },
@@ -26,7 +26,7 @@ local contributors = {
 ---@see RaceGender
 ---@see ClassIcons
 ---@see HexColorPresets
----@type table<number, Credit>
+---@type Credit[]
 local specialThanks = {
     { name = "Tusk", race = AddOn.RaceIcons.Pandaren.Male, class = AddOn.ClassIcons.Monk, color = AddOn.HexColorPresets.Monk },
     { name = "Beo", race = AddOn.RaceIcons.Pandaren.Female, class = AddOn.ClassIcons.DemonHunter, color = AddOn.HexColorPresets.DemonHunter },

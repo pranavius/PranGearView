@@ -1,21 +1,17 @@
 local addonName, AddOn = ...
 ---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 ---@enum DKEnchantAbbr
 AddOn.DKEnchantAbbr = {
-    Razorice = "Razorice",
-    Sanguination = "Sang",
-    Spellwarding = "Spellward",
-    Apocalypse = "Apoc",
-    Fallen = "Fall",
-    Crusader = "Crus",
-    FallenCrusader = "Fall Crus",
-    Stoneskin = "Stnskn",
-    Gargoyle = "Garg",
-    StoneskinGargoyle = "Stnskn Garg",
-    Unending = "Unend",
-    UnendingThirst = "Unend Thirst"
+    Razorice = L["Razorice"],
+    Sanguination = L["Sang"],
+    Spellwarding = L["Spellward"],
+    Apocalypse = L["Apoc"],
+    FallenCrusader = L["Fall Crus"],
+    StoneskinGargoyle = L["Stnskn Garg"],
+    UnendingThirst = L["Unend Thirst"]
 }
 
 ---@class TextReplacement
@@ -23,92 +19,106 @@ AddOn.DKEnchantAbbr = {
 ---@field replacement string The localization key for the abbreviation for the original text
 
 ---A list of tables containing text replacement patterns for enchants
----@type table<number, TextReplacement>
-AddOn.EnchantTextReplace = {
+---@type TextReplacement[]
+AddOn.EnchantTextReplacements = {
     { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
     { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
-    { original = "Enchanted: ", replacement = "" },
-    { original = "Chant", replacement = "" },
-    { original = "Whisper", replacement = "" },
-    { original = "Council", replacement = "" },
-    { original = "Council's", replacement = "" },
-    { original = "Stormrider", replacement = "" },
-    { original = "Stormrider's", replacement = "" },
-    { original = "Stonebound", replacement = "Stn" },
-    { original = "Fiery", replacement = "Fire" },
-    { original = "Resolve", replacement = "Res" },
-    { original = "Cursed", replacement = "Curs" },
-    { original = "Lesser", replacement = "Lssr" },
-    { original = "Greater", replacement = "Grtr" },
-    { original = "Rune", replacement = "" },
-    { original = " of", replacement = "" },
-    { original = " the", replacement = "" },
-    { original = "'s", replacement = "" },
-    { original = "Stamina", replacement = "Stam" },
-    { original = "Intellect", replacement = "Int" },
-    { original = "Strength", replacement = "Str" },
-    { original = "Agility", replacement = "Agi" },
-    { original = "Speed", replacement = "Spd" },
-    { original = "Avoidance", replacement = "Avoid" },
-    { original = "Armor", replacement = "Arm" },
-    { original = "Haste", replacement = "Hst" },
-    { original = "Damage", replacement = "Dmg" },
-    { original = "Mastery", replacement = "Mast" },
-    { original = "Critical Strike", replacement = "Crit" },
-    { original = "Versatility", replacement = "Vers" },
-    { original = "Cavalry", replacement = "Cav" },
-    { original = "Defender", replacement = "Def" },
-    { original = "Defense", replacement = "Def" },
-    { original = "Scout", replacement = "Sco" },
-    { original = "Authority", replacement = "Auth" },
-    { original = "Crystalline", replacement = "Crys" },
-    { original = "Radiance", replacement = "Rad" },
-    { original = "Radiant", replacement = "Rad" },
-    { original = "Power", replacement = "Pwr" },
-    { original = "Oathsworn", replacement = "Oath" },
-    { original = "Oathsworn's", replacement = "Oath" },
-    { original = "Tenacity", replacement = "Ten" },
-    { original = "Winged", replacement = "Wing" },
-    { original = "Burrowing", replacement = "Burr" },
-    { original = "Rapidity", replacement = "Rap" },
-    { original = "Leeching", replacement = "Leech" },
-    { original = "Silken", replacement = "Silk" },
-    { original = "Deftness", replacement = "Deft" },
-    { original = "Finesse", replacement = "Fin" },
-    { original = "Ingenuity", replacement = "Ing" },
-    { original = "Perception", replacement = "Perc" },
-    { original = "Resourcefulness", replacement = "Rsrc" },
-    { original = "Absorption", replacement = "Absorb" },
-    { original = "Artistry", replacement = "Art" },
-    { original = "Sanguination", replacement = AddOn.DKEnchantAbbr.Sanguination },
-    { original = "Spellwarding", replacement = AddOn.DKEnchantAbbr.Spellwarding },
-    { original = "Apocalypse", replacement = AddOn.DKEnchantAbbr.Apocalypse },
-    { original = "Fallen", replacement = AddOn.DKEnchantAbbr.Fallen },
-    { original = "Crusader", replacement = AddOn.DKEnchantAbbr.Crusader },
-    { original = "Stoneskin", replacement = AddOn.DKEnchantAbbr.Stoneskin },
-    { original = "Gargoyle", replacement = AddOn.DKEnchantAbbr.Gargoyle },
-    { original = "Unending", replacement = AddOn.DKEnchantAbbr.Unending },
-    { original = "Twilight", replacement = "Twi" },
-    { original = "Devastation", replacement = "Dev" },
-    { original = "Ritual", replacement = "Rit" },
-    { original = "Twisted", replacement = "Twst" },
-    { original = "Appendage", replacement = "App" },
-    { original = "Gushing", replacement = "Gush" },
-    { original = "Wound", replacement = "Wnd" },
-    { original = "Infinite", replacement = "Inf" },
-    { original = "Stars", replacement = "Star" },
-    { original = "Echoing", replacement = "Echo" },
+    { original = L["Enchanted: "], replacement = "" },
+    { original = L["Radiant Critical Strike"], replacement = L["Rad Crit"] },
+    { original = L["Radiant Haste"], replacement = L["Rad Hst"] },
+    { original = L["Radiant Mastery"], replacement = L["Rad Mast"] },
+    { original = L["Radiant Versatility"], replacement = L["Rad Vers"] },
+    { original = L["Cursed Critical Strike"], replacement = L["Curs Crit"] },
+    { original = L["Cursed Haste"], replacement = L["Curs Hst"] },
+    { original = L["Cursed Mastery"], replacement = L["Curs Mast"] },
+    { original = L["Cursed Versatility"], replacement = L["Curs Vers"] },
+    { original = L["Whisper of Armored Avoidance"], replacement = L["Arm Avoid"] },
+    { original = L["Whisper of Armored Leech"], replacement = L["Arm Leech"] },
+    { original = L["Whisper of Armored Speed"], replacement = L["Arm Spd"] },
+    { original = L["Whisper of Silken Avoidance"], replacement = L["Silk Avoid"] },
+    { original = L["Whisper of Silken Leech"], replacement = L["Silk Leech"] },
+    { original = L["Whisper of Silken Speed"], replacement = L["Silk Spd"] },
+    { original = L["Chant of Armored Avoidance"], replacement = L["Arm Avoid"] },
+    { original = L["Chant of Armored Leech"], replacement = L["Arm Leech"] },
+    { original = L["Chant of Armored Speed"], replacement = L["Arm Spd"] },
+    { original = L["Scout's March"], replacement = L["Sco March"] },
+    { original = L["Defenders's March"], replacement = L["Def March"] },
+    { original = L["Cavalry's March"], replacement = L["Cav March"] },
+    { original = L["Stormrider's Agility"], replacement = L["Agi"] },
+    { original = L["Council's Intellect"], replacement = L["Int"] },
+    { original = L["Crystalline Radiance"], replacement = L["Crys Rad"] },
+    { original = L["Oathsworn's Strength"], replacement = L["Oath Str"] },
+    { original = L["Chant of Winged Grace"], replacement = L["Wing Grc"] },
+    { original = L["Chant of Leeching Fangs"], replacement = L["Leech Fang"] },
+    { original = L["Chant of Burrowing Rapidity"], replacement = L["Burr Rap"] },
+    { original = L["Authority of Air"], replacement = L["Auth Air"] },
+    { original = L["Authority of Fiery Resolve"], replacement = L["Fire Res"] },
+    { original = L["Authority of Radiant Power"], replacement = L["Rad Pow"] },
+    { original = L["Authority of the Depths"], replacement = L["Auth Deps"] },
+    { original = L["Authority of Storms"], replacement = L["Auth Storm"] },
+    { original = L["Oathsworn's Tenacity"], replacement = L["Oath Ten"] },
+    { original = L["Stonebound Artistry"], replacement = L["Stn Art"] },
+    { original = L["Stormrider's Fury"], replacement = L["Fury"] },
+    { original = L["Council's Guile"], replacement = L["Guile"] },
+    { original = L["Lesser Twilight Devastation"], replacement = L["Lssr Twi Dev"] },
+    { original = L["Greater Twilight Devastation"], replacement = L["Grtr Twi Dev"] },
+    { original = L["Lesser Void Ritual"], replacement = L["Lssr Void Rit"] },
+    { original = L["Greater Void Ritual"], replacement = L["Grtr Void Rit"] },
+    { original = L["Lesser Twisted Appendage"], replacement = L["Lssr Twst App"] },
+    { original = L["Greater Twisted Appendage"], replacement = L["Grtr Twst App"] },
+    { original = L["Lesser Echoing Void"], replacement = L["Lssr Echo Void"] },
+    { original = L["Greater Echoing Void"], replacement = L["Grtr Echo Void"] },
+    { original = L["Lesser Gushing Wound"], replacement = L["Lssr Gush Wnd"] },
+    { original = L["Greater Gushing Wound"], replacement = L["Grtr Gush Wnd"] },
+    { original = L["Lesser Infinite Stars"], replacement = L["Lssr Inf Star"] },
+    { original = L["Greater Infinite Stars"], replacement = L["Grtr Inf Star"] },
+    { original = L["Rune of the Fallen Crusader"], replacement = AddOn.DKEnchantAbbr.FallenCrusader },
+    { original = L["Rune of Razorice"], replacement = AddOn.DKEnchantAbbr.Razorice },
+    { original = L["Rune of Sanguination"], replacement = AddOn.DKEnchantAbbr.Sanguination },
+    { original = L["Rune of Spellwarding"], replacement = AddOn.DKEnchantAbbr.Spellwarding },
+    { original = L["Rune of the Apocalypse"], replacement = AddOn.DKEnchantAbbr.Apocalypse },
+    { original = L["Rune of the Stoneskin Gargoyle"], replacement = AddOn.DKEnchantAbbr.StoneskinGargoyle },
+    { original = L["Rune of Unending Thirst"], replacement = AddOn.DKEnchantAbbr.UnendingThirst },
+    { original = L["Stamina"], replacement = L["Stam"] },
+    { original = L["Intellect"], replacement = L["Int"] },
+    { original = L["Strength"], replacement = L["Str"] },
+    { original = L["Agility"], replacement = L["Agi"] },
+    { original = L["Speed"], replacement = L["Spd"] },
+    { original = L["Avoidance"], replacement = L["Avoid"] },
+    { original = L["Armor"], replacement = L["Arm"] },
+    { original = L["Haste"], replacement = L["Hst"] },
+    { original = L["Damage"], replacement = L["Dmg"] },
+    { original = L["Mastery"], replacement = L["Mast"] },
+    { original = L["Critical Strike"], replacement = L["Crit"] },
+    { original = L["Versatility"], replacement = L["Vers"] },
+    { original = L["Deftness"], replacement = L["Deft"] },
+    { original = L["Finesse"], replacement = L["Fin"] },
+    { original = L["Ingenuity"], replacement = L["Ing"] },
+    { original = L["Perception"], replacement = L["Perc"] },
+    { original = L["Resourcefulness"], replacement = L["Rsrc"] },
+    { original = L["Absorption"], replacement = L["Absorb"] },
+}
+
+---A list of tables containing text replacement patterns for enchants that are specific to the ptBR locale.
+---Intended for replacement after language-agnostic replacements are completed
+---@type TextReplacement[]
+AddOn.ptbrEnchantTextReplacements = {
+    { original = "Evasão", replacement = L["Avoid"] },
+    { original = "de ", replacement = "" },
+    { original = "da ", replacement = "" },
+    { original = "do ", replacement = "" },
 }
 
 ---A list of tables containing text replacement patterns for upgrade tracks
----@type table<number, TextReplacement>
-AddOn.UpgradeTextReplace = {
-    { original = "Upgrade Level: Explorer ", replacement = "E" },
-    { original = "Upgrade Level: Adventurer ", replacement = "A" },
-    { original = "Upgrade Level: Veteran ", replacement = "V" },
-    { original = "Upgrade Level: Champion ", replacement = "C" },
-    { original = "Upgrade Level: Hero ", replacement = "H" },
-    { original = "Upgrade Level: Myth ", replacement = "M" }
+---@type TextReplacement[]
+AddOn.UpgradeTextReplacements = {
+    { original = L["Upgrade Level: "], replacement = "" },
+    { original = L["Explorer "], replacement = "E" },
+    { original = L["Adventurer "], replacement = "A" },
+    { original = L["Veteran "], replacement = "V" },
+    { original = L["Champion "], replacement = "C" },
+    { original = L["Hero "], replacement = "H" },
+    { original = L["Myth "], replacement = "M" }
 }
 
 ---@enum HexColorPresets
@@ -160,9 +170,9 @@ AddOn.GearSlots = {
 }
 
 ---@class InspectInfo
----@field slots table<number, string> A list of all slot names when inspecting a character
----@field leftSideSlots table<number, string> A list of all slots that appear on the left side of the character model when inspecting a character
----@field bottomSlots table<number, string> A list of all slots that appear on the bottom of the character model when inspecting a character
+---@field slots string[] A list of all slot names when inspecting a character
+---@field leftSideSlots string[] A list of all slots that appear on the left side of the character model when inspecting a character
+---@field bottomSlots string[] A list of all slots that appear on the bottom of the character model when inspecting a character
 AddOn.InspectInfo = {
     slots = {
         "InspectHeadSlot",
@@ -202,11 +212,11 @@ AddOn.InspectInfo = {
 
 ---@class ExpansionDetails
 ---@field LevelCap number The maximum reachable level for the expansion
----@field SocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
----@field AuxSocketableSlots table<number, any> A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+---@field SocketableSlots any[] A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+---@field AuxSocketableSlots any[] A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 ---@field MaxSocketsPerItem number The maximum number of sockets an item can have
 ---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
----@field EnchantableSlots table<number, any> A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
+---@field EnchantableSlots any[] A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
 ---@field HeadEnchantAvailable boolean Indicates whether or not a head enchant from the expansion is currently available in-game
 ---@field ShieldEnchantAvailable boolean Indicates whether or not a shield enchant from the expansion is currently available in-game
 ---@field OffhandEnchantAvailable boolean Indicates whether or not an off-hand enchant from the expansion is currently available in-game
@@ -266,63 +276,63 @@ AddOn.ExpansionInfo = {
 
 ---@enum SpecOptionKeys
 AddOn.SpecOptionKeys = {
-    [250] = "Blood",
-    [251] = "Frost",
-    [252] = "Unholy",
-    [577] = "Havoc",
-    [581] = "Vengeance",
-    [102] = "Balance",
-    [103] = "Feral",
-    [104] = "Guardian",
-    [105] = "Restoration",
-    [1467] = "Devastation",
-    [1468] = "Preservation",
-    [1473] = "Augmentation",
-    [253] = "Beast Mastery",
-    [254] = "Marksmanship",
-    [255] = "Survival",
-    [62] = "Arcane",
-    [63] = "Fire",
-    [64] = "Frost",
-    [268] = "Brewmaster",
-    [270] = "Mistweaver",
-    [269] = "Windwalker",
-    [65] = "Holy",
-    [66] = "Protection",
-    [70] = "Retribution",
-    [256] = "Discipline",
-    [257] = "Holy",
-    [258] = "Shadow",
-    [259] = "Assassination",
-    [260] = "Outlaw",
-    [261] = "Subtlety",
-    [262] = "Elemental",
-    [263] = "Enchancement",
-    [264] = "Restoration",
-    [265] = "Affliction",
-    [266] = "Demonology",
-    [267] = "Destruction",
-    [71] = "Arms",
-    [72] = "Fury",
-    [73] = "Protection",
+    [250] = L["Blood"],
+    [251] = L["Frost"],
+    [252] = L["Unholy"],
+    [577] = L["Havoc"],
+    [581] = L["Vengeance"],
+    [102] = L["Balance"],
+    [103] = L["Feral"],
+    [104] = L["Guardian"],
+    [105] = L["Restoration"],
+    [1467] = L["Devastation"],
+    [1468] = L["Preservation"],
+    [1473] = L["Augmentation"],
+    [253] = L["Beast Mastery"],
+    [254] = L["Marksmanship"],
+    [255] = L["Survival"],
+    [62] = L["Arcane"],
+    [63] = L["Fire"],
+    [64] = L["Frost"],
+    [268] = L["Brewmaster"],
+    [270] = L["Mistweaver"],
+    [269] = L["Windwalker"],
+    [65] = L["Holy"],
+    [66] = L["Protection"],
+    [70] = L["Retribution"],
+    [256] = L["Discipline"],
+    [257] = L["Holy"],
+    [258] = L["Shadow"],
+    [259] = L["Assassination"],
+    [260] = L["Outlaw"],
+    [261] = L["Subtlety"],
+    [262] = L["Elemental"],
+    [263] = L["Enhancement"],
+    [264] = L["Restoration"],
+    [265] = L["Affliction"],
+    [266] = L["Demonology"],
+    [267] = L["Destruction"],
+    [71] = L["Arms"],
+    [72] = L["Fury"],
+    [73] = L["Protection"],
 }
 
 ---@enum DefaultStatOrder
 AddOn.DefaultStatOrder = {
-    [STAT_CRITICAL_STRIKE] = 1,
-    [STAT_HASTE] = 2,
-    [STAT_MASTERY] = 3,
-    [STAT_VERSATILITY] = 4,
-    [STAT_LIFESTEAL] = 5,
-    [STAT_AVOIDANCE] = 6,
-    [STAT_SPEED] = 7
+    ["Critical Strike"] = 1,
+    ["Haste"] = 2,
+    ["Mastery"] = 3,
+    ["Versatility"] = 4,
+    ["Leech"] = 5,
+    ["Avoidance"] = 6,
+    ["Speed"] = 7
 }
 
 ---@enum DefaultTankStatOrder
 AddOn.DefaultTankStatOrder = {
-    [STAT_DODGE] = 8,
-    [STAT_PARRY] = 9,
-    [STAT_BLOCK] = 10
+    ["Dodge"] = 8,
+    ["Parry"] = 9,
+    ["Block"] = 10
 }
 
 ---@enum TooltipDataType
@@ -462,7 +472,7 @@ AddOn.ClassIcons = {
 ---@field key string The localization key for the dropdown option
 ---@field value string The value for text outline to pass to `SetFont()`
 
----@type table<number, OutlineOption>
+---@type OutlineOption[]
 AddOn.OutlineOptions = {
     { key = "None", value = "" },
     { key = "Monochrome", value = "MONOCHROME" },

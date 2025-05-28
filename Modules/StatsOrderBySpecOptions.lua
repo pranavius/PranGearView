@@ -1,11 +1,12 @@
 local addonName, AddOn = ...
 ---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 
 ---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
----@return table<number, number> options A list of the order in which options should appear in the dropdown
+---@return number[] options A list of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     local options = {}
@@ -64,9 +65,9 @@ function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
         self.db.profile.customSpecStatOrders[specID] = AddOn.DefaultStatOrder
         -- Tanks have extra stats to consider, so only add those options for Tank specs
         if role == "TANK" then
-            self.db.profile.customSpecStatOrders[specID][STAT_DODGE] = AddOn.DefaultTankStatOrder[STAT_DODGE]
-            self.db.profile.customSpecStatOrders[specID][STAT_PARRY] = AddOn.DefaultTankStatOrder[STAT_PARRY]
-            self.db.profile.customSpecStatOrders[specID][STAT_BLOCK] = AddOn.DefaultTankStatOrder[STAT_BLOCK]
+            self.db.profile.customSpecStatOrders[specID]["Dodge"] = AddOn.DefaultTankStatOrder["Dodge"]
+            self.db.profile.customSpecStatOrders[specID]["Parry"] = AddOn.DefaultTankStatOrder["Parry"]
+            self.db.profile.customSpecStatOrders[specID]["Block"] = AddOn.DefaultTankStatOrder["Block"]
         end
     end
 end
@@ -88,7 +89,7 @@ end
 
 ---Reorders stats in the Character Info window based on the custom order defined in the Character Stats options
 function AddOn:ReorderStatFramesBySpec()
-    local specID = self:GetCharacterCurrentSpecIDAndRole()
+    local specID, role = self:GetCharacterCurrentSpecIDAndRole()
     local statFrames = {}
     local enhancementStatFrames = {}
     for _, statFrame in pairs({ CharacterStatsPane:GetChildren() }) do
@@ -98,9 +99,18 @@ function AddOn:ReorderStatFramesBySpec()
     end
 
     for _, statFrame in pairs(statFrames) do
-        local cleanStatName = statFrame.Label and statFrame.Label:GetText() and statFrame.Label:GetText():gsub(":", "") or nil
-        if cleanStatName and self.db.profile.customSpecStatOrders[specID][cleanStatName] ~= nil then
-            local order = self.db.profile.customSpecStatOrders[specID][cleanStatName]
+        local localeStatName = statFrame.Label and statFrame.Label:GetText() and statFrame.Label:GetText():gsub(":", "") or nil
+        local statName
+        for stat, _ in pairs(self.DefaultStatOrder) do
+            if L[stat] == localeStatName then statName = stat break end
+        end
+        if role == "TANK" and statName == nil then
+            for stat, _ in pairs(self.DefaultTankStatOrder) do
+                if L[stat] == localeStatName then statName = stat break end
+            end
+        end
+        if statName and self.db.profile.customSpecStatOrders[specID][statName] ~= nil then
+            local order = self.db.profile.customSpecStatOrders[specID][statName]
             enhancementStatFrames[order] = statFrame
         end
     end

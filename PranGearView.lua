@@ -771,9 +771,9 @@ local Options = {
                         if not AddOn.SpecOptionKeys[specID] then
                             options[0] = ""
                         end
-                        for id, spec in pairs(AddOn.SpecOptionKeys) do
+                        for id, specKey in pairs(AddOn.SpecOptionKeys) do
                             local classFile = select(6, GetSpecializationInfoByID(id))
-                            options[id] = "|A:classicon-"..classFile..":15:15|a "..spec
+                            options[id] = "|A:classicon-"..classFile..":15:15|a "..specKey
                         end
                         return options
                     end,
@@ -811,9 +811,10 @@ local Options = {
                     end,
                     disabled = function()
                         local specID, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        if AddOn.db.profile.customSpecStatOrders[specID] == nil then AddOn:InitializeCustomSpecStatOrderDB(specID, true) end
                         local dbStatOrder = AddOn.db.profile.customSpecStatOrders[specID]
                         for stat, order in pairs(dbStatOrder) do
-                            local isTankStat = stat == STAT_DODGE or stat == STAT_PARRY or stat == STAT_BLOCK
+                            local isTankStat = stat == "Dodge" or stat == "Parry" or stat == "Block"
                             local defaultStatUnordered = not isTankStat and order ~= AddOn.DefaultStatOrder[stat]
                             local tankStatUnordered = isTankStat and order ~= AddOn.DefaultTankStatOrder[stat]
                             if defaultStatUnordered or tankStatUnordered then
@@ -841,7 +842,7 @@ local Options = {
                     order = 15.08,
                     width = "half"
                 },
-                [STAT_CRITICAL_STRIKE] = {
+                ["Critical Strike"] = {
                     type = "select",
                     name = "",
                     order = 15.09,
@@ -860,7 +861,7 @@ local Options = {
                     order = 15.11,
                     width = "half"
                 },
-                [STAT_HASTE] = {
+                ["Haste"] = {
                     type = "select",
                     name = "",
                     order = 15.12,
@@ -879,7 +880,7 @@ local Options = {
                     order = 15.14,
                     width = "half"
                 },
-                [STAT_MASTERY] = {
+                ["Mastery"] = {
                     type = "select",
                     name = "",
                     order = 15.15,
@@ -898,7 +899,7 @@ local Options = {
                     order = 15.17,
                     width = "half"
                 },
-                [STAT_VERSATILITY] = {
+                ["Versatility"] = {
                     type = "select",
                     name = "",
                     order = 15.18,
@@ -921,7 +922,7 @@ local Options = {
                     order = 15.2,
                     width = "half"
                 },
-                [STAT_LIFESTEAL] = {
+                ["Leech"] = {
                     type = "select",
                     name = "",
                     order = 15.21,
@@ -940,7 +941,7 @@ local Options = {
                     order = 15.23,
                     width = "half"
                 },
-                [STAT_AVOIDANCE] = {
+                ["Avoidance"] = {
                     type = "select",
                     name = "",
                     order = 15.24,
@@ -959,7 +960,7 @@ local Options = {
                     order = 15.26,
                     width = "half"
                 },
-                [STAT_SPEED] = {
+                ["Speed"] = {
                     type = "select",
                     name = "",
                     order = 15.27,
@@ -990,7 +991,7 @@ local Options = {
                         return role ~= "TANK"
                     end
                 },
-                [STAT_DODGE] = {
+                ["Dodge"] = {
                     type = "select",
                     name = "",
                     order = 15.3,
@@ -1025,7 +1026,7 @@ local Options = {
                         return role ~= "TANK"
                     end
                 },
-                [STAT_PARRY] = {
+                ["Parry"] = {
                     type = "select",
                     name = "",
                     order = 15.33,
@@ -1060,7 +1061,7 @@ local Options = {
                         return role ~= "TANK"
                     end
                 },
-                [STAT_BLOCK] = {
+                ["Block"] = {
                     type = "select",
                     name = "",
                     order = 15.36,

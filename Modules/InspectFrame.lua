@@ -13,7 +13,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     local showOnInspect = self.db.profile.showOnInspect
     -- Check for a force update even if the DB value is false (required for toggling inspect visibility via slash command)
     if not showOnInspect and not forceUpdate then
-        print("Gear info on inspect disabled")
+        DebugPrint("Gear info on inspect disabled")
         return
     end
     if not IsInRaid() and not IsInGroup() and (InspectFrame.unit and UnitGUID(InspectFrame.unit)) ~= unitGUID then
