@@ -42,7 +42,7 @@ AddOn.EnchantTextReplacements = {
     { original = L["Chant of Armored Leech"], replacement = L["Arm Leech"] },
     { original = L["Chant of Armored Speed"], replacement = L["Arm Spd"] },
     { original = L["Scout's March"], replacement = L["Sco March"] },
-    { original = L["Defenders's March"], replacement = L["Def March"] },
+    { original = L["Defender's March"], replacement = L["Def March"] },
     { original = L["Cavalry's March"], replacement = L["Cav March"] },
     { original = L["Stormrider's Agility"], replacement = L["Agi"] },
     { original = L["Council's Intellect"], replacement = L["Int"] },
