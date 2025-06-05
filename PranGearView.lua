@@ -127,7 +127,7 @@ local Options = {
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
+                    disabled = function() return not AddOn.db.profile.showiLvl end
                 },
                 spacer = AddOn.CreateOptionsSpacer(9.04),
                 iLvlOnItem = {
@@ -1404,12 +1404,7 @@ function AddOn:UpdateEquippedGearInfo()
                 slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
             end
             local iFont, iSize = slot.PGVItemLevel:GetFont()
-            if self.db.profile.iLvlOnItem then
-                -- Outline text when placed on the gear icon ignoring any selected outline option
-                slot.PGVItemLevel:SetFont(iFont, iSize, "THICKOUTLINE")
-            else
-                slot.PGVItemLevel:SetFont(iFont, iSize, self.db.profile.iLvlOutline)
-            end
+            slot.PGVItemLevel:SetFont(iFont, iSize, self.db.profile.iLvlOutline)
             slot.PGVItemLevel:Hide()
             local iLvlTextScale = 1
             if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
