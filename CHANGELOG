@@ -1,3 +1,11 @@
+**1.4.5**
+- Allow item level to not have an outline when shown on top of the equipment icon
+- Fix a bug that showed Tinker sockets as Prismatic sockets
+- Add an option to show character equipped item level with up to 3 decimal places
+- Improved the character stats options so that stats are reordered immediately once an option is modified
+- Minor code cleanup
+- Update code documentation
+
 **1.4.4**
 - Fix some typos that were identified since the last release
 

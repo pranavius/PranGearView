@@ -100,6 +100,13 @@ function AddOn:GetGemsBySlot(slot, isInspect)
                     elseif ttdata.gemIcon then
                         DebugPrint("Found Gem Icon:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, self.GetTextureString(ttdata.gemIcon))
                         gemText = self.GetTextureString(ttdata.gemIcon)..gemText
+                    -- Two conditions below check for tinker sockets
+                    elseif ttdata.socketType and IsLeftSide then
+                        DebugPrint("Empty tinker socket for in slot on left side:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType))
+                        gemText = gemText..self.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType)
+                    elseif ttdata.socketType then
+                        DebugPrint("Empty tinker socket found in slot:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType))
+                        gemText = self.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType)..gemText
                     -- The two conditions below indicate that there is an empty socket on the item
                     elseif IsLeftSide then
                         DebugPrint("Empty socket found in slot on left side:", ColorText(slot:GetID(), "Heirloom"), self.GetTextureString(458977))
