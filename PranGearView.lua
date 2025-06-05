@@ -1089,6 +1089,18 @@ local Options = {
                     name = L["Show Embellishments"],
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
+                    order = 16.01,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end
+                },
+                showCharacteriLvlDecimal = {
+                    type = "toggle",
+                    name = L["Show Decimals for Equipped Item Level"],
+                    width = "full",
+                    desc = L["Show your character's average equipped item level with decimal places"],
                     order = 16.02,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -1096,12 +1108,28 @@ local Options = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end
                 },
+                decimalPlacesForCharacteriLvl = {
+                    type = "range",
+                    name = L["Decimal Precision"],
+                    desc = L["Number of decimal places to show for character's equipped item level"],
+                    order = 16.03,
+                    min = 1,
+                    max = 3,
+                    step = 1,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
+                },
+                spacer = AddOn.CreateOptionsSpacer(16.04),
                 hideShirtTabardInfo = {
                     type = "toggle",
                     name = L["Hide Shirt & Tabard Info"],
                     width = "full",
                     desc = L["Hide information for equipped shirt & tabard"],
-                    order = 16.03,
+                    order = 16.05,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1113,7 +1141,7 @@ local Options = {
                     type = "toggle",
                     name = L["Debug Mode"],
                     desc = L["Display debugging messages in the default chat window"].."\n\n"..ColorText(L["You should never need to enable this"], "DeathKnight"),
-                    order = 16.04,
+                    order = 16.06,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
                 },
@@ -1164,6 +1192,8 @@ local Defaults = {
         customSpecStatOrders = {},
         iLvlOnItem = false,
         showEmbellishments = true,
+        showCharacteriLvlDecimal = false,
+        decimalPlacesForCharacteriLvl = 2,
         hideShirtTabardInfo = false,
         collapseEnchants = false,
     }
@@ -1329,8 +1359,9 @@ function AddOn:OnInitialize()
 
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
-        -- TODO: Implement showing item level with 0-2 decimal places based on AddOn Option
-        -- CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%.2f", GetAverageItemLevel())
+        if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
+            CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
+        end
     end)
 
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
@@ -1466,4 +1497,6 @@ function AddOn:UpdateEquippedGearInfo()
             if slot.PGVEnchant then slot.PGVEnchant:Hide() end
         end
     end
+    -- Manually force a stats update to update item level decimal places and stat ordering if needed
+    PaperDollFrame_UpdateStats()
 end
