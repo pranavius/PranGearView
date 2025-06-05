@@ -891,6 +891,13 @@ unknown
 
  Load database
 
+## inspectedUnitGUID
+
+
+```lua
+string
+```
+
 ## ptbrEnchantTextReplacements
 
 
