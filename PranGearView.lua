@@ -1158,7 +1158,6 @@ local Defaults = {
         showGems = true,
         showEnchants = true,
         showDurability = false,
-        inspectedUnitGUID = nil,
         debug = false,
         iLvlScale = 1,
         iLvlOutline = "",
@@ -1341,7 +1340,7 @@ function AddOn:OnInitialize()
     self:RegisterEvent("INSPECT_READY", function(_, unitGUID)
         if InspectFrame and InspectFrame.unit then
             InspectFrame:HookScript("OnHide", function()
-                AddOn.db.profile.inspectedUnitGUID = nil
+                AddOn.inspectedUnitGUID = nil
                 ClearInspectPlayer()
                 DebugPrint("InspectFrame hidden, DB value and InspectPlayer cleared")
             end)
@@ -1386,7 +1385,7 @@ function AddOn:HandleEquipmentOrSettingsChange()
     end
     if InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
         DebugPrint("Changed AddOn setting for inspect window, updating inspect gear information")
-        self:UpdateInspectedGearInfo(self.db.profile.inspectedUnitGUID, true)
+        self:UpdateInspectedGearInfo(self.inspectedUnitGUID, true)
     end
 end
 

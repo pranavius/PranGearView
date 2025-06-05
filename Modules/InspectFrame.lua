@@ -26,10 +26,10 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     end
     
     -- Retained as more of a failsafe in case db variable is not set to nil when the inspect window is closed
-    if self.db.profile.inspectedUnitGUID ~= unitGUID then
-        self.db.profile.inspectedUnitGUID = unitGUID
+    if self.inspectedUnitGUID ~= unitGUID then
+        self.inspectedUnitGUID = unitGUID
     end
-    DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.db.profile.inspectedUnitGUID)), "Uncommon"), ColorText(self.db.profile.inspectedUnitGUID, "Heirloom"))
+    DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
 
     local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
     local showInspectUpgradeTrack = self.db.profile.showInspectUpgradeTrack
@@ -139,7 +139,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         end
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
-        local token = UnitTokenFromGUID(self.db.profile.inspectedUnitGUID)
+        local token = UnitTokenFromGUID(self.inspectedUnitGUID)
         ---@cast token string
         DebugPrint("Inspected unit token for average item level:", ColorText(token, "Heirloom"))
         local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
