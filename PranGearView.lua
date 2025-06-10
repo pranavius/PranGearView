@@ -1307,6 +1307,7 @@ function AddOn:OnInitialize()
     local registry = LibStub("AceConfigRegistry-3.0")
 
     config:RegisterOptionsTable(addonName, SlashOptions, SlashCmds)
+    self:RegisterChatCommand("pgv", "HandleBaseSlashCmd")
     LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(Options, addonName)
     registry:RegisterOptionsTable("PGVOptions", Options)
 	registry:RegisterOptionsTable("PGVProfiles", profiles)
@@ -1375,6 +1376,17 @@ function AddOn:OnInitialize()
         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
     end)
+end
+
+function AddOn:HandleBaseSlashCmd(input)
+    input = strtrim(input)
+    if input == "" then
+        Settings.OpenToCategory(addonName)
+    elseif input == "help" then
+        LibStub("AceConfigCmd-3.0"):HandleCommand("pgv", addonName, "")
+    else
+        LibStub("AceConfigCmd-3.0"):HandleCommand("pgv", addonName, input)
+    end
 end
 
 ---Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
