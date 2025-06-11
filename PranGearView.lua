@@ -7,7 +7,7 @@ local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
 
-local Options = {
+local OptionsTable = {
     type = "group",
     name = addonName,
     args = {
@@ -1151,7 +1151,7 @@ local Options = {
     }
 }
 
-local Defaults = {
+local DBDefaults = {
     profile = {
         showiLvl = true,
         showUpgradeTrack = true,
@@ -1198,22 +1198,18 @@ local Defaults = {
     }
 }
 
+local incrementSlashOptionOrder = CreateCounter();
 local SlashOptions = {
 	type = "group",
 	handler = AddOn,
 	get = function(item) return AddOn.db.profile[item[#item]] end,
 	set = function(item, value) AddOn.db.profile[item[#item]] = value end,
 	args = {
-		config = {
-			type = "execute",
-			name = "config",
-			desc = L["Open the AddOn options window"],
-			func = function() Settings.OpenToCategory(addonName) end,
-		},
         ilvl = {
             type = "toggle",
             name = "ilvl",
             desc = L["Toggle showing item level"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showiLvl end,
 	        set = function()
                 AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
@@ -1225,6 +1221,7 @@ local SlashOptions = {
             type = "toggle",
             name = "track",
             desc = L["Toggle showing upgrade track"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showUpgradeTrack end,
 	        set = function()
                 AddOn.db.profile.showUpgradeTrack = not AddOn.db.profile.showUpgradeTrack
@@ -1236,6 +1233,7 @@ local SlashOptions = {
             type = "toggle",
             name = "gems",
             desc = L["Toggle showing gem info"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showGems end,
 	        set = function()
                 AddOn.db.profile.showGems = not AddOn.db.profile.showGems
@@ -1247,6 +1245,7 @@ local SlashOptions = {
             type = "toggle",
             name = "ench",
             desc = L["Toggle showing enchant info"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showEnchants end,
 	        set = function()
                 AddOn.db.profile.showEnchants = not AddOn.db.profile.showEnchants
@@ -1263,6 +1262,7 @@ local SlashOptions = {
             type = "toggle",
             name = "dur",
             desc = L["Toggle showing durability percentages"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showDurability end,
             set = function()
                 AddOn.db.profile.showDurability = not AddOn.db.profile.showDurability
@@ -1274,6 +1274,7 @@ local SlashOptions = {
             type = "toggle",
             name = "etext",
             desc = L["Toggle showing enchant text in the Character Info window"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.collapseEnchants end,
             set = function()
                 AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
@@ -1285,6 +1286,7 @@ local SlashOptions = {
             type = "toggle",
             name = "inspect",
             desc = L["Toggle showing gear info when inspecting another player"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showOnInspect end,
             set = function()
                 AddOn.db.profile.showOnInspect = not AddOn.db.profile.showOnInspect
@@ -1299,17 +1301,19 @@ local SlashCmds = { "prangearview", "pgv" }
 
 function AddOn:OnInitialize()
     -- Load database
-	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", Defaults, true)
+	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", DBDefaults, true)
 
     -- Setup config options
     local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
     local config = LibStub("AceConfig-3.0")
     local registry = LibStub("AceConfigRegistry-3.0")
 
+    -- Register Ace3 slash commands and override the default behavior so /pgv and /prangearview open the settings window
     config:RegisterOptionsTable(addonName, SlashOptions, SlashCmds)
-    self:RegisterChatCommand("pgv", "HandleBaseSlashCmd")
-    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(Options, addonName)
-    registry:RegisterOptionsTable("PGVOptions", Options)
+    self:RegisterChatCommand("pgv", function(input) self.HandlePGVSlashCmd("pgv", input) end)
+    self:RegisterChatCommand("prangearview", function(input) self.HandlePGVSlashCmd("prangearview", input) end)
+    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(OptionsTable, addonName)
+    registry:RegisterOptionsTable("PGVOptions", OptionsTable)
 	registry:RegisterOptionsTable("PGVProfiles", profiles)
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
@@ -1378,14 +1382,16 @@ function AddOn:OnInitialize()
     end)
 end
 
-function AddOn:HandleBaseSlashCmd(input)
+function AddOn.HandlePGVSlashCmd(cmd, input)
     input = strtrim(input)
     if input == "" then
         Settings.OpenToCategory(addonName)
     elseif input == "help" then
-        LibStub("AceConfigCmd-3.0"):HandleCommand("pgv", addonName, "")
+        LibStub("AceConfigCmd-3.0"):HandleCommand(cmd, addonName, "")
+        -- Mimic the Ace3 command description format to indicate that no argument opens the addon options
+        print("  |cffffff78(no argument)|r - "..L["Open the AddOn options window"])
     else
-        LibStub("AceConfigCmd-3.0"):HandleCommand("pgv", addonName, input)
+        LibStub("AceConfigCmd-3.0"):HandleCommand(cmd, addonName, input)
     end
 end
 
