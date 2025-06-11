@@ -2,6 +2,8 @@ local addonName, AddOn = ...
 ---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
+local LDB = LibStub("LibDataBroker-1.1")
+local LDBIcon  = LibStub("LibDBIcon-1.0")
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
@@ -1084,12 +1086,28 @@ local OptionsTable = {
             name = L["Other Options"],
             order = 16,
             args = {
+                showMinimap = {
+                    type = "toggle",
+                    name = L["Show Minimap Icon"],
+                    width = "full",
+                    desc = L["Show an icon on the minimap to open the AddOn settings"],
+                    order = 16.01,
+                    get = function() return not AddOn.db.profile.minimap.hide end,
+                    set = function(_, val)
+                        AddOn.db.profile.minimap.hide = not val
+                        if val then
+                            LDBIcon:Show(addonName)
+                        else
+                            LDBIcon:Hide(addonName)
+                        end
+                    end
+                },
                 showEmbellishments = {
                     type = "toggle",
                     name = L["Show Embellishments"],
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
-                    order = 16.01,
+                    order = 16.02,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1101,7 +1119,7 @@ local OptionsTable = {
                     name = L["Show Decimals for Equipped Item Level"],
                     width = "full",
                     desc = L["Show your character's average equipped item level with decimal places"],
-                    order = 16.02,
+                    order = 16.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1112,7 +1130,7 @@ local OptionsTable = {
                     type = "range",
                     name = L["Decimal Precision"],
                     desc = L["Number of decimal places to show for character's equipped item level"],
-                    order = 16.03,
+                    order = 16.04,
                     min = 1,
                     max = 3,
                     step = 1,
@@ -1123,13 +1141,13 @@ local OptionsTable = {
                     end,
                     disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
                 },
-                spacer = AddOn.CreateOptionsSpacer(16.04),
+                spacer = AddOn.CreateOptionsSpacer(16.05),
                 hideShirtTabardInfo = {
                     type = "toggle",
                     name = L["Hide Shirt & Tabard Info"],
                     width = "full",
                     desc = L["Hide information for equipped shirt & tabard"],
-                    order = 16.05,
+                    order = 16.06,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1141,7 +1159,7 @@ local OptionsTable = {
                     type = "toggle",
                     name = L["Debug Mode"],
                     desc = L["Display debugging messages in the default chat window"].."\n\n"..ColorText(L["You should never need to enable this"], "DeathKnight"),
-                    order = 16.06,
+                    order = 16.07,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
                 },
@@ -1195,6 +1213,7 @@ local DBDefaults = {
         decimalPlacesForCharacteriLvl = 2,
         hideShirtTabardInfo = false,
         collapseEnchants = false,
+        minimap = { hide = true }
     }
 }
 
@@ -1293,6 +1312,22 @@ local SlashOptions = {
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
+        },
+        minimap = {
+            type = "toggle",
+            name = "minimap",
+            desc = L["Show/hide the minimap icon"],
+            order = incrementSlashOptionOrder(),
+            get = function() return not AddOn.db.profile.minimap.hide end,
+            set = function()
+                AddOn.db.profile.minimap.hide = not AddOn.db.profile.minimap.hide
+                if AddOn.db.profile.minimap.hide then
+                    LDBIcon:Hide(addonName)
+                else
+                    LDBIcon:Show(addonName)
+                end
+                LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+            end
         }
 	},
 }
@@ -1302,6 +1337,22 @@ local SlashCmds = { "prangearview", "pgv" }
 function AddOn:OnInitialize()
     -- Load database
 	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", DBDefaults, true)
+
+    -- Data broker registration for minimap icon
+    local broker = LDB:NewDataObject(addonName, {
+    type = "launcher",
+    text = addonName,
+    icon = "Interface/AddOns/PranGearView/Media/PranGearViewIcon",
+    OnClick = function()
+      -- Open options window
+      Settings.OpenToCategory(addonName)
+    end,
+    OnTooltipShow = function(tt)
+      tt:AddLine(addonName)
+      tt:AddLine(L["Open the AddOn options window"], 1,1,1)
+    end,
+  })
+  LDBIcon:Register(addonName, broker, self.db.profile.minimap)
 
     -- Setup config options
     local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
