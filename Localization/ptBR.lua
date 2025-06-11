@@ -31,6 +31,7 @@ L["Secondary Stats"] = "Atributo secundário"
 L["Tertiary Stats"] = "Atributo terciário"
 L["Tank Stats"] = "Atributo do tanque"
 L["Other Options"] = "Outras opções"
+L["Show Minimap Icon"] = "Mostrar ícone do minimapa"
 L["Alternate Item Level Placement"] = "Alterar local do nível do item"
 L["Show Embellishments"] = "Mostrar embelezamentos"
 L["Show Decimals for Equipped Item Level"] = "Mostrar decimais para o nível do item equipado"
@@ -81,6 +82,7 @@ L["This can help easily identify the average item level when there is a lot of i
 L["Avg"] = "Méd"
 L["Customize secondary & tertiary stat order in the Character Info window by specialization"] = "Customiza a ordem de atributos secundário e terciário na janela de informação do personagem por especialização"
 L["Display item levels on top of equipment icons"] = "Mostre o nível dos itens no topo do icone de equipamento"
+L["Show an icon on the minimap to open the AddOn settings"] = "Mostrar um ícone no minimapa para abrir a janela de opções de AddOn"
 L["Show a green star in the top-left corner of embellished equipment"] = "Mostre uma estrela verde no canto de cima a esquerda do equipamento embelezado"
 L["Show your character's average equipped item level with decimal places"] = "Exibe o nível médio do item equipado do seu personagem com precisão decimal"
 L["Number of decimal places to show for character's equipped item level"] = "Número de casas decimais para mostrar o nível do item equipado do personagem"
@@ -97,6 +99,7 @@ L["Toggle showing enchant info"] = "Alterar a exibição de informação do enca
 L["Toggle showing durability percentages"] = "Alterar a exibição de informação de porcentagens de durabilidade"
 L["Toggle showing enchant text in the Character Info window"] = "Alterar a exibição de texto de encantamento na janela de informação de personagem"
 L["Toggle showing gear info when inspecting another player"] = "Trocar a exibição de informação de equipamento quando inspecionando outro jogador"
+L["Show/hide the minimap icon"] = "Mostrar/Ocultar o ícone do minimapa"
 
 ------------ UI Elements ------------
 L["Show Enchant Text"] = "Mostrar texto de encantamento"

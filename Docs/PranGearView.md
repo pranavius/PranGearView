@@ -573,6 +573,21 @@ Fetches and formats the upgrade track for an item in the defined gear slot (if o
 
 Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
 
+## HandlePGVSlashCmd
+
+
+```lua
+function PranGearView.HandlePGVSlashCmd(cmd: string, input: string)
+```
+
+Handles slash commands in a way that overrides the default behavior of Ace3 slash commands. Executing the command with no arguments
+opens the AddOn options window, providing the `help` argument displays a list of available arguments and uses for the slash command,
+and all other arguments are handled using Ace3's default behavior.
+
+@*param* `cmd` — The slash command used (should be one of `/pgv` or `/prangearview`)
+
+@*param* `input` — The argument provided to the slash command
+
 ## HexColorPresets
 
 

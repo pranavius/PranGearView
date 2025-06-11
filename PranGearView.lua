@@ -2,12 +2,14 @@ local addonName, AddOn = ...
 ---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
+local LDB = LibStub("LibDataBroker-1.1")
+local LDBIcon  = LibStub("LibDBIcon-1.0")
 
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
 
-local Options = {
+local OptionsTable = {
     type = "group",
     name = addonName,
     args = {
@@ -1084,12 +1086,28 @@ local Options = {
             name = L["Other Options"],
             order = 16,
             args = {
+                showMinimap = {
+                    type = "toggle",
+                    name = L["Show Minimap Icon"],
+                    width = "full",
+                    desc = L["Show an icon on the minimap to open the AddOn settings"],
+                    order = 16.01,
+                    get = function() return not AddOn.db.profile.minimap.hide end,
+                    set = function(_, val)
+                        AddOn.db.profile.minimap.hide = not val
+                        if val then
+                            LDBIcon:Show(addonName)
+                        else
+                            LDBIcon:Hide(addonName)
+                        end
+                    end
+                },
                 showEmbellishments = {
                     type = "toggle",
                     name = L["Show Embellishments"],
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
-                    order = 16.01,
+                    order = 16.02,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1101,7 +1119,7 @@ local Options = {
                     name = L["Show Decimals for Equipped Item Level"],
                     width = "full",
                     desc = L["Show your character's average equipped item level with decimal places"],
-                    order = 16.02,
+                    order = 16.03,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1112,7 +1130,7 @@ local Options = {
                     type = "range",
                     name = L["Decimal Precision"],
                     desc = L["Number of decimal places to show for character's equipped item level"],
-                    order = 16.03,
+                    order = 16.04,
                     min = 1,
                     max = 3,
                     step = 1,
@@ -1123,13 +1141,13 @@ local Options = {
                     end,
                     disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
                 },
-                spacer = AddOn.CreateOptionsSpacer(16.04),
+                spacer = AddOn.CreateOptionsSpacer(16.05),
                 hideShirtTabardInfo = {
                     type = "toggle",
                     name = L["Hide Shirt & Tabard Info"],
                     width = "full",
                     desc = L["Hide information for equipped shirt & tabard"],
-                    order = 16.05,
+                    order = 16.06,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
@@ -1141,7 +1159,7 @@ local Options = {
                     type = "toggle",
                     name = L["Debug Mode"],
                     desc = L["Display debugging messages in the default chat window"].."\n\n"..ColorText(L["You should never need to enable this"], "DeathKnight"),
-                    order = 16.06,
+                    order = 16.07,
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val) AddOn.db.profile[item[#item]] = val end
                 },
@@ -1151,7 +1169,7 @@ local Options = {
     }
 }
 
-local Defaults = {
+local DBDefaults = {
     profile = {
         showiLvl = true,
         showUpgradeTrack = true,
@@ -1195,25 +1213,22 @@ local Defaults = {
         decimalPlacesForCharacteriLvl = 2,
         hideShirtTabardInfo = false,
         collapseEnchants = false,
+        minimap = { hide = true }
     }
 }
 
+local incrementSlashOptionOrder = CreateCounter();
 local SlashOptions = {
 	type = "group",
 	handler = AddOn,
 	get = function(item) return AddOn.db.profile[item[#item]] end,
 	set = function(item, value) AddOn.db.profile[item[#item]] = value end,
 	args = {
-		config = {
-			type = "execute",
-			name = "config",
-			desc = L["Open the AddOn options window"],
-			func = function() Settings.OpenToCategory(addonName) end,
-		},
         ilvl = {
             type = "toggle",
             name = "ilvl",
             desc = L["Toggle showing item level"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showiLvl end,
 	        set = function()
                 AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
@@ -1225,6 +1240,7 @@ local SlashOptions = {
             type = "toggle",
             name = "track",
             desc = L["Toggle showing upgrade track"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showUpgradeTrack end,
 	        set = function()
                 AddOn.db.profile.showUpgradeTrack = not AddOn.db.profile.showUpgradeTrack
@@ -1236,6 +1252,7 @@ local SlashOptions = {
             type = "toggle",
             name = "gems",
             desc = L["Toggle showing gem info"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showGems end,
 	        set = function()
                 AddOn.db.profile.showGems = not AddOn.db.profile.showGems
@@ -1247,6 +1264,7 @@ local SlashOptions = {
             type = "toggle",
             name = "ench",
             desc = L["Toggle showing enchant info"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showEnchants end,
 	        set = function()
                 AddOn.db.profile.showEnchants = not AddOn.db.profile.showEnchants
@@ -1263,6 +1281,7 @@ local SlashOptions = {
             type = "toggle",
             name = "dur",
             desc = L["Toggle showing durability percentages"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showDurability end,
             set = function()
                 AddOn.db.profile.showDurability = not AddOn.db.profile.showDurability
@@ -1274,6 +1293,7 @@ local SlashOptions = {
             type = "toggle",
             name = "etext",
             desc = L["Toggle showing enchant text in the Character Info window"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.collapseEnchants end,
             set = function()
                 AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
@@ -1285,11 +1305,28 @@ local SlashOptions = {
             type = "toggle",
             name = "inspect",
             desc = L["Toggle showing gear info when inspecting another player"],
+            order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.showOnInspect end,
             set = function()
                 AddOn.db.profile.showOnInspect = not AddOn.db.profile.showOnInspect
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
+            end
+        },
+        minimap = {
+            type = "toggle",
+            name = "minimap",
+            desc = L["Show/hide the minimap icon"],
+            order = incrementSlashOptionOrder(),
+            get = function() return not AddOn.db.profile.minimap.hide end,
+            set = function()
+                AddOn.db.profile.minimap.hide = not AddOn.db.profile.minimap.hide
+                if AddOn.db.profile.minimap.hide then
+                    LDBIcon:Hide(addonName)
+                else
+                    LDBIcon:Show(addonName)
+                end
+                LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
             end
         }
 	},
@@ -1299,16 +1336,35 @@ local SlashCmds = { "prangearview", "pgv" }
 
 function AddOn:OnInitialize()
     -- Load database
-	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", Defaults, true)
+	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", DBDefaults, true)
+
+    -- Data broker registration for minimap icon
+    local broker = LDB:NewDataObject(addonName, {
+    type = "launcher",
+    text = addonName,
+    icon = "Interface/AddOns/PranGearView/Media/PranGearViewIcon",
+    OnClick = function()
+      -- Open options window
+      Settings.OpenToCategory(addonName)
+    end,
+    OnTooltipShow = function(tt)
+      tt:AddLine(addonName)
+      tt:AddLine(L["Open the AddOn options window"], 1,1,1)
+    end,
+  })
+  LDBIcon:Register(addonName, broker, self.db.profile.minimap)
 
     -- Setup config options
     local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
     local config = LibStub("AceConfig-3.0")
     local registry = LibStub("AceConfigRegistry-3.0")
 
+    -- Register Ace3 slash commands and override the default behavior so /pgv and /prangearview open the settings window
     config:RegisterOptionsTable(addonName, SlashOptions, SlashCmds)
-    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(Options, addonName)
-    registry:RegisterOptionsTable("PGVOptions", Options)
+    self:RegisterChatCommand("pgv", function(input) self.HandlePGVSlashCmd("pgv", input) end)
+    self:RegisterChatCommand("prangearview", function(input) self.HandlePGVSlashCmd("prangearview", input) end)
+    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(OptionsTable, addonName)
+    registry:RegisterOptionsTable("PGVOptions", OptionsTable)
 	registry:RegisterOptionsTable("PGVProfiles", profiles)
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
@@ -1375,6 +1431,24 @@ function AddOn:OnInitialize()
         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
     end)
+end
+
+---Handles slash commands in a way that overrides the default behavior of Ace3 slash commands. Executing the command with no arguments
+---opens the AddOn options window, providing the `help` argument displays a list of available arguments and uses for the slash command,
+---and all other arguments are handled using Ace3's default behavior.
+---@param cmd string The slash command used (should be one of `/pgv` or `/prangearview`)
+---@param input string The argument provided to the slash command
+function AddOn.HandlePGVSlashCmd(cmd, input)
+    input = strtrim(input)
+    if input == "" then
+        Settings.OpenToCategory(addonName)
+    elseif input == "help" then
+        LibStub("AceConfigCmd-3.0"):HandleCommand(cmd, addonName, "")
+        -- Mimic the Ace3 command description format to indicate that no argument opens the addon options
+        print("  |cffffff78(no argument)|r - "..L["Open the AddOn options window"])
+    else
+        LibStub("AceConfigCmd-3.0"):HandleCommand(cmd, addonName, input)
+    end
 end
 
 ---Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
