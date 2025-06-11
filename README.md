@@ -9,6 +9,7 @@
 - Shows abbreviated names for item enchants to reduce visual clutter
 - Allows quick showing/hiding of enchant text if you are only concerned with the quality of the enchant (Dragonflight enchants and onward)
 - Indicates when equipped items have embellishments
+- DataBroker integration for quick access to options via minimap icon or other DataBroker AddOns
 
 ## Summary
 **PranGearView** allows you to display customized information about your character in the Character Info window. If you want to know what item level each equipped item is, whether any sockets, gems, or enchants are missing, or what each equipped item's durability is, then this AddOn will serve you well. It is designed to be used on top of Blizzard's default Character Info window with the goal of not needing to install entire UI packs to have this information available.
@@ -21,7 +22,7 @@ As mentioned earlier, this AddOn was developed to work on Blizzard's default Cha
 - Russian (RU)
 
 ## Usage
-You can use the options window to modify all available options. To open the options window from the Chat window, type the slash command `/pgv config`.
+You can use the options window to modify all available options. To open the options window from the Chat window, type the slash command `/pgv`.
 
 ### Options Window
 - **Item Level**: Display item levels for equipped items
@@ -38,12 +39,13 @@ You can use the options window to modify all available options. To open the opti
 - **Durability**: Change text size
 - **Inspect Window**: Choose which information (if any) to display when inspecting other players
 - **Character Stats**: Set stat order based on class and specialization
-- **Other Options**: Place item levels on equipment, show embellishments, hide shirt & tabard info, show debugging messages (you should never need to enable this)
+- **Other Options**: Show minimap icon, Place item levels on equipment, show embellishments, hide shirt & tabard info, show debugging messages (you should never need to enable this)
 
 ### Slash Commands
 All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Examples listed here use `/pgv` for brevity.
 
-- `/pgv config`: Opens the Options window
+- `/pgv`: Opens the Options window
+- `/pgv help`: List all available slash commands for the AddOn
 - `/pgv ilvl`: Toggle showing item level
   - This is the same as clicking the **Item Level** checkbox in the Options window
 - `/pgv track`: Toggle showing upgrade track
@@ -58,6 +60,8 @@ All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Ex
   - This is the same as clicking the **Show Enchant Text** or **Hide Enchant Text** button in the Character Info window
 - `/pgv inspect`: Toggle showing gear info when inspecting another player
   - This is the same as clicking the **Show Gear Info on Inspect** checkbox under the **Inspect Window** section of the Options window
+- `/pgv minimap`: Show/hide the minimap icon
+  - This is the same as clicking the **Show Minimap Icon** checkbox under the **Other Options** section of the Options window
 
 ## Planned Updates
 The goal of this AddOn is to provide maximum customization capabilities on the default Blizzard UI. There is much more work to be done to help achieve this, including some of the items listed below. Suggestions and feedback on customization features are always welcome.

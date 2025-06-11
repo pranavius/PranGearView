@@ -1433,6 +1433,11 @@ function AddOn:OnInitialize()
     end)
 end
 
+---Handles slash commands in a way that overrides the default behavior of Ace3 slash commands. Executing the command with no arguments
+---opens the AddOn options window, providing the `help` argument displays a list of available arguments and uses for the slash command,
+---and all other arguments are handled using Ace3's default behavior.
+---@param cmd string The slash command used (should be one of `/pgv` or `/prangearview`)
+---@param input string The argument provided to the slash command
 function AddOn.HandlePGVSlashCmd(cmd, input)
     input = strtrim(input)
     if input == "" then
