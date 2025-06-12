@@ -1412,6 +1412,24 @@ function AddOn:OnInitialize()
         end
     end)
 
+    hooksecurefunc(CharacterFrame, "RefreshDisplay", function()
+        if PaperDollFrame:IsVisible() then
+            -- Overwrite global value
+            CharacterFrame:SetWidth(600)
+            CharacterFrameInset:SetPoint("BOTTOMRIGHT", CharacterFrame, "BOTTOMLEFT", 400, 4)
+            CharacterModelScene:SetPoint("BOTTOMRIGHT", CharacterFrameInset, "BOTTOMLEFT", 350, 35)
+            CharacterMainHandSlot:SetPoint("BOTTOMLEFT", PaperDollItemsFrame, "BOTTOMLEFT", 175, 16)
+            CharacterModelFrameBackgroundTopLeft:SetWidth(281)
+            CharacterModelFrameBackgroundBotLeft:SetWidth(281)
+            CharacterModelScene:SetResetCallback(function(self)
+                if self:GetPlayerActor() then
+                    self:GetPlayerActor():SetScale(0.9)
+                end
+            end)
+            CharacterModelScene:Reset()
+        end
+    end)
+
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
         if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
