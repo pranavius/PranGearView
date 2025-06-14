@@ -1419,20 +1419,24 @@ function AddOn:OnInitialize()
     end)
     DebugPrint(ColorText(addonName, "Heirloom"), "initialized successfully")
 
-    hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
-        if subFrame == "PaperDollFrame" then
-            self:UpdateEquippedGearInfo()
-        end
-    end)
-
-    hooksecurefunc(CharacterFrame, "RefreshDisplay", function()
-        self:AdjustCharacterInfoWindowSize()
-    end)
-
+    -- Hook into necessary secure functions
+    hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame) if subFrame == "PaperDollFrame" then self:UpdateEquippedGearInfo() end end)
+    hooksecurefunc(CharacterFrame, "RefreshDisplay", function() self:AdjustCharacterInfoWindowSize() end)
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
         if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
             CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
+        end
+    end)
+    hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
+        if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
+            local actor = cms:GetPlayerActor()
+            if actor then actor:SetRequestedScale(0.8) end
+            actor:UpdateScale()
+            DebugPrint("Updated requested scale to", actor:GetRequestedScale())
+            local posX, posY, posZ = actor:GetPosition()
+            -- Apply a offeset to the vertical positioning so that more of the model is visible (feet are not covered)
+            actor:SetPosition(posX, posY, posZ + 0.25)
         end
     end)
 
@@ -1469,6 +1473,7 @@ function AddOn.HandlePGVSlashCmd(cmd, input)
 end
 
 function AddOn:AdjustCharacterInfoWindowSize()
+    DebugPrint("AdjustCharacterInfoWindowSize - Refreshing display")
     if PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
         DebugPrint("Larger character info window enabled")
         -- Overwrite defined character frame width and adjust positioning of frames within CharacterFrame
@@ -1479,12 +1484,16 @@ function AddOn:AdjustCharacterInfoWindowSize()
         CharacterModelFrameBackgroundTopLeft:SetWidth(331)
         CharacterModelFrameBackgroundBotLeft:SetWidth(331)
         -- Scale down the character model size by a tiny bit so that the entire model is still clearly visible
-        CharacterModelScene:SetResetCallback(function(self)
-            if self:GetPlayerActor() then self:GetPlayerActor():SetScale(0.9) end
-        end)
-        -- Call :Reset() immediately so the new scaling can take effect
-        CharacterModelScene:Reset()
+        if not CharacterModelScene.resetCallback then
+            CharacterModelScene:SetResetCallback(function(cms)
+                DebugPrint("I'm a little callback")
+                if cms:GetPlayerActor() then cms:GetPlayerActor():SetRequestedScale(0.8) end
+            end)
+            DebugPrint("CharacterModelScene reset callback added")
+        end
+        DebugPrint("AdjustWindow - Character Scale:", CharacterModelScene:GetPlayerActor() and CharacterModelScene:GetPlayerActor():GetRequestedScale())
     elseif PaperDollFrame:IsVisible() then
+        DebugPrint("Larger character info window disabled. Resetting any adjusted values.")
         -- Undo all changes made for displaying the larger window
         -- Sources: /fstack in-game and https://www.townlong-yak.com/framexml/live/Blizzard_UIPanels_Game/PaperDollFrame.xml
         local charFrameInsetBotRightXOffset = select(4, CharacterFrameInset:GetPointByName("BOTTOMRIGHT"))
@@ -1498,8 +1507,13 @@ function AddOn:AdjustCharacterInfoWindowSize()
         if CharacterModelFrameBackgroundBotLeft:GetWidth() ~= 212 then CharacterModelFrameBackgroundBotLeft:SetWidth(212) end
         if CharacterModelScene.resetCallback then
             CharacterModelScene:SetResetCallback(nil)
-            -- Calling :Reset() to adjust the sizing back to default
-            CharacterModelScene:Reset()
+            DebugPrint("CharacterModelScene reset callabck removed")
+        end
+        if CharacterModelScene:GetPlayerActor() then
+            local actor = CharacterModelScene:GetPlayerActor()
+            if actor:GetRequestedScale() then actor.requestedScale = nil end
+            actor:UpdateScale()
+            if select(3, actor:GetPosition()) > 1.25 then actor:SetPosition(0, 0, select(3, actor:GetPosition()) - 0.25) end
         end
     end
 end
