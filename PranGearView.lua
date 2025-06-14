@@ -1326,6 +1326,18 @@ local SlashOptions = {
                 AddOn:HandleEquipmentOrSettingsChange()
             end
         },
+        expand = {
+            type = "toggle",
+            name = "expand",
+            desc = "Toggle using the larger Character Info window",
+            order = incrementSlashOptionOrder(),
+            get = function() return AddOn.db.profile.increaseCharacterInfoSize end,
+            set = function()
+                AddOn.db.profile.increaseCharacterInfoSize = not AddOn.db.profile.increaseCharacterInfoSize
+                LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                AddOn:AdjustCharacterInfoWindowSize()
+            end
+        },
         minimap = {
             type = "toggle",
             name = "minimap",
@@ -1507,7 +1519,7 @@ function AddOn:AdjustCharacterInfoWindowSize()
         if CharacterModelFrameBackgroundBotLeft:GetWidth() ~= 212 then CharacterModelFrameBackgroundBotLeft:SetWidth(212) end
         if CharacterModelScene.resetCallback then
             CharacterModelScene:SetResetCallback(nil)
-            DebugPrint("CharacterModelScene reset callabck removed")
+            DebugPrint("CharacterModelScene reset callback removed")
         end
         if CharacterModelScene:GetPlayerActor() then
             local actor = CharacterModelScene:GetPlayerActor()
