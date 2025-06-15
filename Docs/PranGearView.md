@@ -213,6 +213,15 @@ Abbreviates `text` using the provided `replacementTable`
 
 @*return* `abbreviation` — The abbreviated version of `text` as per the entries in `replacementTable`
 
+## AdjustCharacterInfoWindowSize
+
+
+```lua
+(method) PranGearView:AdjustCharacterInfoWindowSize()
+```
+
+Handles changing the Character Info window size when the option to use the larger character window is checked
+
 ## BuildCreditsGroup
 
 

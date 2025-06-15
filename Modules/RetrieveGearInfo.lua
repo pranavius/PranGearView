@@ -66,11 +66,26 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
 
         if upgradeTrackText ~= "" then
             if upgradeColor:lower() ~= self.HexColorPresets.PrevSeasonGear:lower() then
-                if self.db.profile.useCustomColorForUpgradeTrack then
+                if self.db.profile.useQualityScaleColorsForUpgradeTrack then
+                    -- Do something
+                    if upgradeTrackText:match("E") or upgradeTrackText:match("A") then
+                        upgradeColor = self.HexColorPresets.Priest
+                    elseif upgradeTrackText:match("V") then
+                        upgradeColor = self.HexColorPresets.Uncommon
+                    elseif upgradeTrackText:match("C") then
+                        upgradeColor = self.HexColorPresets.Rare
+                    elseif upgradeTrackText:match("H") then
+                        upgradeColor = self.HexColorPresets.Epic
+                    elseif upgradeTrackText:match("M") then
+                        upgradeColor = self.HexColorPresets.Legendary
+                    else
+                        -- If a match isn't found, fallback to the item quality color
+                        upgradeColor = select(4, C_Item.GetItemQualityColor(item:GetItemQuality())):sub(3)
+                    end
+                elseif self.db.profile.useCustomColorForUpgradeTrack then
                     upgradeColor = self.db.profile.upgradeTrackCustomColor
                 else
-                    upgradeColor = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
-                    upgradeColor = upgradeColor:sub(3)
+                    upgradeColor = select(4, C_Item.GetItemQualityColor(item:GetItemQuality())):sub(3)
                 end
             end
             slot.PGVUpgradeTrack:SetFormattedText(ColorText(upgradeTrackText, upgradeColor))
@@ -206,8 +221,14 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
         if not isEnchanted and self:IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
             local isCharacterMaxLevel = UnitLevel("player") == self.CurrentExpac.LevelCap
             if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
-                -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
-                slot.PGVEnchant:SetFormattedText(self.db.profile.collapseEnchants and self.GetTextureString(523826) or self.GetTextureString(523826)..ColorText(L["Enchant"], "Druid"))
+                local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
+                if self.db.profile.collapseEnchants and not isInspect then
+                    -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
+                    slot.PGVEnchant:SetFormattedText(self.GetTextureString(523826))
+                -- For left side and main hand slots, show the icon to the right of the text. For all other slots, show the icon to the left (better mirroring look and feel)
+                elseif IsLeftSide or (IsLeftSide == nil and slot:GetID() == 16) then slot.PGVEnchant:SetFormattedText(ColorText(L["Enchant"], "Druid")..self.GetTextureString(523826))
+                else slot.PGVEnchant:SetFormattedText(self.GetTextureString(523826)..ColorText(L["Enchant"], "Druid"))
+                end
                 slot.PGVEnchant:Show()
             end
         end
