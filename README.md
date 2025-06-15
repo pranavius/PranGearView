@@ -9,6 +9,7 @@
 - Shows abbreviated names for item enchants to reduce visual clutter
 - Allows quick showing/hiding of enchant text if you are only concerned with the quality of the enchant (Dragonflight enchants and onward)
 - Indicates when equipped items have embellishments
+- Option to expand Character Info window so that gear information is more easily readable
 - DataBroker integration for quick access to options via minimap icon or other DataBroker AddOns
 
 ## Summary
@@ -19,7 +20,7 @@ As mentioned earlier, this AddOn was developed to work on Blizzard's default Cha
 ### Current Locales/Languages Supported:
 - English (US and GB)
 - Portuguese (BR)
-- Russian (RU)
+- Russian (RU) [*partial*]
 
 ## Usage
 You can use the options window to modify all available options. To open the options window from the Chat window, type the slash command `/pgv`.
@@ -39,7 +40,7 @@ You can use the options window to modify all available options. To open the opti
 - **Durability**: Change text size
 - **Inspect Window**: Choose which information (if any) to display when inspecting other players
 - **Character Stats**: Set stat order based on class and specialization
-- **Other Options**: Show minimap icon, Place item levels on equipment, show embellishments, hide shirt & tabard info, show debugging messages (you should never need to enable this)
+- **Other Options**: Show minimap icon, Increase the size of the Character Info window, place item levels on equipment, show embellishments, hide shirt & tabard info, show debugging messages (you should never need to enable this)
 
 ### Slash Commands
 All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Examples listed here use `/pgv` for brevity.
@@ -60,6 +61,8 @@ All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Ex
   - This is the same as clicking the **Show Enchant Text** or **Hide Enchant Text** button in the Character Info window
 - `/pgv inspect`: Toggle showing gear info when inspecting another player
   - This is the same as clicking the **Show Gear Info on Inspect** checkbox under the **Inspect Window** section of the Options window
+- `/pgv expand`: Toggle using a larger Character Info window to view gear info
+  - This is the same as clicking the **Larger Character Info Window** checkbox under the **Other Options** section of the Options window
 - `/pgv minimap`: Show/hide the minimap icon
   - This is the same as clicking the **Show Minimap Icon** checkbox under the **Other Options** section of the Options window
 
@@ -67,7 +70,6 @@ All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Ex
 The goal of this AddOn is to provide maximum customization capabilities on the default Blizzard UI. There is much more work to be done to help achieve this, including some of the items listed below. Suggestions and feedback on customization features are always welcome.
 
 - Increased language support (*Looking for translators!*)
-- Adjustable Character Info window sizes
 - Customizable borders for gear icons and backgrounds for the character model
 - Per-spec gear "wishlist" to track items you want to obtain
 - Displaying additional useful stats (such as GCD) in Character Stats pane

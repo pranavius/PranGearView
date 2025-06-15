@@ -8,8 +8,8 @@ local buttonDim = CharacterFrame.TitleContainer:GetHeight() - 1
 button:SetSize(buttonDim, buttonDim)
 button:SetFrameStrata("TOOLTIP")
 button:SetPoint("RIGHT", CharacterFrame.TitleContainer, "RIGHT")
-button:SetNormalTexture("Interface/Icons/Inv_Enchant_FormulaEpic_01") --237018
-button:SetPushedTexture("Interface/Icons/Inv_Enchant_FormulaEpic_01")
+button:SetNormalTexture("Interface\\Icons\\Inv_Enchant_FormulaEpic_01") --237018
+button:SetPushedTexture("Interface\\Icons\\Inv_Enchant_FormulaEpic_01")
 button:SetHighlightTexture("Interface\\BUTTONS\\UI-Common-MouseHilight", "ADD")
 
 button.tooltipText = L["Hide Enchant Text"]
@@ -29,9 +29,9 @@ button:UpdateTooltip()
 
 AddOn.PGVToggleEnchantButton = button
 
----Updates the text shown on the enchant text toggling button in the Character Info window
----@param text string The text that should appear on the button
-function AddOn.PGVToggleEnchantButton:UpdateText(text)
+---Updates the text shown for the tooltip when hovering over the enchant text toggling button in the Character Info window
+---@param text string The text that should appear in the button's tooltip
+function AddOn.PGVToggleEnchantButton:UpdateTooltipText(text)
     self.tooltipText = text
     self:UpdateTooltip()
 end

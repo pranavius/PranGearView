@@ -336,15 +336,15 @@ local OptionsTable = {
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 upgradeTrackColorDesc = {
                     type = "description",
-                    name = ColorText("By default, upgrade tracks are shown in the color that matches the quality of the equipment. Upgrade tracks for previous season equipment always appear in grey", "Info"),
+                    name = ColorText(L["By default, upgrade tracks are shown in the color that matches the quality of the equipment. Upgrade tracks for previous season equipment always appear in gray"], "Info"),
                     order = orderCounter()
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 useQualityScaleColorsForUpgradeTrack = {
                     type = "toggle",
-                    name = "Use Quality Color Scale",
+                    name = L["Use Quality Color Scale"],
                     width = "full",
-                    desc = "Use the item quality color scale when showing upgrade tracks:\n\n"..ColorText("Explorer", "Common").."\n"..ColorText("Adventurer", "Common").."\n"..ColorText("Veteran", "Uncommon").."\n"..ColorText("Champion", "Rare").."\n"..ColorText("Hero", "Epic").."\n"..ColorText("Myth", "Legendary"),
+                    desc = L["Use the item quality color scale when showing upgrade tracks"].."\n\n"..ColorText(strtrim(L["Explorer "]), "Common").."\n"..ColorText(strtrim(L["Adventurer "]), "Common").."\n"..ColorText(strtrim(L["Veteran "]), "Uncommon").."\n"..ColorText(strtrim(L["Champion "]), "Rare").."\n"..ColorText(strtrim(L["Hero "]), "Epic").."\n"..ColorText(strtrim(L["Myth "]), "Legendary"),
                     order = orderCounter(),
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -1137,9 +1137,9 @@ local OptionsTable = {
                 },
                 increaseCharacterInfoSize = {
                     type = "toggle",
-                    name = "Larger Character Info Window",
+                    name = L["Larger Character Info Window"],
                     width = "full",
-                    desc = "Increase the size of the Character Info window.\n\nThis can help reduce text overlap with the character model and make reading text easier.",
+                    desc = L["Increase the size of the Character Info window"].."\n\n"..L["This can help reduce text overlap with the character model and make reading text easier."],
                     order = orderCounter(),
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -1364,7 +1364,7 @@ local SlashOptions = {
         expand = {
             type = "toggle",
             name = "expand",
-            desc = "Toggle using the larger Character Info window",
+            desc = L["Toggle using the larger Character Info window"],
             order = incrementSlashOptionOrder(),
             get = function() return AddOn.db.profile.increaseCharacterInfoSize end,
             set = function()
@@ -1431,14 +1431,14 @@ function AddOn:OnInitialize()
 
     if self.db.profile.collapseEnchants then
         DebugPrint("Enchant text is collapsed, update button text accordingly")
-        AddOn.PGVToggleEnchantButton:UpdateText(L["Show Enchant Text"])
+        AddOn.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
     end
 
     AddOn.PGVToggleEnchantButton:SetScript("OnClick", function(button)
         local collapseEnchants = not AddOn.db.profile.collapseEnchants
         AddOn.db.profile.collapseEnchants = collapseEnchants
         AddOn.UpdateEquippedGearInfo(AddOn)
-        button:UpdateText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
+        button:UpdateTooltipText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
     if not self.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
@@ -1469,12 +1469,6 @@ function AddOn:OnInitialize()
     -- Hook into necessary secure functions
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame) if subFrame == "PaperDollFrame" then self:UpdateEquippedGearInfo() end end)
     hooksecurefunc(CharacterFrame, "RefreshDisplay", function() self:AdjustCharacterInfoWindowSize() end)
-    hooksecurefunc("PaperDollFrame_UpdateStats", function()
-        self:ReorderStatFramesBySpec()
-        if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
-            CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
-        end
-    end)
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
         if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
             local actor = cms:GetPlayerActor()
@@ -1485,6 +1479,12 @@ function AddOn:OnInitialize()
             local posX, posY, posZ = actor:GetPosition()
             -- Apply a offeset to the vertical positioning so that more of the model is visible (feet are not covered)
             actor:SetPosition(posX, posY, posZ + 0.25)
+        end
+    end)
+    hooksecurefunc("PaperDollFrame_UpdateStats", function()
+        self:ReorderStatFramesBySpec()
+        if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
+            CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
         end
     end)
 
@@ -1520,6 +1520,7 @@ function AddOn.HandlePGVSlashCmd(cmd, input)
     end
 end
 
+---Handles changing the Character Info window size when the option to use the larger character window is checked
 function AddOn:AdjustCharacterInfoWindowSize()
     DebugPrint("AdjustCharacterInfoWindowSize - Refreshing display")
     if PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then

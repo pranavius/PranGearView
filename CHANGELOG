@@ -1,3 +1,13 @@
+**1.6.0**
+- Updated AddOn to run in Patch 11.1.7
+- Added an option to increase the size of the Character Info window
+- Replaced the "Show/Hide Enchant" button with an icon (Enchanting Formula) in the Character Info window
+- Added an option to display upgrade track colors using the item quality color scale (not the same as using the actual item quality color)
+- Fixed a bug where the option to use a custom upgrade track color didn't always stay selected on login/reload
+- Updated localizations for supported languages
+- Minor code cleanup
+- Update code documentation
+
 **1.5.0**
 - Added DataBroker integration to show a minimap icon for the AddOn that opens the options window when clicked
 - Added an option to show/hide the minimap icon under "Other Options"
