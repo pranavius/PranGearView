@@ -3,27 +3,35 @@ local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
-local button = CreateFrame("Button", "PGVToggleEnchantButton", PaperDollSidebarTabs)
-button:SetSize(96, 17)
+local button = CreateFrame("Button", "PGVToggleEnchantButton", CharacterFrame.TitleContainer, "UIPanelCloseButton")
+local buttonDim = CharacterFrame.TitleContainer:GetHeight() - 1
+button:SetSize(buttonDim, buttonDim)
 button:SetFrameStrata("TOOLTIP")
-button:SetPoint("BOTTOMRIGHT", PaperDollSidebarTabs, "TOPRIGHT", -15, 6)
-button:SetNormalTexture("Interface\\BUTTONS\\UI-DialogBox-Button-Up")
-button:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875)
-button:SetPushedTexture("Interface\\BUTTONS\\UI-DialogBox-Button-Down")
-button:GetPushedTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875)
+button:SetPoint("RIGHT", CharacterFrame.TitleContainer, "RIGHT")
+button:SetNormalTexture("Interface/Icons/Inv_Enchant_FormulaEpic_01") --237018
+button:SetPushedTexture("Interface/Icons/Inv_Enchant_FormulaEpic_01")
 button:SetHighlightTexture("Interface\\BUTTONS\\UI-Common-MouseHilight", "ADD")
-button:GetHighlightTexture():SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
 
-button:SetFontString(button:CreateFontString(nil, "OVERLAY", "GameFontNormal"))
-button:GetFontString():SetText(L["Hide Enchant Text"])
-button:GetFontString():SetPoint("CENTER")
-button:GetFontString():SetTextScale(0.8)
-button:SetHighlightFontObject("GameFontHighlight")
+button.tooltipText = L["Hide Enchant Text"]
+function button:UpdateTooltip()
+    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(self.tooltipText)
+    GameTooltip:Show()
+end
+
+button:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
+
+button:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+end)
+button:UpdateTooltip()
 
 AddOn.PGVToggleEnchantButton = button
 
 ---Updates the text shown on the enchant text toggling button in the Character Info window
 ---@param text string The text that should appear on the button
 function AddOn.PGVToggleEnchantButton:UpdateText(text)
-    self:GetFontString():SetText(text)
+    self.tooltipText = text
+    self:UpdateTooltip()
 end

@@ -224,7 +224,8 @@ local OptionsTable = {
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
-                    order = orderCounter()
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
                 },
                 iLvlCustomColor = {
                     type = "color",
@@ -242,7 +243,8 @@ local OptionsTable = {
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end
+                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
                 },
                 customColorHex = {
                     type = "input",
@@ -263,7 +265,8 @@ local OptionsTable = {
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end
+                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
                 },
                 resetCustomColor = {
                     type = "execute",
@@ -279,7 +282,8 @@ local OptionsTable = {
                         local usingCustomColor = AddOn.db.profile.useCustomColorForILvl
                         local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.iLvlCustomColor == AddOn.HexColorPresets.Priest
                         return not itemLevelShown or not usingCustomColor or customColorIsDefault
-                    end
+                    end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
                 }
             }
         },
@@ -330,6 +334,26 @@ local OptionsTable = {
                     disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
+                upgradeTrackColorDesc = {
+                    type = "description",
+                    name = ColorText("By default, upgrade tracks are shown in the color that matches the quality of the equipment. Upgrade tracks for previous season equipment always appear in grey", "Info"),
+                    order = orderCounter()
+                },
+                spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
+                useQualityScaleColorsForUpgradeTrack = {
+                    type = "toggle",
+                    name = "Use Quality Color Scale",
+                    width = "full",
+                    desc = "Use the item quality color scale when showing upgrade tracks:\n\n"..ColorText("Explorer", "Common").."\n"..ColorText("Adventurer", "Common").."\n"..ColorText("Veteran", "Uncommon").."\n"..ColorText("Champion", "Rare").."\n"..ColorText("Hero", "Epic").."\n"..ColorText("Myth", "Legendary"),
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        if val then AddOn.db.profile.useCustomColorForUpgradeTrack = false end
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showUpgradeTrack end
+                },
                 useCustomColorForUpgradeTrack = {
                     type = "toggle",
                     name = L["Use Custom Color"],
@@ -339,6 +363,7 @@ local OptionsTable = {
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
+                        if val then AddOn.db.profile.useQualityScaleColorsForUpgradeTrack = false end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showUpgradeTrack end
@@ -346,7 +371,8 @@ local OptionsTable = {
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
-                    order = orderCounter()
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 },
                 upgradeTrackCustomColor = {
                     type = "color",
@@ -364,7 +390,8 @@ local OptionsTable = {
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForUpgradeTrack end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 },
                 upgradeTrackCustomColorHex = {
                     type = "input",
@@ -385,7 +412,8 @@ local OptionsTable = {
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForILvl end
+                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForILvl end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 },
                 resetUpgradeTrackCustomColor = {
                     type = "execute",
@@ -401,7 +429,8 @@ local OptionsTable = {
                         local usingCustomColor = AddOn.db.profile.useCustomColorForUpgradeTrack
                         local customColorIsDefault = upgradeTrackShown and usingCustomColor and AddOn.db.profile.upgradeTrackCustomColor == AddOn.HexColorPresets.Priest
                         return not upgradeTrackShown or not usingCustomColor or customColorIsDefault
-                    end
+                    end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 }
             }
         },
@@ -560,7 +589,8 @@ local OptionsTable = {
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
-                    order = orderCounter()
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
                 },
                 enchCustomColor = {
                     type = "color",
@@ -578,7 +608,8 @@ local OptionsTable = {
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end
+                    disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
                 },
                 customColorHex = {
                     type = "input",
@@ -594,7 +625,8 @@ local OptionsTable = {
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end
+                    disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
                 },
                 resetCustomColor = {
                     type = "execute",
@@ -610,7 +642,8 @@ local OptionsTable = {
                         local usingCustomEnchColor = AddOn.db.profile.useCustomColorForEnchants
                         local enchCustomColorIsDefault = enchantsShown and usingCustomEnchColor and AddOn.db.profile.enchCustomColor == AddOn.HexColorPresets.Uncommon
                         return not enchantsShown or not usingCustomEnchColor or enchCustomColorIsDefault
-                    end
+                    end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
                 }
             }
         },
@@ -1198,6 +1231,8 @@ local DBDefaults = {
         iLvlCustomColor = AddOn.HexColorPresets.Priest,
         upgradeTrackScale = 1,
         upgradeTrackOutline = "",
+        useQualityScaleColorsForUpgradeTrack = false,
+        useCustomColorForUpgradeTrack = false,
         upgradeTrackCustomColor = AddOn.HexColorPresets.Priest,
         gemScale = 1,
         showMissingGems = true,
@@ -1399,11 +1434,11 @@ function AddOn:OnInitialize()
         AddOn.PGVToggleEnchantButton:UpdateText(L["Show Enchant Text"])
     end
 
-    AddOn.PGVToggleEnchantButton:SetScript("OnClick", function(self, button, down)
+    AddOn.PGVToggleEnchantButton:SetScript("OnClick", function(button)
         local collapseEnchants = not AddOn.db.profile.collapseEnchants
         AddOn.db.profile.collapseEnchants = collapseEnchants
         AddOn.UpdateEquippedGearInfo(AddOn)
-        self:UpdateText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
+        button:UpdateText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
     if not self.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
@@ -1443,7 +1478,8 @@ function AddOn:OnInitialize()
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
         if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
             local actor = cms:GetPlayerActor()
-            if actor then actor:SetRequestedScale(0.8) end
+            DebugPrint("CMS Transition: requested scale before mod - ", actor:GetRequestedScale())
+            actor:SetRequestedScale(actor:GetRequestedScale() * 0.8)
             actor:UpdateScale()
             DebugPrint("Updated requested scale to", actor:GetRequestedScale())
             local posX, posY, posZ = actor:GetPosition()
@@ -1495,15 +1531,6 @@ function AddOn:AdjustCharacterInfoWindowSize()
         CharacterMainHandSlot:SetPoint("BOTTOMLEFT", PaperDollItemsFrame, "BOTTOMLEFT", 200, 16)
         CharacterModelFrameBackgroundTopLeft:SetWidth(331)
         CharacterModelFrameBackgroundBotLeft:SetWidth(331)
-        -- Scale down the character model size by a tiny bit so that the entire model is still clearly visible
-        if not CharacterModelScene.resetCallback then
-            CharacterModelScene:SetResetCallback(function(cms)
-                DebugPrint("I'm a little callback")
-                if cms:GetPlayerActor() then cms:GetPlayerActor():SetRequestedScale(0.8) end
-            end)
-            DebugPrint("CharacterModelScene reset callback added")
-        end
-        DebugPrint("AdjustWindow - Character Scale:", CharacterModelScene:GetPlayerActor() and CharacterModelScene:GetPlayerActor():GetRequestedScale())
     elseif PaperDollFrame:IsVisible() then
         DebugPrint("Larger character info window disabled. Resetting any adjusted values.")
         -- Undo all changes made for displaying the larger window
@@ -1517,10 +1544,6 @@ function AddOn:AdjustCharacterInfoWindowSize()
         if charMainHandSlotBotLeftXOffset ~= 130 then CharacterMainHandSlot:SetPoint("BOTTOMLEFT", PaperDollItemsFrame, "BOTTOMLEFT", 130, 16) end
         if CharacterModelFrameBackgroundTopLeft:GetWidth() ~= 212 then CharacterModelFrameBackgroundTopLeft:SetWidth(212) end
         if CharacterModelFrameBackgroundBotLeft:GetWidth() ~= 212 then CharacterModelFrameBackgroundBotLeft:SetWidth(212) end
-        if CharacterModelScene.resetCallback then
-            CharacterModelScene:SetResetCallback(nil)
-            DebugPrint("CharacterModelScene reset callback removed")
-        end
         if CharacterModelScene:GetPlayerActor() then
             local actor = CharacterModelScene:GetPlayerActor()
             if actor:GetRequestedScale() then actor.requestedScale = nil end
