@@ -1,3 +1,44 @@
+# CharacterStatFrame
+
+## Background
+
+
+```lua
+Frame
+```
+
+A highlight color that serves as a background for even-ordered displayed stats (helps with visual separation)
+
+## Label
+
+
+```lua
+FontString
+```
+
+The name of the stat being shown
+
+## Value
+
+
+```lua
+FontString
+```
+
+The displayed value of the stat being shown
+
+## numericValue
+
+
+```lua
+number?
+```
+
+The true numeric value for the stat being shown
+
+
+---
+
 # Credit
 
 ## class
@@ -345,7 +386,7 @@ function PranGearView.DebugPrint(...string|number)
 ```
 
 Prints the desired text if the AddOn is in debugging mode. This is just a wrapper around the standard `print` function.
-See: [print](file:///Users/pranavchary/.vscode/extensions/sumneko.lua-3.14.0-darwin-arm64/server/meta/Lua%205.4%20en-us%20utf8/basic.lua#235#9)
+See: [print](file:///Users/pranavchary/.vscode/extensions/sumneko.lua-3.15.0-darwin-arm64/server/meta/Lua%205.4%20en-us%20utf8/basic.lua#235#9)
 
 ## DebugTable
 
@@ -836,6 +877,15 @@ Handles setting changes to stat order options
 Set upgrade track text position in the Character Info window
 
 @*param* `slot` — The gear slot to set upgrade tracks position for
+
+## ShowDecimalStatValues
+
+
+```lua
+(method) PranGearView:ShowDecimalStatValues()
+```
+
+Updates enhancement stat frame values to include decimal percentages when the relevant option is enabled 
 
 ## ShowDurabilityBySlot
 
