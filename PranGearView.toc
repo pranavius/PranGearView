@@ -3,7 +3,7 @@
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
 ## Author: pranavius
-## Version: 1.6.0
+## Version: 1.6.1
 ## SavedVariables: PranGearViewDB
 ## X-Flavor: retail
 ## X-Category: Class
@@ -24,7 +24,7 @@ Localization\ruRU.lua
 Constants.lua
 Utils.lua
 Modules\ToggleEnchantButton.lua
-Modules\StatsOrderBySpecOptions.lua
+Modules\CharacterStats.lua
 Modules\RetrieveGearInfo.lua
 Modules\PositionGearInfo.lua
 Modules\InspectFrame.lua

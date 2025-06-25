@@ -104,15 +104,19 @@ function AddOn:ReorderStatFramesBySpec()
         for stat, _ in pairs(self.DefaultStatOrder) do
             if L[stat] == localeStatName then statName = stat break end
         end
-        if role == "TANK" and statName == nil then
-            for stat, _ in pairs(self.DefaultTankStatOrder) do
-                if L[stat] == localeStatName then statName = stat break end
-            end
+        -- Iterate over "Tank" stats as well for classes like Shaman which gain Block from equipping a shield as a non-tank
+        for stat, _ in pairs(self.DefaultTankStatOrder) do
+            if L[stat] == localeStatName then statName = stat break end
         end
+        local order
         if statName and self.db.profile.customSpecStatOrders[specID][statName] ~= nil then
-            local order = self.db.profile.customSpecStatOrders[specID][statName]
-            enhancementStatFrames[order] = statFrame
+            order = self.db.profile.customSpecStatOrders[specID][statName]
+        elseif statName then
+            -- For non-tank classes with a "Tank" stat, simply append the stat to the end of the list of frames
+            -- Adding 11 because there are currently 10 possible stats that can be shown, guaranteeing no overlap
+            order = #enhancementStatFrames + 11
         end
+        if order then enhancementStatFrames[order] = statFrame end
     end
 
     -- if stat in position (order - 1) is hidden, there could be overlapping/hidden stats in the Character Info window
@@ -127,6 +131,18 @@ function AddOn:ReorderStatFramesBySpec()
         else
             frame:SetPoint("TOP", enhancementStatFrames[order - 1], "BOTTOM", 0, 0)
             frame.Background:SetShown((order % 2) == 0)
+        end
+    end
+end
+
+function AddOn:ShowDecimalStatValues()
+    for _, frame in pairs({ CharacterStatsPane:GetChildren() }) do
+        if frame.Label and frame.numericValue then
+            -- decimal in the numeric value indicates a secondary/tertiary stat (main stats don't have decimal parts from what I've seen)
+            -- search for decimal with punctuation character (%p)
+            if tostring(frame.numericValue):match("%p") then
+                frame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForStats.."f%%", frame.numericValue)
+            end
         end
     end
 end
