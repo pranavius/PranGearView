@@ -5,6 +5,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 
+---@class CharacterStatFrame : Frame
+---@field Background Frame A highlight color that serves as a background for even-ordered displayed stats (helps with visual separation)
+---@field Label FontString The name of the stat being shown
+---@field Value FontString The displayed value of the stat being shown
+---@field numericValue? number The true numeric value for the stat being shown
+
 ---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
 ---@return number[] options A list of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
@@ -91,14 +97,17 @@ end
 function AddOn:ReorderStatFramesBySpec()
     local specID, role = self:GetCharacterCurrentSpecIDAndRole()
     local statFrames = {}
+    ---@type CharacterStatFrame[]
     local enhancementStatFrames = {}
     for _, statFrame in pairs({ CharacterStatsPane:GetChildren() }) do
+        ---@cast statFrame CharacterStatFrame
         if statFrame.Label then
             statFrames[#statFrames + 1] = statFrame
         end
     end
 
     for _, statFrame in pairs(statFrames) do
+        ---@cast statFrame CharacterStatFrame
         local localeStatName = statFrame.Label and statFrame.Label:GetText() and statFrame.Label:GetText():gsub(":", "") or nil
         local statName
         for stat, _ in pairs(self.DefaultStatOrder) do
@@ -135,8 +144,10 @@ function AddOn:ReorderStatFramesBySpec()
     end
 end
 
+---Updates enhancement stat frame values to include decimal percentages when the relevant option is enabled 
 function AddOn:ShowDecimalStatValues()
     for _, frame in pairs({ CharacterStatsPane:GetChildren() }) do
+        ---@cast frame CharacterStatFrame
         if frame.Label and frame.numericValue then
             -- decimal in the numeric value indicates a secondary/tertiary stat (main stats don't have decimal parts from what I've seen)
             -- search for decimal with punctuation character (%p)

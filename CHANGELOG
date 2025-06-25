@@ -1,6 +1,8 @@
 **1.6.1**
 - Fixed a bug where stats typically associated with tanks overlapped other stats for non-tank specs
 - Added ability to display stat values with decimals in the Character Info window
+- Updated localizations for supported languages
+- Updated code documentation
 
 **1.6.0**
 - Updated AddOn to run in Patch 11.1.7
