@@ -790,12 +790,43 @@ local OptionsTable = {
             name = L["Character Stats"],
             order = orderCounter(),
             args = {
+                showDecimalsForStats = {
+                    type = "toggle",
+                    name = L["Show Decimals for Stats"],
+                    width = "full",
+                    desc = L["Show your character's stats with decimal places"],
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:ShowDecimalStatValues()
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end
+                },
+                decimalPlacesForStats = {
+                    type = "range",
+                    name = L["Decimal Precision"],
+                    desc = L["Number of decimal places to show for character's stats"],
+                    order = orderCounter(),
+                    min = 1,
+                    max = 3,
+                    step = 1,
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:ShowDecimalStatValues()
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showDecimalsForStats end,
+                    hidden = function() return not AddOn.db.profile.showDecimalsForStats end
+                },
+                spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 statUsageDesc = {
                     type = "description",
                     name = ColorText(L["Customize secondary & tertiary stat order in the Character Info window by specialization"], "Info"),
                     order = orderCounter(),
                 },
-                spacer = AddOn.CreateOptionsSpacer(orderCounter()),
+                spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 specSelect = {
                     type = "select",
                     name = L["Specialization"],
@@ -1184,7 +1215,8 @@ local OptionsTable = {
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
+                    disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end,
+                    hidden = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 hideShirtTabardInfo = {
@@ -1245,6 +1277,8 @@ local DBDefaults = {
         enchCustomColor = AddOn.HexColorPresets.Uncommon,
         durabilityScale = 1,
         lastSelectedSpecID = nil,
+        showDecimalsForStats = false,
+        decimalPlacesForStats = 2,
         showOnInspect = false,
         showInspectAvgILvl = true,
         includeAvgLabel = false,
@@ -1483,6 +1517,7 @@ function AddOn:OnInitialize()
     end)
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
+        if CharacterStatsPane and self.db.profile.showDecimalsForStats then self:ShowDecimalStatValues() end
         if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
             CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
         end
