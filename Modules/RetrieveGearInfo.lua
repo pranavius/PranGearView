@@ -284,20 +284,37 @@ end
 ---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
     if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
+    if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem then
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 if ttdata and ttdata.leftText:find("Embellished") then
+                    -- Create shadow layer (semi-transparent black)
+                    if not slot.PGVEmbellishmentShadow then
+                        slot.PGVEmbellishmentShadow = slot:CreateTexture("PGVEmbellishmentShadow"..slot:GetID(), "ARTWORK")
+                    end
+                    slot.PGVEmbellishmentShadow:SetSize(60, 60)
+                    slot.PGVEmbellishmentShadow:ClearAllPoints()
+                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
+                        slot.PGVEmbellishmentShadow:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, -9)
+                    else
+                        slot.PGVEmbellishmentShadow:SetPoint("TOPLEFT", slot, "TOPLEFT", -2, -2)
+                    end
+                    slot.PGVEmbellishmentShadow:SetTexture("Interface/Buttons/WHITE8x8")
+                    slot.PGVEmbellishmentShadow:SetVertexColor(0, 0, 0, 0.35)
+                    slot.PGVEmbellishmentShadow:Show()
+
+                    -- Main embellishment star (top layer)
                     if not slot.PGVEmbellishmentTexture then
                         DebugPrint("Creating embellishment texture in slot", ColorText(slot:GetID(), "Heirloom"))
                         slot.PGVEmbellishmentTexture = slot:CreateTexture("PGVEmbellishmentTexture"..slot:GetID(), "OVERLAY")
                     end
-                    slot.PGVEmbellishmentTexture:SetSize(20, 20)
+                    slot.PGVEmbellishmentTexture:SetSize(25, 25)
                     slot.PGVEmbellishmentTexture:ClearAllPoints()
                     if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
-                        slot.PGVEmbellishmentTexture:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, -5)
+                        slot.PGVEmbellishmentTexture:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 2, -7)
                     else
                         slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
                     end
