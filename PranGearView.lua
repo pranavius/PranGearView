@@ -566,6 +566,25 @@ local OptionsTable = {
                         end,
                     disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
                 },
+                -- Options to toggle enchant button visibility
+                showEnchantTextButton = {
+                    type = "toggle",
+                    name = L["Show/Hide Enchant Text Button"],
+                    desc = L["Toggle the visibility of the enchant text button"],
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        -- Hide if unchecked
+                        if not val and AddOn.PGVToggleEnchantButton:IsShown() then
+                            AddOn.PGVToggleEnchantButton:Hide()
+                        -- Show if checked and not already shown
+                        elseif val and not AddOn.PGVToggleEnchantButton:IsShown() then
+                            AddOn.PGVToggleEnchantButton:Show()
+                        end
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end
+                },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 enchTextColorOptionsDesc = {
                     type = "description",
@@ -1295,7 +1314,8 @@ local DBDefaults = {
         hideShirtTabardInfo = false,
         collapseEnchants = false,
         minimap = { hide = true },
-        increaseCharacterInfoSize = true
+        increaseCharacterInfoSize = true,
+        showEnchantTextButton = true
     }
 }
 
@@ -1535,6 +1555,13 @@ function AddOn:OnInitialize()
         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
     end)
+
+    -- Always check the box for showing enchant text button when the AddOn is initialized
+    -- Ace3 saves the state of the checkbox but not the button iteself, so it will always be shown
+    -- TODO: Need to ensure the state of the enchant button is saved between sessions
+    if self.db.profile.showEnchantTextButton ~= true then
+        self.db.profile.showEnchantTextButton = true
+    end
 end
 
 ---Handles slash commands in a way that overrides the default behavior of Ace3 slash commands. Executing the command with no arguments
