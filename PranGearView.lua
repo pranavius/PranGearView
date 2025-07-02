@@ -566,6 +566,22 @@ local OptionsTable = {
                         end,
                     disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
                 },
+                showEnchantTextButton = {
+                    type = "toggle",
+                    name = L["Show/Hide Enchant Text Button"],
+                    desc = L["Toggle the visibility of the enchant text button"],
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        if not val and AddOn.PGVToggleEnchantButton:IsShown() then
+                            AddOn.PGVToggleEnchantButton:Hide()
+                        elseif val and not AddOn.PGVToggleEnchantButton:IsShown() then
+                            AddOn.PGVToggleEnchantButton:Show()
+                        end
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end
+                },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 enchTextColorOptionsDesc = {
                     type = "description",
@@ -1295,7 +1311,8 @@ local DBDefaults = {
         hideShirtTabardInfo = false,
         collapseEnchants = false,
         minimap = { hide = true },
-        increaseCharacterInfoSize = true
+        increaseCharacterInfoSize = true,
+        showEnchantTextButton = true
     }
 }
 
