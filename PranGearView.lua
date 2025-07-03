@@ -704,10 +704,22 @@ local OptionsTable = {
                     end,
                     disabled = function() return not AddOn.db.profile.showDurability end
                 },
+                customBarColorDesc = {
+                    type = "description",
+                    name = ColorText("Custom colors below only affect the durability bar (not the text).", "Info"),
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
+                durabilityBarColorChart = {
+                    type = "description",
+                    name = ColorText("|cFF1EFF00High|r: > 50%   |cFFFFD100Medium|r: 25% - 50%   |cFFFF3300Low|r: 0% - 25%", "Info"),
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
                 useCustomColorForDurabilityBar = {
                     type = "toggle",
                     name = L["Use Custom Color"],
-                    desc = "Customize durability bar colors",
+                    desc = "Customize durability bar colors (does not affect text)",
                     order = orderCounter(),
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -718,7 +730,7 @@ local OptionsTable = {
                 },
                 durabilityBarColorHigh = {
                     type = "color",
-                    name = "High Durability Color",
+                    name = "High (above 50%)",
                     order = orderCounter(),
                     hasAlpha = false,
                     get = function(item)
@@ -734,7 +746,7 @@ local OptionsTable = {
                 },
                 durabilityBarColorMedium = {
                     type = "color",
-                    name = "Medium Durability Color",
+                    name = "Medium (25% - 50%)",
                     order = orderCounter(),
                     hasAlpha = false,
                     get = function(item)
@@ -750,7 +762,7 @@ local OptionsTable = {
                 },
                 durabilityBarColorLow = {
                     type = "color",
-                    name = "Low Durability Color",
+                    name = "Low (25% or less)",
                     order = orderCounter(),
                     hasAlpha = false,
                     get = function(item)
