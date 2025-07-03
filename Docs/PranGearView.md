@@ -45,7 +45,7 @@ The true numeric value for the stat being shown
 
 
 ```lua
-ClassIcons
+ClassIcons?
 ```
 
 World of Warcraft class they identify with in-game
@@ -72,7 +72,7 @@ Contributor name
 
 
 ```lua
-string
+string?
 ```
 
 World of Warcraft race & gender they identify with in-game
@@ -431,14 +431,16 @@ table
 
 See:
   * ~Frame~ for generic definition along without common functions and variables available for all Frames
-  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#172#10) for a list of Frame names available when the Inspect window is open
+  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#174#10) for a list of Frame names available when the Inspect window is open
 
 ## GearSlots
 
 
 ```lua
-table
+Slot[]
 ```
+
+A list of character gear slots visible in the Character Info window
 
 ## GetCharacterCurrentSpecIDAndRole
 
@@ -455,7 +457,7 @@ Returns specialization ID and role for the logged-in character
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#277#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#279#9) for a list of specializations and their IDs
 
 ## GetEnchantmentBySlot
 
@@ -529,7 +531,7 @@ Returns specialization ID and role for the chosen spec whenever it is changed in
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#277#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#279#9) for a list of specializations and their IDs
 
 ## GetStatOrderHandler
 
@@ -1024,6 +1026,13 @@ Indicates whether the equipment slot is on the left, right, or bottom of the Cha
 
 ```lua
 FontString?
+```
+
+## PGVEmbellishmentShadow
+
+
+```lua
+Texture?
 ```
 
 ## PGVEmbellishmentTexture

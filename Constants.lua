@@ -148,6 +148,8 @@ AddOn.HexColorPresets = {
     Warrior = "C69B6D"
 }
 
+---A list of character gear slots visible in the Character Info window
+---@type Slot[]
 AddOn.GearSlots = {
     CharacterHeadSlot,
     CharacterNeckSlot,
