@@ -319,7 +319,7 @@ function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
                     else
                         slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
                     end
-                    slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
+                    slot.PGVEmbellishmentTexture:SetTexture("Interface/LootFrame/Toast-Star")
                     slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
                     DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
                     slot.PGVEmbellishmentTexture:Show()

@@ -124,6 +124,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             self:ShowEmbellishmentBySlot(slot, true)
         elseif slot.PGVEmbellishmentTexture then
             slot.PGVEmbellishmentTexture:Hide()
+            if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
         end
 
         if self.db.profile.hideShirtTabardInfo and (slot == _G["InspectShirtSlot"] or slot == _G["InspectTabardSlot"]) then

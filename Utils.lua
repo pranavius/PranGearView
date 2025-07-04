@@ -152,6 +152,7 @@ end
 ---@field PGVEnchant? FontString
 ---@field PGVDurability? FontString
 ---@field PGVEmbellishmentTexture? Texture
+---@field PGVEmbellishmentShadow? Texture
 
 ---Indicates whether an item is equipped in a particular gear slot or not
 ---@param slot Slot The gear slot to check for an equipped item
