@@ -295,14 +295,8 @@ function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
                     if not slot.PGVEmbellishmentShadow then
                         slot.PGVEmbellishmentShadow = slot:CreateTexture("PGVEmbellishmentShadow"..slot:GetID(), "ARTWORK")
                     end
-                    slot.PGVEmbellishmentShadow:SetSize(37, 37)
                     slot.PGVEmbellishmentShadow:ClearAllPoints()
-                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
-                        slot.PGVEmbellishmentShadow:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, 0)
-                    else
-                        slot.PGVEmbellishmentShadow:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
-                    end
-                    -- TODO: Disable the shadow if the embellishment is not visible
+                    slot.PGVEmbellishmentShadow:SetAllPoints(slot)
                     slot.PGVEmbellishmentShadow:SetTexture("Interface/Buttons/WHITE8x8")
                     slot.PGVEmbellishmentShadow:SetVertexColor(0, 0, 0, 0.3)
                     slot.PGVEmbellishmentShadow:Show()
