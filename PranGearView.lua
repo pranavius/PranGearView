@@ -1715,8 +1715,8 @@ function AddOn:UpdateEquippedGearInfo()
 
         if self.db.profile.showEmbellishments then
             self:ShowEmbellishmentBySlot(slot)
-        elseif slot.PGVEmbellishmentTexture then
-            slot.PGVEmbellishmentTexture:Hide()
+        else
+            if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
             if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
         end
 
