@@ -682,7 +682,7 @@ local OptionsTable = {
                 durabilityScale = {
                     type = "range",
                     name = L["Font Scale"],
-                    desc = L["Scale durability text size relative to the default"],
+                    desc = L["Scale durability text size relative to the default (disabled if Show Durability as Bar is enabled)"],
                     order = orderCounter(),
                     min = 0.1,
                     max = 2,
@@ -693,7 +693,91 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function() return not AddOn.db.profile.showDurability end
-                }
+                },
+                showDurabilityAsBar = {
+                    type = "toggle",
+                    name = L["Show Durability as Bar"],
+                    desc = L["Display durability as a bar instead of text over gear icons"],
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showDurability end
+                },
+                customBarColorDesc = {
+                    type = "description",
+                    name = ColorText("Custom colors below only affect the durability bar (not the text).", "Info"),
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
+                durabilityBarColorChart = {
+                    type = "description",
+                    name = ColorText("|cFF1EFF00High|r: > 50%   |cFFFFD100Medium|r: 25% - 50%   |cFFFF3300Low|r: 0% - 25%", "Info"),
+                    order = orderCounter(),
+                    hidden = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
+                useCustomColorForDurabilityBar = {
+                    type = "toggle",
+                    name = L["Use Custom Color"],
+                    desc = "Customize durability bar colors (does not affect text)",
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.showDurabilityAsBar end
+                },
+                durabilityBarColorHigh = {
+                    type = "color",
+                    name = "High (above 50%)",
+                    order = orderCounter(),
+                    hasAlpha = false,
+                    get = function(item)
+                        local hex = AddOn.db.profile[item[#item]] or "1EFF00"
+                        return AddOn.ConvertHexToRGB(hex)
+                    end,
+                    set = function(item, r, g, b)
+                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
+                durabilityBarColorMedium = {
+                    type = "color",
+                    name = "Medium (25% - 50%)",
+                    order = orderCounter(),
+                    hasAlpha = false,
+                    get = function(item)
+                        local hex = AddOn.db.profile[item[#item]] or "FFD100"
+                        return AddOn.ConvertHexToRGB(hex)
+                    end,
+                    set = function(item, r, g, b)
+                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
+                durabilityBarColorLow = {
+                    type = "color",
+                    name = "Low (25% or less)",
+                    order = orderCounter(),
+                    hasAlpha = false,
+                    get = function(item)
+                        local hex = AddOn.db.profile[item[#item]] or "FF3300"
+                        return AddOn.ConvertHexToRGB(hex)
+                    end,
+                    set = function(item, r, g, b)
+                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end,
+                    disabled = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                },
             }
         },
         inspectOptions = {
@@ -1317,7 +1401,11 @@ local DBDefaults = {
         collapseEnchants = false,
         minimap = { hide = true },
         increaseCharacterInfoSize = true,
-        showEnchantTextButton = true
+        showEnchantTextButton = true,
+        useCustomColorForDurabilityBar = false,
+        durabilityBarColorHigh = "1EFF00",
+        durabilityBarColorMedium = "FFD100",
+        durabilityBarColorLow = "FF3300",
     }
 }
 
@@ -1631,7 +1719,7 @@ function AddOn:UpdateEquippedGearInfo()
     end
     
     DebugPrint("Enchants collapsed:", self.db.profile.collapseEnchants)
-    for _, slot in ipairs(self.GearSlots) do
+       for _, slot in ipairs(self.GearSlots) do
         local slotID = slot:GetID()
         if self.db.profile.showiLvl then
             if not slot.PGVItemLevel then
