@@ -19,6 +19,7 @@ As mentioned earlier, this AddOn was developed to work on Blizzard's default Cha
 
 ### Current Locales/Languages Supported:
 - English (US and GB)
+- French (FR)
 - Portuguese (BR)
 - Russian (RU) [*partial*]
 - Chinese (TW) [*partial*]
