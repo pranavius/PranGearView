@@ -21,7 +21,8 @@ local contributors = {
     { name = "Numynum", race = AddOn.RaceIcons.BloodElf.Female, class = AddOn.ClassIcons.DemonHunter, color = AddOn.HexColorPresets.DemonHunter },
     { name = "ZamestoTV", race = AddOn.RaceIcons.NightElf.Male, class = AddOn.ClassIcons.Druid, color = AddOn.HexColorPresets.Druid },
     { name = "Lirfdam", color = AddOn.HexColorPresets.Priest },
-    { name = "BlueNightSky", color = AddOn.HexColorPresets.Priest }
+    { name = "BlueNightSky", color = AddOn.HexColorPresets.Priest },
+    { name = "Azaran", color = AddOn.HexColorPresets.Priest }
 }
 
 ---A list of individuals who have not contributed code, but have been very helpful in providing feedback and support for the AddOn
