@@ -19,8 +19,10 @@ As mentioned earlier, this AddOn was developed to work on Blizzard's default Cha
 
 ### Current Locales/Languages Supported:
 - English (US and GB)
+- French (FR)
 - Portuguese (BR)
 - Russian (RU) [*partial*]
+- Chinese (TW) [*partial*]
 
 ## Usage
 You can use the options window to modify all available options. To open the options window from the Chat window, type the slash command `/pgv`.
@@ -36,7 +38,7 @@ You can use the options window to modify all available options. To open the opti
 - **Item Level**: Change text size, outline, and color
 - **Upgrade Track**: Change text size, outline, and color
 - **Gems**: Change icon size, show missing gems and sockets, only show missing gems and sockets for max level characters
-- **Enchants**: Change text size, text outline, show missing enchants, only show missing enchants for max level characters, change text color
+- **Enchants**: Change text size, text outline, show missing enchants, only show missing enchants for max level characters, show or hide button to display enchant text, change text color
 - **Durability**: Change text size
 - **Inspect Window**: Choose which information (if any) to display when inspecting other players
 - **Character Stats**: Set stat order based on class and specialization

@@ -557,7 +557,7 @@ local OptionsTable = {
                     type = "toggle",
                     name = L["Only Show for Max Level"],
                     desc = L["Hide missing enchant info for characters under the level cap"],
-                    width = "double",
+                    width = "full",
                     order = orderCounter(),
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
@@ -566,32 +566,34 @@ local OptionsTable = {
                         end,
                     disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
                 },
+                spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 -- Options to toggle enchant button visibility
                 showEnchantTextButton = {
                     type = "toggle",
-                    name = L["Show/Hide Enchant Text Button"],
-                    desc = L["Toggle the visibility of the enchant text button"],
+                    name = L["Enchant Text Button"],
+                    desc = L["Display a button to show or hide enchant text in the Character Info window"],
+                    width = "full",
                     order = orderCounter(),
                     get = function(item) return AddOn.db.profile[item[#item]] end,
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
-                        -- Hide if unchecked
+                        -- Hide if unchecked, regardless of whether showEnchants is checked or not
                         if not val and AddOn.PGVToggleEnchantButton:IsShown() then
                             AddOn.PGVToggleEnchantButton:Hide()
-                        -- Show if checked and not already shown
-                        elseif val and not AddOn.PGVToggleEnchantButton:IsShown() then
+                        -- Show if checked, showEnchants is checked, and button is not already shown
+                        elseif val and AddOn.db.profile.showEnchants and not AddOn.PGVToggleEnchantButton:IsShown() then
                             AddOn.PGVToggleEnchantButton:Show()
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end
                 },
-                spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
+                spacerThree = AddOn.CreateOptionsSpacer(orderCounter()),
                 enchTextColorOptionsDesc = {
                     type = "description",
                     name = ColorText(L["Enchant quality symbol is not affected by the custom color option"], "Info"),
                     order = orderCounter()
                 },
-                spacerThree = AddOn.CreateOptionsSpacer(orderCounter()),
+                spacerFour = AddOn.CreateOptionsSpacer(orderCounter()),
                 useCustomColorForEnchants = {
                     type = "toggle",
                     name = L["Use Custom Color"],
@@ -1583,7 +1585,7 @@ function AddOn:OnInitialize()
         button:UpdateTooltipText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
-    if not self.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
+    if (not self.db.profile.showEnchants or (self.db.profile.showEnchants and not self.db.profile.showEnchantTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
         AddOn.PGVToggleEnchantButton:Hide()
     end
 
@@ -1643,13 +1645,6 @@ function AddOn:OnInitialize()
         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
     end)
-
-    -- Always check the box for showing enchant text button when the AddOn is initialized
-    -- Ace3 saves the state of the checkbox but not the button iteself, so it will always be shown
-    -- TODO: Need to ensure the state of the enchant button is saved between sessions
-    if self.db.profile.showEnchantTextButton ~= true then
-        self.db.profile.showEnchantTextButton = true
-    end
 end
 
 ---Handles slash commands in a way that overrides the default behavior of Ace3 slash commands. Executing the command with no arguments
@@ -1808,8 +1803,9 @@ function AddOn:UpdateEquippedGearInfo()
 
         if self.db.profile.showEmbellishments then
             self:ShowEmbellishmentBySlot(slot)
-        elseif slot.PGVEmbellishmentTexture then
-            slot.PGVEmbellishmentTexture:Hide()
+        else
+            if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
+            if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
         end
 
         if self.db.profile.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot) then
