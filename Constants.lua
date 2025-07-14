@@ -109,6 +109,15 @@ AddOn.ptbrEnchantTextReplacements = {
     { original = "do ", replacement = "" },
 }
 
+---A list of tables containing text replacement patterns for enchants that are specific to the frFR locale.
+---Intended for replacement after language-agnostic replacements are completed
+---@type TextReplacement[]
+AddOn.frfrEnchantTextReplacements = {
+    { original = "à la ", replacement = "" },
+    { original = "à l’", replacement = "" },
+    { original = "au score de ", replacement = "" },
+}
+
 ---A list of tables containing text replacement patterns for upgrade tracks
 ---@type TextReplacement[]
 AddOn.UpgradeTextReplacements = {
