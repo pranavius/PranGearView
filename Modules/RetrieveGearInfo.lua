@@ -171,7 +171,8 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                     DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
                     enchText = self:AbbreviateText(enchText, self.EnchantTextReplacements)
                     -- Perform locale replacements specific to ptBR to further shorten and fix some abbreviations
-                    if GetLocale() == "ptBR" then enchText = self:AbbreviateText(enchText, self.ptbrEnchantTextReplacements) end
+                    if GetLocale() == "ptBR" then enchText = self:AbbreviateText(enchText, self.ptbrEnchantTextReplacements)
+                    elseif GetLocale() == "frFR" then enchText = self:AbbreviateText(enchText, self.frfrEnchantTextReplacements) end
                     -- Trim enchant text to remove leading and trailing whitespace
                     -- strtrim is a Blizzard-provided global utility function
                     enchText = strtrim(enchText)
