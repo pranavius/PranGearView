@@ -1,3 +1,16 @@
+**1.7.2**
+- Correct minor issues with `frFR` localization
+
+**1.7.1**
+- Added localization support for `frFR`
+
+**1.7.0**
+- Updated the embellishment indicator to be more prominent (increased size and added a shadow behind it when visible)
+- Added an option to show or hide the button that toggles enchant text in the Character Info window
+- Updated localizations for supported languages
+- Added partial localization support for `zhTW`
+- Updated code documentation
+
 **1.6.1**
 - Fixed a bug where stats typically associated with tanks overlapped other stats for non-tank specs
 - Added ability to display stat values with decimals in the Character Info window

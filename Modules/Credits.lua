@@ -7,8 +7,8 @@ local ColorText = AddOn.ColorText
 
 ---@class (exact) Credit
 ---@field name string Contributor name
----@field race string World of Warcraft race & gender they identify with in-game
----@field class ClassIcons World of Warcraft class they identify with in-game
+---@field race? string World of Warcraft race & gender they identify with in-game
+---@field class? ClassIcons World of Warcraft class they identify with in-game
 ---@field color HexColorPresets Color to display the contributor's name in
 
 ---A list of individuals who have contributed, directly or indirectly, to the codebase.
@@ -17,9 +17,12 @@ local ColorText = AddOn.ColorText
 ---@see HexColorPresets
 ---@type Credit[]
 local contributors = {
+    { name = "Tusk", race = AddOn.RaceIcons.Pandaren.Male, class = AddOn.ClassIcons.Monk, color = AddOn.HexColorPresets.Monk },
+    { name = "Numynum", race = AddOn.RaceIcons.BloodElf.Female, class = AddOn.ClassIcons.DemonHunter, color = AddOn.HexColorPresets.DemonHunter },
     { name = "ZamestoTV", race = AddOn.RaceIcons.NightElf.Male, class = AddOn.ClassIcons.Druid, color = AddOn.HexColorPresets.Druid },
-    { name = "Lirfdam", race = AddOn.RaceIcons.Nightborne.Female, class = AddOn.ClassIcons.Mage, color = AddOn.HexColorPresets.Mage },
-    { name = "Numynum", race = AddOn.RaceIcons.BloodElf.Female, class = AddOn.ClassIcons.DemonHunter, color = AddOn.HexColorPresets.DemonHunter }
+    { name = "Lirfdam", color = AddOn.HexColorPresets.Priest },
+    { name = "BlueNightSky", color = AddOn.HexColorPresets.Priest },
+    { name = "Azaran", color = AddOn.HexColorPresets.Priest }
 }
 
 ---A list of individuals who have not contributed code, but have been very helpful in providing feedback and support for the AddOn
@@ -28,7 +31,6 @@ local contributors = {
 ---@see HexColorPresets
 ---@type Credit[]
 local specialThanks = {
-    { name = "Tusk", race = AddOn.RaceIcons.Pandaren.Male, class = AddOn.ClassIcons.Monk, color = AddOn.HexColorPresets.Monk },
     { name = "Beo", race = AddOn.RaceIcons.Pandaren.Female, class = AddOn.ClassIcons.DemonHunter, color = AddOn.HexColorPresets.DemonHunter },
     { name = "Knifermonkey", race = AddOn.RaceIcons.Undead.Male, class = AddOn.ClassIcons.Warlock, color = AddOn.HexColorPresets.Warlock },
     { name = "Jery", race = AddOn.RaceIcons.BloodElf.Male, class = AddOn.ClassIcons.Mage, color = AddOn.HexColorPresets.Mage },
@@ -69,7 +71,7 @@ function AddOn:BuildCreditsGroup()
     for idx, cont in ipairs(contributors) do
         credits.args["contributor"..idx] = {
             type = "description",
-            name = self.GetTextureAtlasString(cont.race)..self.GetTextureAtlasString(cont.class).." "..ColorText(cont.name, cont.color),
+            name = (cont.race and self.GetTextureAtlasString(cont.race) or "")..(cont.class and self.GetTextureAtlasString(cont.class) or "")..((cont.race or cont.class) and " " or "")..ColorText(cont.name, cont.color),
             fontSize = "medium",
             order = credits.args.contributorsHeader.order + idx
         }

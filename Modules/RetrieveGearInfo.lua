@@ -171,7 +171,8 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                     DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
                     enchText = self:AbbreviateText(enchText, self.EnchantTextReplacements)
                     -- Perform locale replacements specific to ptBR to further shorten and fix some abbreviations
-                    if GetLocale() == "ptBR" then enchText = self:AbbreviateText(enchText, self.ptbrEnchantTextReplacements) end
+                    if GetLocale() == "ptBR" then enchText = self:AbbreviateText(enchText, self.ptbrEnchantTextReplacements)
+                    elseif GetLocale() == "frFR" then enchText = self:AbbreviateText(enchText, self.frfrEnchantTextReplacements) end
                     -- Trim enchant text to remove leading and trailing whitespace
                     -- strtrim is a Blizzard-provided global utility function
                     enchText = strtrim(enchText)
@@ -418,14 +419,8 @@ function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
                     if not slot.PGVEmbellishmentShadow then
                         slot.PGVEmbellishmentShadow = slot:CreateTexture("PGVEmbellishmentShadow"..slot:GetID(), "ARTWORK")
                     end
-                    slot.PGVEmbellishmentShadow:SetSize(40, 45)
                     slot.PGVEmbellishmentShadow:ClearAllPoints()
-                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
-                        slot.PGVEmbellishmentShadow:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 0, -9)
-                    else
-                        slot.PGVEmbellishmentShadow:SetPoint("TOPLEFT", slot, "TOPLEFT", -2, -2)
-                    end
-                    -- TODO: Disable the shadow if the embellishment is not visible
+                    slot.PGVEmbellishmentShadow:SetAllPoints(slot)
                     slot.PGVEmbellishmentShadow:SetTexture("Interface/Buttons/WHITE8x8")
                     slot.PGVEmbellishmentShadow:SetVertexColor(0, 0, 0, 0.3)
                     slot.PGVEmbellishmentShadow:Show()
@@ -447,7 +442,7 @@ function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
                     else
                         slot.PGVEmbellishmentTexture:SetPoint("TOPLEFT", slot, "TOPLEFT", 0, 0)
                     end
-                    slot.PGVEmbellishmentTexture:SetTexture(1342533) -- Interface/LootFrame/Toast-Star
+                    slot.PGVEmbellishmentTexture:SetTexture("Interface/LootFrame/Toast-Star")
                     slot.PGVEmbellishmentTexture:SetVertexColor(0, 1, 0.6, 1)
                     DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
                     slot.PGVEmbellishmentTexture:Show()
