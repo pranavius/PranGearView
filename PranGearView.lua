@@ -249,7 +249,7 @@ local OptionsTable = {
                 customColorHex = {
                     type = "input",
                     name = "",
-                    width = "half",
+                    width = 0.65,
                     order = orderCounter(),
                     get = function()
                         if not AddOn.db.profile.iLvlCustomColor then
@@ -396,7 +396,7 @@ local OptionsTable = {
                 upgradeTrackCustomColorHex = {
                     type = "input",
                     name = "",
-                    width = "half",
+                    width = 0.65,
                     order = orderCounter(),
                     get = function()
                         if not AddOn.db.profile.upgradeTrackCustomColor then
@@ -633,7 +633,7 @@ local OptionsTable = {
                 customColorHex = {
                     type = "input",
                     name = "",
-                    width = "half",
+                    width = 0.65,
                     order = orderCounter(),
                     get = function() return "#"..AddOn.db.profile.enchCustomColor end,
                     set = function(_, val)
@@ -673,14 +673,14 @@ local OptionsTable = {
             args = {
                 durUsageDesc = {
                     type = "description",
-                    name = ColorText(L["Durability always hidden at 100%"], "Info"),
+                    name = ColorText(L["Durability text is always hidden at 100%"], "Info"),
                     order = orderCounter()
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 durabilityScale = {
                     type = "range",
                     name = L["Font Scale"],
-                    desc = L["Scale durability text size relative to the default (disabled if Show Durability as Bar is enabled)"],
+                    desc = L["Scale durability text size relative to the default"].."\n\n".."Does nothing if |cFFFFD100Show Durability as Bar|r is enabled",
                     order = orderCounter(),
                     min = 0.1,
                     max = 2,
@@ -692,45 +692,16 @@ local OptionsTable = {
                         end,
                     disabled = function() return not AddOn.db.profile.showDurability end
                 },
-                showDurabilityAsBar = {
-                    type = "toggle",
-                    name = L["Show Durability as Bar"],
-                    desc = L["Display durability as a bar instead of text over gear icons"],
-                    order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
-                        AddOn:HandleEquipmentOrSettingsChange()
-                    end,
-                    disabled = function() return not AddOn.db.profile.showDurability end
-                },
-                customBarColorDesc = {
+                spacerThree = AddOn.CreateOptionsSpacer(orderCounter()),
+                durabilityColorChart = {
                     type = "description",
-                    name = ColorText("Custom colors below only affect the durability bar (not the text).", "Info"),
-                    order = orderCounter(),
-                    hidden = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                    name = ColorText(ColorText("High", AddOn.HexColorPresets.Priest)..": above 50%  |  "..ColorText("Medium", AddOn.HexColorPresets.Priest)..": 25% - 50%  |  "..ColorText("Low", AddOn.HexColorPresets.Priest)..": 25% or less", "Info"),
+                    order = orderCounter()
                 },
-                durabilityBarColorChart = {
-                    type = "description",
-                    name = ColorText("|cFF1EFF00High|r: > 50%   |cFFFFD100Medium|r: 25% - 50%   |cFFFF3300Low|r: 0% - 25%", "Info"),
-                    order = orderCounter(),
-                    hidden = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
-                },
-                useCustomColorForDurabilityBar = {
-                    type = "toggle",
-                    name = L["Use Custom Color"],
-                    desc = "Customize durability bar colors (does not affect text)",
-                    order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
-                        AddOn:HandleEquipmentOrSettingsChange()
-                    end,
-                    disabled = function() return not AddOn.db.profile.showDurabilityAsBar end
-                },
-                durabilityBarColorHigh = {
+                spacerFour = AddOn.CreateOptionsSpacer(orderCounter()),
+                durabilityColorHigh = {
                     type = "color",
-                    name = "High (above 50%)",
+                    name = "High",
                     order = orderCounter(),
                     hasAlpha = false,
                     get = function(item)
@@ -740,13 +711,46 @@ local OptionsTable = {
                     set = function(item, r, g, b)
                         AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
-                    end,
-                    disabled = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                    end
                 },
-                durabilityBarColorMedium = {
+                durabilityColorHighHex = {
+                    type = "input",
+                    name = "",
+                    width = 0.65,
+                    order = orderCounter(),
+                    get = function()
+                        if not AddOn.db.profile.durabilityColorHigh then
+                            AddOn.db.profile.durabilityColorHigh = AddOn.HexColorPresets.Uncommon
+                        end
+                        return "#"..AddOn.db.profile.durabilityColorHigh
+                    end,
+                    set = function(_, val)
+                        -- Validate that the provided hex code can be converted to an RGB color before setting
+                        local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
+                        if r ~= nil and g ~= nil and b ~= nil then
+                            AddOn.db.profile.durabilityColorHigh = val:gsub("#", "")
+                            AddOn:HandleEquipmentOrSettingsChange()
+                        end
+                    end
+                },
+                resetDurabilityColorHigh = {
+                    type = "execute",
+                    name = L["Reset"],
+                    width = "half",
+                    order = orderCounter(),
+                    func = function()
+                        AddOn.db.profile.durabilityColorHigh = AddOn.HexColorPresets.Uncommon
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function()
+                        return AddOn.db.profile.durabilityColorHigh == AddOn.HexColorPresets.Uncommon
+                    end
+                },
+                durabilityColorMedium = {
                     type = "color",
-                    name = "Medium (25% - 50%)",
+                    name = "Medium",
                     order = orderCounter(),
                     hasAlpha = false,
                     get = function(item)
@@ -756,13 +760,46 @@ local OptionsTable = {
                     set = function(item, r, g, b)
                         AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
-                    end,
-                    disabled = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
+                    end
                 },
-                durabilityBarColorLow = {
+                durabilityColorMediumHex = {
+                    type = "input",
+                    name = "",
+                    width = 0.65,
+                    order = orderCounter(),
+                    get = function()
+                        if not AddOn.db.profile.durabilityColorMedium then
+                            AddOn.db.profile.durabilityColorMedium = AddOn.HexColorPresets.Info
+                        end
+                        return "#"..AddOn.db.profile.durabilityColorMedium
+                    end,
+                    set = function(_, val)
+                        -- Validate that the provided hex code can be converted to an RGB color before setting
+                        local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
+                        if r ~= nil and g ~= nil and b ~= nil then
+                            AddOn.db.profile.durabilityColorMedium = val:gsub("#", "")
+                            AddOn:HandleEquipmentOrSettingsChange()
+                        end
+                    end
+                },
+                resetDurabilityColorMedium = {
+                    type = "execute",
+                    name = L["Reset"],
+                    width = "half",
+                    order = orderCounter(),
+                    func = function()
+                        AddOn.db.profile.durabilityColorMedium = AddOn.HexColorPresets.Info
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function()
+                        return AddOn.db.profile.durabilityColorMedium == AddOn.HexColorPresets.Info
+                    end
+                },
+                durabilityColorLow = {
                     type = "color",
-                    name = "Low (25% or less)",
+                    name = "Low",
                     order = orderCounter(),
                     hasAlpha = false,
                     get = function(item)
@@ -772,10 +809,72 @@ local OptionsTable = {
                     set = function(item, r, g, b)
                         AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
+                        AddOn:HandleEquipmentOrSettingsChange()
+                    end
+                },
+                durabilityColorLowHex = {
+                    type = "input",
+                    name = "",
+                    width = 0.65,
+                    order = orderCounter(),
+                    get = function()
+                        if not AddOn.db.profile.durabilityColorLow then
+                            AddOn.db.profile.durabilityColorLow = AddOn.HexColorPresets.Error
+                        end
+                        return "#"..AddOn.db.profile.durabilityColorLow
+                    end,
+                    set = function(_, val)
+                        -- Validate that the provided hex code can be converted to an RGB color before setting
+                        local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
+                        if r ~= nil and g ~= nil and b ~= nil then
+                            AddOn.db.profile.durabilityColorLow = val:gsub("#", "")
+                            AddOn:HandleEquipmentOrSettingsChange()
+                        end
+                    end
+                },
+                resetDurabilityColorLow = {
+                    type = "execute",
+                    name = L["Reset"],
+                    width = "half",
+                    order = orderCounter(),
+                    func = function()
+                        AddOn.db.profile.durabilityColorLow = AddOn.HexColorPresets.Error
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function()
+                        return AddOn.db.profile.durabilityColorLow == AddOn.HexColorPresets.Error
+                    end
+                },
+                spacerFive = AddOn.CreateOptionsSpacer(orderCounter()),
+                resetAllDurabilityColors = {
+                    type = "execute",
+                    name = L["Reset All"],
+                    order = orderCounter(),
+                    func = function()
+                        AddOn.db.profile.durabilityColorHigh = AddOn.HexColorPresets.Uncommon
+                        AddOn.db.profile.durabilityColorMedium = AddOn.HexColorPresets.Info
+                        AddOn.db.profile.durabilityColorLow = AddOn.HexColorPresets.Error
+                        AddOn:HandleEquipmentOrSettingsChange()
+                        end,
+                    disabled = function()
+                        return AddOn.db.profile.durabilityColorLow == AddOn.HexColorPresets.Error and AddOn.db.profile.durabilityColorMedium == AddOn.HexColorPresets.Info and AddOn.db.profile.durabilityColorHigh == AddOn.HexColorPresets.Uncommon
+                    end
+                },
+                spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
+                showDurabilityAsBar = {
+                    type = "toggle",
+                    name = L["Show Durability as Bar"],
+                    desc = L["Display durability as a bar instead of text over gear icons"],
+                    width = "full",
+                    order = orderCounter(),
+                    get = function(item) return AddOn.db.profile[item[#item]] end,
+                    set = function(item, val)
+                        AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.useCustomColorForDurabilityBar end
-                },
+                    disabled = function() return not AddOn.db.profile.showDurability end
+                }
             }
         },
         inspectOptions = {
@@ -1400,10 +1499,9 @@ local DBDefaults = {
         minimap = { hide = true },
         increaseCharacterInfoSize = true,
         showEnchantTextButton = true,
-        useCustomColorForDurabilityBar = false,
-        durabilityBarColorHigh = "1EFF00",
-        durabilityBarColorMedium = "FFD100",
-        durabilityBarColorLow = "FF3300",
+        durabilityColorHigh = AddOn.HexColorPresets.Uncommon,
+        durabilityColorMedium = AddOn.HexColorPresets.Info,
+        durabilityColorLow = AddOn.HexColorPresets.Error,
     }
 }
 

@@ -238,8 +238,11 @@ end
 ---Fetches and formats the durability percentage for an item in the defined gear slot (if one exists).
 ---@param slot Slot The gear slot to get durability information for
 function AddOn:ShowDurabilityBySlot(slot)
-    -- Helper to create or update a status bar for durability
-    local function EnsureDurabilityBar(slot, isBG)
+    ---Helper to create or update a status bar for durability
+    ---@param slot Slot The gear slot to get durability information for
+    ---@param isBG boolean Whether or not the bar is a background bar
+    ---@return table|StatusBar|TextStatusBar bar
+    local function GetDurabilityBar(slot, isBG)
         local barName = isBG and "PGVDurabilityBarBG" or "PGVDurabilityBar"
         local bar = slot[barName]
         if not bar then
@@ -263,10 +266,10 @@ function AddOn:ShowDurabilityBySlot(slot)
             bar:SetFrameLevel(slot:GetFrameLevel() + (isBG and 1 or 2))
             if not isBG then
                 bar:EnableMouse(true)
-                bar:SetScript("OnEnter", function(self)
-                    if self.percent then
-                        GameTooltip:SetOwner(self, "ANCHOR_TOP")
-                        GameTooltip:AddLine("Durability: "..self.percent.."%", 1, 1, 1)
+                bar:SetScript("OnEnter", function(durBar)
+                    if durBar.percent then
+                        GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
+                        GameTooltip:AddLine("Durability: "..durBar.percent.."%", 1, 1, 1)
                         GameTooltip:Show()
                     end
                 end)
@@ -309,41 +312,40 @@ function AddOn:ShowDurabilityBySlot(slot)
             local percent = cDur / mDur
             if self.db.profile.showDurabilityAsBar then
                 -- Create or update bars
-                local bgBar = EnsureDurabilityBar(slot, true)
-                local fillBar = EnsureDurabilityBar(slot, false)
+                local bgBar = GetDurabilityBar(slot, true)
+                local fillBar = GetDurabilityBar(slot, false)
                 bgBar:SetValue(100)
                 bgBar:Show()
                 fillBar:SetValue(percent * 100)
                 fillBar.percent = tostring(self.RoundNumber(percent * 100))
-                if self.db.profile.useCustomColorForDurabilityBar then
-                    if percent > 0.5 then
-                        local hex = self.db.profile.durabilityBarColorHigh or "1EFF00"
-                        local r, g, b = AddOn.ConvertHexToRGB(hex)
-                        fillBar:SetStatusBarColor(r, g, b, 1)
-                    elseif percent > 0.25 then
-                        local hex = self.db.profile.durabilityBarColorMedium or "FFD100"
-                        local r, g, b = AddOn.ConvertHexToRGB(hex)
-                        fillBar:SetStatusBarColor(r, g, b, 1)
-                    else
-                        local hex = self.db.profile.durabilityBarColorLow or "FF3300"
-                        local r, g, b = AddOn.ConvertHexToRGB(hex)
-                        fillBar:SetStatusBarColor(r, g, b, 1)
-                    end
+                -- Set default bar colors in DB if not present
+                if not self.db.profile.durabilityColorHigh or not self.db.profile.durabilityColorMedium or not self.db.profile.durabilityColorLow then
+                    self.db.profile.durabilityColorHigh = self.HexColorPresets.Uncommon
+                    self.db.profile.durabilityColorMedium = self.HexColorPresets.Info
+                    self.db.profile.durabilityColorLow = self.HexColorPresets.Error
+                end
+                if percent > 0.5 then
+                    local r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorHigh)
+                    fillBar:SetStatusBarColor(r, g, b, 1)
+                elseif percent > 0.25 then
+                    local r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorMedium)
+                    fillBar:SetStatusBarColor(r, g, b, 1)
                 else
-                    if percent > 0.5 then
-                        fillBar:SetStatusBarColor(0.2, 1, 0.2, 1)
-                    elseif percent > 0.25 then
-                        fillBar:SetStatusBarColor(1, 1, 0.2, 1)
-                    else
-                        fillBar:SetStatusBarColor(1, 0.2, 0.2, 1)
-                    end
+                    local r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorLow)
+                    fillBar:SetStatusBarColor(r, g, b, 1)
                 end
                 fillBar:Show()
                 if slot.PGVDurability then slot.PGVDurability:Hide() end
             else
                 -- Hide both bars and clear value
-                if slot.PGVDurabilityBar then slot.PGVDurabilityBar:SetValue(0); slot.PGVDurabilityBar:Hide() end
-                if slot.PGVDurabilityBarBG then slot.PGVDurabilityBarBG:SetValue(0); slot.PGVDurabilityBarBG:Hide() end
+                if slot.PGVDurabilityBar then
+                    slot.PGVDurabilityBar:SetValue(0)
+                    slot.PGVDurabilityBar:Hide()
+                end
+                if slot.PGVDurabilityBarBG then
+                    slot.PGVDurabilityBarBG:SetValue(0)
+                    slot.PGVDurabilityBarBG:Hide()
+                end
                 -- Create the font string for durability text if it doesn't exist
                 if not slot.PGVDurability then
                     slot.PGVDurability = slot:CreateFontString("PGVDurability"..slot:GetID(), "OVERLAY", "GameTooltipText")
@@ -363,13 +365,11 @@ function AddOn:ShowDurabilityBySlot(slot)
                 local durText = ""
                 local percentText = self.RoundNumber(percent * 100)
                 if percentText < 100 and percentText > 50 then
-                    durText = ColorText(percentText.."%%", "Uncommon")
+                    durText = ColorText(percentText.."%%", self.db.profile.durabilityColorHigh)
                 elseif percentText < 100 and percentText > 25 then
-                    durText = ColorText(percentText.."%%", "Info")
-                elseif percentText < 100 and percentText > 0 then
-                    durText = ColorText(percentText.."%%", "Legendary")
-                elseif percentText == 0 then
-                    durText = ColorText(percentText.."%%", "DeathKnight")
+                    durText = ColorText(percentText.."%%", self.db.profile.durabilityColorMedium)
+                elseif percentText < 100 and percentText >= 0 then
+                    durText = ColorText(percentText.."%%", self.db.profile.durabilityColorLow)
                 end
                 DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
                 slot.PGVDurability:SetFormattedText(durText)
@@ -378,15 +378,27 @@ function AddOn:ShowDurabilityBySlot(slot)
         else
             -- Hide all if no durability info
             if slot.PGVDurability then slot.PGVDurability:Hide() end
-            if slot.PGVDurabilityBar then slot.PGVDurabilityBar:SetValue(0); slot.PGVDurabilityBar:Hide() end
-            if slot.PGVDurabilityBarBG then slot.PGVDurabilityBarBG:SetValue(0); slot.PGVDurabilityBarBG:Hide() end
+            if slot.PGVDurabilityBar then
+                slot.PGVDurabilityBar:SetValue(0)
+                slot.PGVDurabilityBar:Hide()
+            end
+            if slot.PGVDurabilityBarBG then
+                slot.PGVDurabilityBarBG:SetValue(0)
+                slot.PGVDurabilityBarBG:Hide()
+            end
         end
     else
         -- No item equipped, hide all
         DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
         if slot.PGVDurability then slot.PGVDurability:Hide() end
-        if slot.PGVDurabilityBar then slot.PGVDurabilityBar:SetValue(0); slot.PGVDurabilityBar:Hide() end
-        if slot.PGVDurabilityBarBG then slot.PGVDurabilityBarBG:SetValue(0); slot.PGVDurabilityBarBG:Hide() end
+            if slot.PGVDurabilityBar then
+                slot.PGVDurabilityBar:SetValue(0)
+                slot.PGVDurabilityBar:Hide()
+            end
+            if slot.PGVDurabilityBarBG then
+                slot.PGVDurabilityBarBG:SetValue(0)
+                slot.PGVDurabilityBarBG:Hide()
+            end
     end
 end
 
