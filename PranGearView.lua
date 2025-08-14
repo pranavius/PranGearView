@@ -1547,7 +1547,7 @@ function AddOn:OnInitialize()
 
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
     -- it shows the character's current specialization options by default
-    SettingsPanel:SetScript("OnShow", function()
+    SettingsPanel:HookScript("OnShow", function()
         local specID = AddOn.GetCharacterCurrentSpecIDAndRole(AddOn)
         if AddOn.SpecOptionKeys[specID] and specID ~= AddOn.db.profile.lastSelectedSpecID then
             AddOn.db.profile.lastSelectedSpecID = specID
