@@ -25,7 +25,6 @@ button:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
 button:SetScript("OnLeave", function()
     GameTooltip:Hide()
 end)
-button:UpdateTooltip()
 
 AddOn.PGVToggleEnchantButton = button
 
