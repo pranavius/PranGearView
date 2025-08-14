@@ -13,10 +13,10 @@ AddOn.CurrentExpac = AddOn.ExpansionInfo.TheWarWithin
 ---@see HexColorPresets for a list of predefined colors such as class colors, item quality, etc.
 function AddOn.ColorText(text, color)
     if AddOn.HexColorPresets[color] then
-        return "|cFF"..AddOn.HexColorPresets[color]..text.."|r"
+        return WrapTextInColorCode(tostring(text), "FF"..AddOn.HexColorPresets[color])
     end
 
-    return "|cFF"..color..text.."|r"
+    return WrapTextInColorCode(tostring(text), "FF"..color)
 end
 
 local ColorText = AddOn.ColorText
