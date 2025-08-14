@@ -279,7 +279,7 @@ AddOn.ExpansionInfo = {
             "InspectMainHandSlot",
             "InspectSecondaryHandSlot"
         },
-        HeadEnchantAvailable = true,
+        HeadEnchantAvailable = false,
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false
     }

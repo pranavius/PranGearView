@@ -100,7 +100,7 @@ end
 ---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:GetGemsBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
-    if hasItem then
+    if hasItem and (self:IsSocketableSlot(slot) or self:IsAuxSocketableSlot(slot)) then
         local existingSocketCount = 0
         local gemText = ""
         local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
@@ -160,7 +160,7 @@ end
 ---@param isInspect? boolean Whether or not a character is currently being inspected
 function AddOn:GetEnchantmentBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
-    if hasItem then
+    if hasItem and self:IsEnchantableSlot(slot) then
         local isEnchanted = false
         local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
         if tooltip and tooltip.lines then

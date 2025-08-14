@@ -1,3 +1,4 @@
+-- Localization provided by Lirfdam
 local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "ptBR")
 
 if not L then return end
