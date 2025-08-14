@@ -1,3 +1,6 @@
+**1.8.1**
+- Fix a bug causing inactive enchants to be visible
+
 **1.8.0**
 - Update for Patch 11.2
 - Remove head enchant check
