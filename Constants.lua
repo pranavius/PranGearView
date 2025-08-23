@@ -252,7 +252,8 @@ AddOn.ExpansionInfo = {
             CharacterWaistSlot,
             "InspectHeadSlot",
             "InspectWristSlot",
-            "InspectWaistSlot"
+            "InspectWaistSlot",
+            CharacterBackSlot -- Reshii Wraps in TWW S3
         },
         MaxSocketsPerItem = 2,
         MaxAuxSocketsPerItem = 1,

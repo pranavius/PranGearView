@@ -1,3 +1,8 @@
+**1.9.0**
+- Add option to show durability as a bar rather than percentage text
+- Fix a bug where socketed Fiber icon for Reshii Wraps did not appear
+- Update localizations for supported languages
+
 **1.8.2**
 - Fix bug that sometimes breaks other addons
 - Remove a tooltip appearing on login/reload when it shouldn't

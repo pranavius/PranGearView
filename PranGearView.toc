@@ -3,7 +3,7 @@
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
 ## Author: pranavius
-## Version: 1.8.2
+## Version: 1.9.0
 ## SavedVariables: PranGearViewDB
 ## X-Flavor: retail
 ## X-Category: Class

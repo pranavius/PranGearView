@@ -43,6 +43,14 @@ L["Show Decimals for Equipped Item Level"] = "Dezimalwerte für angelegte Gegens
 L["Decimal Precision"] = "Dezimalpräzision"
 L["Hide Shirt & Tabard Info"] = "Hemd- und Wappenrock-Info ausblenden"
 L["Debug Mode"] = "Debug-Modus"
+L["Does nothing if Show Durability as Bar is enabled"] = WrapTextInColor("Führt nichts aus, wenn ", DARKYELLOW_FONT_COLOR)..WrapTextInColor("Show Durability as Bar", WHITE_FONT_COLOR)..WrapTextInColor(" aktiviert ist", DARKYELLOW_FONT_COLOR)
+L["High: above 50%"] = WrapTextInColor("Hoch", WHITE_FONT_COLOR)..": über 50%"
+L["Medium: 25% - 50%"] = WrapTextInColor("Mittel", WHITE_FONT_COLOR)..": 25% - 50%"
+L["Low: 25% or less"] = WrapTextInColor("Niedrig", WHITE_FONT_COLOR)..": 25% oder weniger"
+L["High"] = "Hoch"
+L["Medium"] = "Mittel"
+L["Low"] = "Niedrig"
+L["Reset All"] = "Alles zurücksetzen"
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Öffnet das Addon-Optionsfenster"
