@@ -1,5 +1,5 @@
 **1.9.0**
-- Add option to show durability as a bar rather than percentage text
+- Add option to show durability as a bar rather than percentage text (includes exact durability percentage when hovering over the bar)
 - Fix a bug where socketed Fiber icon for Reshii Wraps did not appear
 - Update localizations for supported languages
 
