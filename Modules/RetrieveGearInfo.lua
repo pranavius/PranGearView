@@ -270,7 +270,7 @@ function AddOn:ShowDurabilityBySlot(slot)
                 bar:SetScript("OnEnter", function(durBar)
                     if durBar.percent then
                         GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
-                        GameTooltip:AddLine("Durability: "..durBar.percent.."%", 1, 1, 1)
+                        GameTooltip:AddLine(L["Durability: "]..durBar.percent.."%", 1, 1, 1)
                         GameTooltip:Show()
                     end
                 end)
