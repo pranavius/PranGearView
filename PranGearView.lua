@@ -1823,6 +1823,7 @@ function AddOn:UpdateEquippedGearInfo()
             if not slot.PGVItemLevel then
                 slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
             end
+            ---@type string, number
             local iFont, iSize = slot.PGVItemLevel:GetFont()
             slot.PGVItemLevel:SetFont(iFont, iSize, self.db.profile.iLvlOutline)
             slot.PGVItemLevel:Hide()
@@ -1842,6 +1843,7 @@ function AddOn:UpdateEquippedGearInfo()
             if not slot.PGVUpgradeTrack then
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
+            ---@type string, number
             local uFont, uSize = slot.PGVUpgradeTrack:GetFont()
             slot.PGVUpgradeTrack:SetFont(uFont, uSize, self.db.profile.upgradeTrackOutline)
             slot.PGVUpgradeTrack:Hide()
@@ -1878,6 +1880,7 @@ function AddOn:UpdateEquippedGearInfo()
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
+            ---@type string, number
             local eFont, eSize = slot.PGVEnchant:GetFont()
             slot.PGVEnchant:SetFont(eFont, eSize, self.db.profile.enchantOutline)
             slot.PGVEnchant:Hide()

@@ -242,7 +242,7 @@ function AddOn:ShowDurabilityBySlot(slot)
     ---Helper to create or update a status bar for durability
     ---@param slot Slot The gear slot to get durability information for
     ---@param isBG boolean Whether or not the bar is a background bar
-    ---@return table|StatusBar|TextStatusBar bar
+    ---@return table|StatusBar bar
     local function GetDurabilityBar(slot, isBG)
         local barName = isBG and "PGVDurabilityBarBG" or "PGVDurabilityBar"
         local bar = slot[barName]
@@ -311,41 +311,44 @@ function AddOn:ShowDurabilityBySlot(slot)
         local cDur, mDur = GetInventoryItemDurability(slot:GetID())
         if cDur and mDur then
             local percent = cDur / mDur
-            if self.db.profile.showDurabilityAsBar then
+            if self.db.profile.showDurability and self.db.profile.showDurabilityAsBar then
                 -- Create or update bars
-                local bgBar = GetDurabilityBar(slot, true)
-                local fillBar = GetDurabilityBar(slot, false)
-                bgBar:SetValue(100)
-                bgBar:Show()
-                fillBar:SetValue(percent * 100)
-                fillBar.percent = tostring(self.RoundNumber(percent * 100))
+                slot.PGVDurabilityBarBg = GetDurabilityBar(slot, true)
+                slot.PGVDurabilityBar = GetDurabilityBar(slot, false)
+                slot.PGVDurabilityBarBg:SetValue(100)
+                slot.PGVDurabilityBarBg:Show()
+                slot.PGVDurabilityBar:SetValue(percent * 100)
+                slot.PGVDurabilityBar.percent = tostring(self.RoundNumber(percent * 100))
                 -- Set default bar colors in DB if not present
                 if not self.db.profile.durabilityColorHigh or not self.db.profile.durabilityColorMedium or not self.db.profile.durabilityColorLow then
                     self.db.profile.durabilityColorHigh = self.HexColorPresets.Uncommon
                     self.db.profile.durabilityColorMedium = self.HexColorPresets.Info
                     self.db.profile.durabilityColorLow = self.HexColorPresets.Error
                 end
+                local r, g, b
                 if percent > 0.5 then
-                    local r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorHigh)
-                    fillBar:SetStatusBarColor(r, g, b, 1)
+                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorHigh)
                 elseif percent > 0.25 then
-                    local r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorMedium)
-                    fillBar:SetStatusBarColor(r, g, b, 1)
+                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorMedium)
                 else
-                    local r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorLow)
-                    fillBar:SetStatusBarColor(r, g, b, 1)
+                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorLow)
                 end
-                fillBar:Show()
-                if slot.PGVDurability then slot.PGVDurability:Hide() end
-            else
+                if r ~= nil and g ~= nil and b ~= nil then
+                    slot.PGVDurabilityBar:SetStatusBarColor(r, g, b, 1)
+                    slot.PGVDurabilityBar:Show()
+                    if slot.PGVDurability then slot.PGVDurability:Hide() end
+                else
+                    self.DebugPrint("Unable to render durability bar due to invalid color value(s) - r, g, b =", r, g, b)
+                end
+            elseif self.db.profile.showDurability then
                 -- Hide both bars and clear value
                 if slot.PGVDurabilityBar then
                     slot.PGVDurabilityBar:SetValue(0)
                     slot.PGVDurabilityBar:Hide()
                 end
-                if slot.PGVDurabilityBarBG then
-                    slot.PGVDurabilityBarBG:SetValue(0)
-                    slot.PGVDurabilityBarBG:Hide()
+                if slot.PGVDurabilityBarBg then
+                    slot.PGVDurabilityBarBg:SetValue(0)
+                    slot.PGVDurabilityBarBg:Hide()
                 end
                 -- Create the font string for durability text if it doesn't exist
                 if not slot.PGVDurability then
@@ -383,9 +386,9 @@ function AddOn:ShowDurabilityBySlot(slot)
                 slot.PGVDurabilityBar:SetValue(0)
                 slot.PGVDurabilityBar:Hide()
             end
-            if slot.PGVDurabilityBarBG then
-                slot.PGVDurabilityBarBG:SetValue(0)
-                slot.PGVDurabilityBarBG:Hide()
+            if slot.PGVDurabilityBarBg then
+                slot.PGVDurabilityBarBg:SetValue(0)
+                slot.PGVDurabilityBarBg:Hide()
             end
         end
     else
@@ -396,9 +399,9 @@ function AddOn:ShowDurabilityBySlot(slot)
                 slot.PGVDurabilityBar:SetValue(0)
                 slot.PGVDurabilityBar:Hide()
             end
-            if slot.PGVDurabilityBarBG then
-                slot.PGVDurabilityBarBG:SetValue(0)
-                slot.PGVDurabilityBarBG:Hide()
+            if slot.PGVDurabilityBarBg then
+                slot.PGVDurabilityBarBg:SetValue(0)
+                slot.PGVDurabilityBarBg:Hide()
             end
     end
 end

@@ -144,6 +144,9 @@ function AddOn.CreateOptionsSpacer(order, width)
     }
 end
 
+---@class PGVDurabilityBar: StatusBar
+---@field percent number
+
 ---@class Slot: Frame
 ---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
 ---@field PGVItemLevel? FontString
@@ -151,6 +154,8 @@ end
 ---@field PGVGems? FontString
 ---@field PGVEnchant? FontString
 ---@field PGVDurability? FontString
+---@field PGVDurabilityBarBg? StatusBar
+---@field PGVDurabilityBar? PGVDurabilityBar
 ---@field PGVEmbellishmentTexture? Texture
 ---@field PGVEmbellishmentShadow? Texture
 

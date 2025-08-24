@@ -236,6 +236,18 @@ The value for text outline to pass to `SetFont()`
 
 ---
 
+# PGVDurabilityBar
+
+## percent
+
+
+```lua
+number
+```
+
+
+---
+
 # PranGearView
 
 ## AbbreviateText
@@ -297,7 +309,7 @@ Alternatively, a color's hexadecimal code can be provided for the `color` argume
 
 @*return* `result` — A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
 
-See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#124#9) for a list of predefined colors such as class colors, item quality, etc.
+See: [HexColorPresets](PranGearView/Constants.lua#133#9) for a list of predefined colors such as class colors, item quality, etc.
 
 ## CompressTable
 
@@ -431,7 +443,7 @@ table
 
 See:
   * ~Frame~ for generic definition along without common functions and variables available for all Frames
-  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#174#10) for a list of Frame names available when the Inspect window is open
+  * [InspectInfo](PranGearView/Constants.lua#183#10) for a list of Frame names available when the Inspect window is open
 
 ## GearSlots
 
@@ -457,7 +469,7 @@ Returns specialization ID and role for the logged-in character
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#279#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](PranGearView/Constants.lua#289#9) for a list of specializations and their IDs
 
 ## GetEnchantmentBySlot
 
@@ -531,7 +543,7 @@ Returns specialization ID and role for the chosen spec whenever it is changed in
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#279#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](PranGearView/Constants.lua#289#9) for a list of specializations and their IDs
 
 ## GetStatOrderHandler
 
@@ -967,6 +979,16 @@ unknown
 
  Load database
 
+## frfrEnchantTextReplacements
+
+
+```lua
+TextReplacement[]
+```
+
+A list of tables containing text replacement patterns for enchants that are specific to the frFR locale.
+Intended for replacement after language-agnostic replacements are completed
+
 ## inspectedUnitGUID
 
 
@@ -1026,6 +1048,20 @@ Indicates whether the equipment slot is on the left, right, or bottom of the Cha
 
 ```lua
 FontString?
+```
+
+## PGVDurabilityBar
+
+
+```lua
+PGVDurabilityBar?
+```
+
+## PGVDurabilityBarBg
+
+
+```lua
+StatusBar?
 ```
 
 ## PGVEmbellishmentShadow
