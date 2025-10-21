@@ -137,7 +137,7 @@ function AddOn:GetGemsBySlot(slot, isInspect)
         end
 
         -- Indicates slots that can have sockets added to them
-        local showGems = isInspect and self.db.profile.showInspectGems or self.db.profile.showGems
+        local showGems = (isInspect and self.db.profile.showInspectGems and not PlayerGetTimerunningSeasonID()) or self.ShowGems
         if showGems and self.db.profile.showMissingGems and self:IsSocketableSlot(slot) and existingSocketCount < self.CurrentExpac.MaxSocketsPerItem then
             local isCharacterMaxLevel = UnitLevel("player") == self.CurrentExpac.LevelCap
             if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then

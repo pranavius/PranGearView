@@ -78,7 +78,7 @@ function AddOn:SetGemsPositionBySlot(slot)
     slot.PGVGems:ClearAllPoints()
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local upgradeTrackShown = self.db.profile.showUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local upgradeTrackShown = self.ShowUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
     local isMainHand = slot == CharacterMainHandSlot
 
     -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
@@ -108,7 +108,7 @@ function AddOn:SetInspectGemsPositionBySlot(slot)
     slot.PGVGems:ClearAllPoints()
     local itemLevelShown = self.db.profile.showInspectiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showInspectiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local upgradeTrackShown = self.db.profile.showInspectUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local upgradeTrackShown = self.db.profile.showInspectUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown() and not PlayerGetTimerunningSeasonID()
     local isMainHand = slot == _G["InspectMainHandSlot"]
 
     if upgradeTrackShown and IsLeftSide == nil then
@@ -139,9 +139,9 @@ function AddOn:SetEnchantPositionBySlot(slot)
     local isEnchantableSlot = self:IsEnchantableSlot(slot)
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local upgradeTrackShown = self.db.profile.showUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
-    local gemsShown = self.db.profile.showGems and slot.PGVGems and slot.PGVGems:IsShown()
-    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self.db.profile.showGems and not isSocketableSlot)) and 10 or 25
+    local upgradeTrackShown = self.ShowUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local gemsShown = self.ShowGems and slot.PGVGems and slot.PGVGems:IsShown()
+    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self.ShowGems and not isSocketableSlot)) and 10 or 25
 
     if self.db.profile.collapseEnchants and slot.IsLeftSide == nil and upgradeTrackShown then
         -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown
@@ -186,7 +186,7 @@ function AddOn:SetInspectEnchantPositionBySlot(slot)
     local itemLevelShown = self.db.profile.showInspectiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showInspectiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local upgradeTrackShown = self.db.profile.showInspectUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
-    local gemsShown = self.db.profile.showInspectGems and slot.PGVGems and slot.PGVGems:IsShown()
+    local gemsShown = self.db.profile.showInspectGems and slot.PGVGems and slot.PGVGems:IsShown() and not PlayerGetTimerunningSeasonID()
 
     
     if itemLevelShown and IsLeftSide ~= nil and isEnchantableSlot then

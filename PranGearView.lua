@@ -41,6 +41,7 @@ local OptionsTable = {
                 AddOn.db.profile[item[#item]] = val
                 AddOn:HandleEquipmentOrSettingsChange()
                 end,
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         showGems = {
             type = "toggle",
@@ -51,7 +52,8 @@ local OptionsTable = {
             set = function(item, val)
                 AddOn.db.profile[item[#item]] = val
                 AddOn:HandleEquipmentOrSettingsChange()
-            end
+            end,
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         showEnchants = {
             type = "toggle",
@@ -67,7 +69,8 @@ local OptionsTable = {
                     AddOn.PGVToggleEnchantButton:Show()
                 end
                 AddOn:HandleEquipmentOrSettingsChange()
-            end
+            end,
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         showDurability = {
             type = "toggle",
@@ -78,7 +81,8 @@ local OptionsTable = {
             set = function(item, val)
                 AddOn.db.profile[item[#item]] = val
                 AddOn:HandleEquipmentOrSettingsChange()
-            end
+            end,
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         divider = {
             type = "header",
@@ -432,7 +436,8 @@ local OptionsTable = {
                     end,
                     hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 }
-            }
+            },
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         gemOptions = {
             type = "group",
@@ -492,7 +497,8 @@ local OptionsTable = {
                     name = ColorText(L["indicates an empty socket on the item"], "Info"),
                     order = orderCounter()
                 }
-            }
+            },
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         enchantOptions = {
             type = "group",
@@ -666,7 +672,8 @@ local OptionsTable = {
                     end,
                     hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
                 }
-            }
+            },
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         durabilityOptions = {
             type = "group",
@@ -877,7 +884,8 @@ local OptionsTable = {
                     end,
                     disabled = function() return not AddOn.db.profile.showDurability end
                 }
-            }
+            },
+            hidden = PlayerGetTimerunningSeasonID() ~= nil
         },
         inspectOptions = {
             type = "group",
@@ -948,7 +956,8 @@ local OptionsTable = {
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                    disabled = function() return not AddOn.db.profile.showOnInspect end,
+                    hidden = PlayerGetTimerunningSeasonID() ~= nil
                 },
                 showInspectGems = {
                     type = "toggle",
@@ -960,7 +969,8 @@ local OptionsTable = {
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                    disabled = function() return not AddOn.db.profile.showOnInspect end,
+                    hidden = PlayerGetTimerunningSeasonID() ~= nil
                 },
                 showInspectEnchants = {
                     type = "toggle",
@@ -972,7 +982,8 @@ local OptionsTable = {
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                    disabled = function() return not AddOn.db.profile.showOnInspect end,
+                    hidden = PlayerGetTimerunningSeasonID() ~= nil
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
@@ -985,7 +996,8 @@ local OptionsTable = {
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                    disabled = function() return not AddOn.db.profile.showOnInspect end,
+                    hidden = PlayerGetTimerunningSeasonID() ~= nil
                 },
             }
         },
@@ -1671,6 +1683,11 @@ function AddOn:OnInitialize()
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
 
+    self.ShowGems = self.db.profile.showGems and not PlayerGetTimerunningSeasonID()
+    self.ShowEnchants = self.db.profile.showEnchants and not PlayerGetTimerunningSeasonID()
+    self.ShowEmbellishments = self.db.profile.showEmbellishments and not PlayerGetTimerunningSeasonID()
+    self.ShowUpgradeTrack = self.db.profile.showUpgradeTrack and not PlayerGetTimerunningSeasonID()
+
     if self.db.profile.collapseEnchants then
         DebugPrint("Enchant text is collapsed, update button text accordingly")
         AddOn.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
@@ -1683,7 +1700,7 @@ function AddOn:OnInitialize()
         button:UpdateTooltipText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
-    if (not self.db.profile.showEnchants or (self.db.profile.showEnchants and not self.db.profile.showEnchantTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
+    if (not self.ShowEnchants or (self.ShowEnchants and not self.db.profile.showEnchantTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
         AddOn.PGVToggleEnchantButton:Hide()
     end
 
@@ -1839,7 +1856,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVItemLevel:Hide()
         end
 
-        if self.db.profile.showUpgradeTrack then
+        if self.ShowUpgradeTrack then
             if not slot.PGVUpgradeTrack then
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -1859,7 +1876,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVUpgradeTrack:Hide()
         end
 
-        if self.db.profile.showGems then
+        if self.ShowGems then
             if not slot.PGVGems then
                 slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -1876,7 +1893,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVGems:Hide()
         end
 
-        if self.db.profile.showEnchants then
+        if self.ShowEnchants then
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -1902,7 +1919,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVDurability:Hide()
         end
 
-        if self.db.profile.showEmbellishments then
+        if self.ShowEmbellishments then
             self:ShowEmbellishmentBySlot(slot)
         else
             if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end

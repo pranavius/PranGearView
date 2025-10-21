@@ -32,10 +32,10 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
 
     local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
-    local showInspectUpgradeTrack = self.db.profile.showInspectUpgradeTrack
-    local showInspectGems = showOnInspect and self.db.profile.showInspectGems
-    local showInspectEnchants = showOnInspect and self.db.profile.showInspectEnchants
-    local showInspectEmbellishments = showOnInspect and self.db.profile.showInspectEmbellishments
+    local showInspectUpgradeTrack = self.db.profile.showInspectUpgradeTrack and not PlayerGetTimerunningSeasonID()
+    local showInspectGems = showOnInspect and self.db.profile.showInspectGems and not PlayerGetTimerunningSeasonID()
+    local showInspectEnchants = showOnInspect and self.db.profile.showInspectEnchants and not PlayerGetTimerunningSeasonID()
+    local showInspectEmbellishments = showOnInspect and self.db.profile.showInspectEmbellishments and not PlayerGetTimerunningSeasonID()
     for _, slotName in ipairs(self.InspectInfo.slots) do
         ---@type Slot
         local slot = _G[slotName]

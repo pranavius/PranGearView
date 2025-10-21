@@ -1,3 +1,6 @@
+**1.10.0**
+- Hide indicators and options not available on Timerunners
+
 **1.9.1**
 - Fix bug with showing and hiding durability when the **Show Durability as Bar** option is selected
 - Minor code and documentation updates
