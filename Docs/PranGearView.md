@@ -39,6 +39,11 @@ The true numeric value for the stat being shown
 
 ---
 
+# ClassIcons
+
+
+---
+
 # Credit
 
 ## class
@@ -76,6 +81,21 @@ string?
 ```
 
 World of Warcraft race & gender they identify with in-game
+
+
+---
+
+# DKEnchantAbbr
+
+
+---
+
+# DefaultStatOrder
+
+
+---
+
+# DefaultTankStatOrder
 
 
 ---
@@ -162,6 +182,11 @@ any[]
 ```
 
 A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
+
+
+---
+
+# HexColorPresets
 
 
 ---
@@ -285,6 +310,15 @@ Handles changing the Character Info window size when the option to use the large
 
 Generates the Credits section of the AddOn options dynamically based on tables of contributors and special mentions (special thanks)
 
+## CheckIfTimerunner
+
+
+```lua
+(method) PranGearView:CheckIfTimerunner()
+```
+
+ Temporarily using for Timerunning characters
+
 ## ClassIcons
 
 
@@ -309,7 +343,7 @@ Alternatively, a color's hexadecimal code can be provided for the `color` argume
 
 @*return* `result` — A formatted string wrapped in syntax to display `text` in the `color` desired at full opacity
 
-See: [HexColorPresets](PranGearView/Constants.lua#133#9) for a list of predefined colors such as class colors, item quality, etc.
+See: [HexColorPresets](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#133#9) for a list of predefined colors such as class colors, item quality, etc.
 
 ## CompressTable
 
@@ -398,7 +432,7 @@ function PranGearView.DebugPrint(...string|number)
 ```
 
 Prints the desired text if the AddOn is in debugging mode. This is just a wrapper around the standard `print` function.
-See: [print](file:///Users/pranavchary/.vscode/extensions/sumneko.lua-3.15.0-darwin-arm64/server/meta/Lua%205.4%20en-us%20utf8/basic.lua#235#9)
+See: [print](file:///Users/pranavchary/.vscode/extensions/sumneko.lua-3.16.0-darwin-arm64/server/meta/Lua%205.4%20en-us%20utf8/basic.lua#245#9)
 
 ## DebugTable
 
@@ -443,7 +477,7 @@ table
 
 See:
   * ~Frame~ for generic definition along without common functions and variables available for all Frames
-  * [InspectInfo](PranGearView/Constants.lua#183#10) for a list of Frame names available when the Inspect window is open
+  * [InspectInfo](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#183#10) for a list of Frame names available when the Inspect window is open
 
 ## GearSlots
 
@@ -469,7 +503,7 @@ Returns specialization ID and role for the logged-in character
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](PranGearView/Constants.lua#289#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#289#9) for a list of specializations and their IDs
 
 ## GetEnchantmentBySlot
 
@@ -543,7 +577,7 @@ Returns specialization ID and role for the chosen spec whenever it is changed in
 
 @*return* `role` — The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 
-See: [SpecOptionKeys](PranGearView/Constants.lua#289#9) for a list of specializations and their IDs
+See: [SpecOptionKeys](file:///Users/pranavchary/Documents/repos/PranGearView/Constants.lua#289#9) for a list of specializations and their IDs
 
 ## GetStatOrderHandler
 
@@ -740,6 +774,13 @@ Indicates whether an item equipped in a particular gear slot can have a gem sock
 
 @*return* `result` — `true` if the item can have a socket, `false` otherwise
 
+## IsTimerunner
+
+
+```lua
+boolean
+```
+
 ## OnInitialize
 
 
@@ -892,6 +933,38 @@ Set upgrade track text position in the Character Info window
 
 @*param* `slot` — The gear slot to set upgrade tracks position for
 
+## ShouldShowEmbellishments
+
+
+```lua
+(method) PranGearView:ShouldShowEmbellishments()
+  -> boolean
+```
+
+## ShouldShowEnchants
+
+
+```lua
+(method) PranGearView:ShouldShowEnchants()
+  -> boolean
+```
+
+## ShouldShowGems
+
+
+```lua
+(method) PranGearView:ShouldShowGems()
+  -> boolean
+```
+
+## ShouldShowUpgradeTrack
+
+
+```lua
+(method) PranGearView:ShouldShowUpgradeTrack()
+  -> boolean
+```
+
 ## ShowDecimalStatValues
 
 
@@ -924,6 +997,13 @@ Fetches and formats embellishment details for an item in the defined gear slot (
 @*param* `slot` — The gear slot to get gem information for
 
 @*param* `isInspect` — Whether or not a character is currently being inspected
+
+## ShowEnchants
+
+
+```lua
+boolean
+```
 
 ## SpecOptionKeys
 
@@ -1109,6 +1189,11 @@ FontString?
 
 ---
 
+# SpecOptionKeys
+
+
+---
+
 # TextReplacement
 
 ## original
@@ -1128,3 +1213,11 @@ string
 ```
 
 The localization key for the abbreviation for the original text
+
+
+---
+
+# TooltipDataType
+
+
+---

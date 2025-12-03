@@ -40,8 +40,8 @@ local OptionsTable = {
             set = function(item, val)
                 AddOn.db.profile[item[#item]] = val
                 AddOn:HandleEquipmentOrSettingsChange()
-                end,
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            end,
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         showGems = {
             type = "toggle",
@@ -53,7 +53,7 @@ local OptionsTable = {
                 AddOn.db.profile[item[#item]] = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         showEnchants = {
             type = "toggle",
@@ -70,7 +70,7 @@ local OptionsTable = {
                 end
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         showDurability = {
             type = "toggle",
@@ -82,7 +82,7 @@ local OptionsTable = {
                 AddOn.db.profile[item[#item]] = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         divider = {
             type = "header",
@@ -437,7 +437,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 }
             },
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         gemOptions = {
             type = "group",
@@ -498,7 +498,7 @@ local OptionsTable = {
                     order = orderCounter()
                 }
             },
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         enchantOptions = {
             type = "group",
@@ -673,7 +673,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
                 }
             },
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         durabilityOptions = {
             type = "group",
@@ -885,7 +885,7 @@ local OptionsTable = {
                     disabled = function() return not AddOn.db.profile.showDurability end
                 }
             },
-            hidden = PlayerGetTimerunningSeasonID() ~= nil
+            hidden = function() return AddOn.IsTimerunner or false end
         },
         inspectOptions = {
             type = "group",
@@ -957,7 +957,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = PlayerGetTimerunningSeasonID() ~= nil
+                    hidden = function() return AddOn.IsTimerunner or false end
                 },
                 showInspectGems = {
                     type = "toggle",
@@ -970,7 +970,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = PlayerGetTimerunningSeasonID() ~= nil
+                    hidden = function() return AddOn.IsTimerunner or false end
                 },
                 showInspectEnchants = {
                     type = "toggle",
@@ -983,7 +983,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = PlayerGetTimerunningSeasonID() ~= nil
+                    hidden = function() return AddOn.IsTimerunner or false end
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
@@ -997,7 +997,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = PlayerGetTimerunningSeasonID() ~= nil
+                    hidden = function() return AddOn.IsTimerunner or false end
                 },
             }
         },
@@ -1404,7 +1404,8 @@ local OptionsTable = {
                     set = function(item, val)
                         AddOn.db.profile[item[#item]] = val
                         AddOn:HandleEquipmentOrSettingsChange()
-                    end
+                    end,
+                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 },
                 showCharacteriLvlDecimal = {
                     type = "toggle",
@@ -1648,6 +1649,28 @@ local SlashOptions = {
 
 local SlashCmds = { "prangearview", "pgv" }
 
+-- Temporarily using for Timerunning characters
+function AddOn:CheckIfTimerunner()
+    local timerunningID = PlayerGetTimerunningSeasonID()
+    self.IsTimerunner = timerunningID ~= nil
+end
+
+function AddOn:ShouldShowGems()
+    return self.db.profile.showGems and not self.IsTimerunner
+end
+
+function AddOn:ShouldShowEnchants()
+    return self.db.profile.showEnchants and not self.IsTimerunner
+end
+
+function AddOn:ShouldShowEmbellishments()
+    return self.db.profile.showEmbellishments and not self.IsTimerunner
+end
+
+function AddOn:ShouldShowUpgradeTrack()
+    return self.db.profile.showUpgradeTrack and not self.IsTimerunner
+end
+
 function AddOn:OnInitialize()
     -- Load database
 	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", DBDefaults, true)
@@ -1683,10 +1706,8 @@ function AddOn:OnInitialize()
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
 
-    self.ShowGems = self.db.profile.showGems and not PlayerGetTimerunningSeasonID()
+    self.IsTimerunner = false
     self.ShowEnchants = self.db.profile.showEnchants and not PlayerGetTimerunningSeasonID()
-    self.ShowEmbellishments = self.db.profile.showEmbellishments and not PlayerGetTimerunningSeasonID()
-    self.ShowUpgradeTrack = self.db.profile.showUpgradeTrack and not PlayerGetTimerunningSeasonID()
 
     if self.db.profile.collapseEnchants then
         DebugPrint("Enchant text is collapsed, update button text accordingly")
@@ -1700,7 +1721,7 @@ function AddOn:OnInitialize()
         button:UpdateTooltipText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
-    if (not self.ShowEnchants or (self.ShowEnchants and not self.db.profile.showEnchantTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
+    if (not self.db.profile.showEnchants or (self.db.profile.showEnchants and not self.db.profile.showEnchantTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
         AddOn.PGVToggleEnchantButton:Hide()
     end
 
@@ -1726,8 +1747,19 @@ function AddOn:OnInitialize()
     DebugPrint(ColorText(addonName, "Heirloom"), "initialized successfully")
 
     -- Hook into necessary secure functions
-    hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame) if subFrame == "PaperDollFrame" then self:UpdateEquippedGearInfo() end end)
-    hooksecurefunc(CharacterFrame, "RefreshDisplay", function() self:AdjustCharacterInfoWindowSize() end)
+    hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
+        if subFrame == "PaperDollFrame" then
+            self:CheckIfTimerunner()
+            self:UpdateEquippedGearInfo()
+        end
+    end)
+    hooksecurefunc(CharacterFrame, "RefreshDisplay", function()
+            self:CheckIfTimerunner()
+            if self.IsTimerunner then
+                AddOn.PGVToggleEnchantButton:Hide()
+            end
+            self:AdjustCharacterInfoWindowSize()
+        end)
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
         if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
             local actor = cms:GetPlayerActor()
@@ -1751,6 +1783,7 @@ function AddOn:OnInitialize()
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
     -- it shows the character's current specialization options by default
     SettingsPanel:HookScript("OnShow", function()
+        self:CheckIfTimerunner()
         local specID = AddOn.GetCharacterCurrentSpecIDAndRole(AddOn)
         if AddOn.SpecOptionKeys[specID] and specID ~= AddOn.db.profile.lastSelectedSpecID then
             AddOn.db.profile.lastSelectedSpecID = specID
@@ -1856,7 +1889,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVItemLevel:Hide()
         end
 
-        if self.ShowUpgradeTrack then
+        if self:ShouldShowUpgradeTrack() then
             if not slot.PGVUpgradeTrack then
                 slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -1876,7 +1909,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVUpgradeTrack:Hide()
         end
 
-        if self.ShowGems then
+        if self:ShouldShowGems() then
             if not slot.PGVGems then
                 slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -1893,7 +1926,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVGems:Hide()
         end
 
-        if self.ShowEnchants then
+        if self:ShouldShowEnchants() then
             if not slot.PGVEnchant then
                 slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
             end
@@ -1919,7 +1952,7 @@ function AddOn:UpdateEquippedGearInfo()
             slot.PGVDurability:Hide()
         end
 
-        if self.ShowEmbellishments then
+        if self:ShouldShowEmbellishments() then
             self:ShowEmbellishmentBySlot(slot)
         else
             if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end

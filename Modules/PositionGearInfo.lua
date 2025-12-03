@@ -78,7 +78,7 @@ function AddOn:SetGemsPositionBySlot(slot)
     slot.PGVGems:ClearAllPoints()
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local upgradeTrackShown = self.ShowUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local upgradeTrackShown = self:ShouldShowUpgradeTrack() and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
     local isMainHand = slot == CharacterMainHandSlot
 
     -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
@@ -139,9 +139,9 @@ function AddOn:SetEnchantPositionBySlot(slot)
     local isEnchantableSlot = self:IsEnchantableSlot(slot)
     local itemLevelShown = self.db.profile.showiLvl and not self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
     local itemLevelShownOnItem = self.db.profile.showiLvl and self.db.profile.iLvlOnItem and slot.PGVItemLevel and slot.PGVItemLevel:IsShown()
-    local upgradeTrackShown = self.ShowUpgradeTrack and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
-    local gemsShown = self.ShowGems and slot.PGVGems and slot.PGVGems:IsShown()
-    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self.ShowGems and not isSocketableSlot)) and 10 or 25
+    local upgradeTrackShown = self:ShouldShowUpgradeTrack() and slot.PGVUpgradeTrack and slot.PGVUpgradeTrack:IsShown()
+    local gemsShown = self:ShouldShowGems() and slot.PGVGems and slot.PGVGems:IsShown()
+    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and self:ShouldShowGems() and not isSocketableSlot)) and 10 or 25
 
     if self.db.profile.collapseEnchants and slot.IsLeftSide == nil and upgradeTrackShown then
         -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown

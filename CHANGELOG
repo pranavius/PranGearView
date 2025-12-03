@@ -1,3 +1,8 @@
+**1.11.0**
+- Update for Patch 11.2.7
+- Fixed bug causing Timerunners to not be detected properly until UI reload
+- Documentation updates
+
 **1.10.0**
 - Hide indicators and options not available on Timerunners
 
