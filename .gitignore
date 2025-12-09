@@ -1,3 +1,5 @@
 .DS_Store
 .vscode
+.release
+Libs
 generate-docs.sh
