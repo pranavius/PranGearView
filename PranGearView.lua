@@ -952,6 +952,7 @@ local OptionsTable = {
                     end,
                     disabled = function() return not AddOn.db.profile.showOnInspect end
                 },
+                --@retail@
                 showInspectUpgradeTrack = {
                     type = "toggle",
                     name = L["Upgrade Track"],
@@ -965,6 +966,7 @@ local OptionsTable = {
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
                     hidden = function() return AddOn.IsTimerunner or false end
                 },
+                --@end-retail@
                 showInspectGems = {
                     type = "toggle",
                     name = L["Gems"],
