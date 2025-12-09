@@ -1,4 +1,5 @@
 ## Interface: 120000, 110207
+## Interface-Mists: 50502
 ## Title: Pran Gear View
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon

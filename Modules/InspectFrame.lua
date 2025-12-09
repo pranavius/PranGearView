@@ -143,7 +143,12 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         local token = UnitTokenFromGUID(self.inspectedUnitGUID)
         ---@cast token string
         DebugPrint("Inspected unit token for average item level:", ColorText(token, "Heirloom"))
+        --@retail@
         local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
+        --@end-retail@
+        --@version-mists@
+        local itemLevelText = ""
+        --@end-version-mists@
         local classFile = select(2, UnitClass(token))
         local classHexWithAlpha = select(4, GetClassColor(classFile))
         if self.db.profile.includeAvgLabel then

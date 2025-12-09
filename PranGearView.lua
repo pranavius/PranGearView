@@ -31,6 +31,7 @@ local OptionsTable = {
                 AddOn:HandleEquipmentOrSettingsChange()
             end
         },
+        --@retail@
         showUpgradeTrack = {
             type = "toggle",
             name = L["Upgrade Track"],
@@ -43,6 +44,7 @@ local OptionsTable = {
             end,
             hidden = function() return AddOn.IsTimerunner or false end
         },
+        --@end-retail@
         showGems = {
             type = "toggle",
             name = L["Gems"],
@@ -291,6 +293,7 @@ local OptionsTable = {
                 }
             }
         },
+        --@retail@
         upgradeTrackOptions = {
             type = "group",
             name = L["Upgrade Track"],
@@ -439,6 +442,7 @@ local OptionsTable = {
             },
             hidden = function() return AddOn.IsTimerunner or false end
         },
+        --@end-retail@
         gemOptions = {
             type = "group",
             name = L["Gems"],
@@ -910,6 +914,7 @@ local OptionsTable = {
                     order = orderCounter()
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
+                --@retail@
                 showInspectAvgILvl = {
                     type = "toggle",
                     name = L["Average Item Level"],
@@ -934,6 +939,7 @@ local OptionsTable = {
                     end,
                     disabled = function() return not AddOn.db.profile.showOnInspect or not AddOn.db.profile.showInspectAvgILvl end
                 },
+                --@end-retail@
                 showInspectiLvl = {
                     type = "toggle",
                     name = L["Item Level"],
@@ -985,6 +991,7 @@ local OptionsTable = {
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
                     hidden = function() return AddOn.IsTimerunner or false end
                 },
+                --@retail@
                 showInspectEmbellishments = {
                     type = "toggle",
                     name = L["Embellishments"],
@@ -999,6 +1006,7 @@ local OptionsTable = {
                     disabled = function() return not AddOn.db.profile.showOnInspect end,
                     hidden = function() return AddOn.IsTimerunner or false end
                 },
+                --@end-retail@
             }
         },
         characterStatOptions = {
@@ -1394,6 +1402,7 @@ local OptionsTable = {
                         AddOn:AdjustCharacterInfoWindowSize()
                     end
                 },
+                --@retail@
                 showEmbellishments = {
                     type = "toggle",
                     name = L["Show Embellishments"],
@@ -1435,6 +1444,7 @@ local OptionsTable = {
                     disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end,
                     hidden = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
                 },
+                --@end-retail@
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 hideShirtTabardInfo = {
                     type = "toggle",
@@ -1648,6 +1658,8 @@ local SlashOptions = {
 }
 
 local SlashCmds = { "prangearview", "pgv" }
+
+PlayerGetTimerunningSeasonID = PlayerGetTimerunningSeasonID or function() return nil end
 
 -- START: Temporary Timerunner character functions
 function AddOn:CheckIfTimerunner()
