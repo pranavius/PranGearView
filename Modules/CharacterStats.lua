@@ -5,12 +5,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
 
----@class CharacterStatFrame : Frame
----@field Background Frame A highlight color that serves as a background for even-ordered displayed stats (helps with visual separation)
----@field Label FontString The name of the stat being shown
----@field Value FontString The displayed value of the stat being shown
----@field numericValue? number The true numeric value for the stat being shown
-
 ---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
 ---@return number[] options A list of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
