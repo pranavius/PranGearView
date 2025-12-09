@@ -5,7 +5,7 @@ if not L then return end
 
 ------------ Options ------------
 L["Item Level"] = "Gegenstandsstufe"
-L["Upgrade Track"] = "Aufwertung"
+L["Upgrade Track"] = "Sture aufwerten"
 L["Gems"] = "Sockel & Edelsteine"
 L["Enchants"] = "Verzauberungen"
 L["Durability"] = "Haltbarkeit"
@@ -51,6 +51,7 @@ L["High"] = "Hoch"
 L["Medium"] = "Mittel"
 L["Low"] = "Niedrig"
 L["Reset All"] = "Alles zurücksetzen"
+L["Enchant"] = "Verzauberung"
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Öffnet das Addon-Optionsfenster"
@@ -79,7 +80,7 @@ L["Fall Crus"] = "Kreuzfahrer"
 L["Stnskn Garg"] = "Steinhaut"
 L["Unend Thirst"] = "Unstillbarer Durst"
 --- Enchant Text ---
-L["Enchanted: "] = "VZ: "
+L["Enchanted: "] = "Verzaubert: "
 L["Radiant Critical Strike"] = "Strahlender kritischer Trefferwert"
 L["Rad Crit"] = "Strahl. Krit"
 L["Radiant Haste"] = "Strahlendes Tempo"

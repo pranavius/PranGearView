@@ -1649,7 +1649,7 @@ local SlashOptions = {
 
 local SlashCmds = { "prangearview", "pgv" }
 
--- Temporarily using for Timerunning characters
+-- START: Temporary Timerunner character functions
 function AddOn:CheckIfTimerunner()
     local timerunningID = PlayerGetTimerunningSeasonID()
     self.IsTimerunner = timerunningID ~= nil
@@ -1670,6 +1670,7 @@ end
 function AddOn:ShouldShowUpgradeTrack()
     return self.db.profile.showUpgradeTrack and not self.IsTimerunner
 end
+-- END: Temporary Timerunner character functions
 
 function AddOn:OnInitialize()
     -- Load database
@@ -1867,7 +1868,7 @@ function AddOn:UpdateEquippedGearInfo()
     end
     
     DebugPrint("Enchants collapsed:", self.db.profile.collapseEnchants)
-       for _, slot in ipairs(self.GearSlots) do
+    for _, slot in ipairs(self.GearSlots) do
         local slotID = slot:GetID()
         if self.db.profile.showiLvl then
             if not slot.PGVItemLevel then
