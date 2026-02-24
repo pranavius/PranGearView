@@ -1703,7 +1703,7 @@ function AddOn:OnInitialize()
     LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(OptionsTable, addonName)
     registry:RegisterOptionsTable("PGVOptions", OptionsTable)
 	registry:RegisterOptionsTable("PGVProfiles", profiles)
-    LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
+    _, self.categoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
 
     self.IsTimerunner = false
@@ -1803,7 +1803,7 @@ end
 function AddOn.HandlePGVSlashCmd(cmd, input)
     input = strtrim(input)
     if input == "" then
-        Settings.OpenToCategory(addonName)
+        Settings.OpenToCategory(AddOn.categoryID)
     elseif input == "help" then
         LibStub("AceConfigCmd-3.0"):HandleCommand(cmd, addonName, "")
         -- Mimic the Ace3 command description format to indicate that no argument opens the addon options
