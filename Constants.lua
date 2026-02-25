@@ -349,7 +349,7 @@ AddOn.DefaultTankStatOrder = {
 
 ---@enum TooltipDataType
 AddOn.TooltipDataType = {
-    UpgradeTrack = 42,
+    UpgradeTrack = 32,
     Gem = 3,
     Enchant = 15,
 

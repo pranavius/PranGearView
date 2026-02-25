@@ -1,9 +1,9 @@
-## Interface: 110207
+## Interface: 120000
 ## Title: Pran Gear View
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
 ## Author: pranavius
-## Version: 1.11.0
+## Version: 1.12.0
 ## SavedVariables: PranGearViewDB
 ## Category: User Interface
 ## X-Flavor: retail
