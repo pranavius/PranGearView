@@ -2,6 +2,7 @@
 *A lightweight, customizable way to view your equipped gear*
 
 ## Highlights
+- **NEW**: Updated for compatibility with the Midnight expansion (Patch 12.0.0)
 - Allows for a wide range of text customization (size, color, outline, and more to come!)
 - Lets you know when items are missing sockets, gems, and enchants
 - Can show gear information when inspecting players
@@ -88,3 +89,5 @@ If you would like to contribute to development, please clone the repository loca
 **GitHub**: [Pranavius](https://github.com/pranavius)
 
 **Email**: [pranavius1@gmail.com](mailto:pranavius1@gmail.com)
+
+**Discord**: [Pranlabs](https://discord.gg/Vj3D5GeQZh)
