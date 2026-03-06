@@ -1,3 +1,13 @@
+**1.12.1**
+- Add expansion gear information for Midnight
+- Add Midnight enchants and abbreviations
+- Add **Devourer** spec to options list
+- Updated localizations with Devourer Demon Hunter specialization name
+- Removed unused localization for `enGB`
+
+**1.12.0**
+- Update for compatibility with Midnight
+
 **1.11.0**
 - Update for Patch 11.2.7
 - Fixed bug causing Timerunners to not be detected properly until UI reload

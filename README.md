@@ -19,9 +19,10 @@
 As mentioned earlier, this AddOn was developed to work on Blizzard's default Character Info UI, so this may cause unexpected interactions when run with other AddOns or UI packs. If you would like to report any issues, please reach out with a description of the problem along with a list of all AddOns that were enabled when this was observed. Screenshots can also be helpful in troubleshooting and fixing these types of issues.
 
 ### Current Locales/Languages Supported:
-- English (US and GB)
+- English (US)
 - French (FR)
 - Portuguese (BR)
+- German (DE)
 - Russian (RU) [*partial*]
 - Chinese (TW) [*partial*]
 
