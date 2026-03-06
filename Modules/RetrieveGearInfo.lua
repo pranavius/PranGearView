@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
@@ -15,21 +15,21 @@ function AddOn:GetItemLevelBySlot(slot, isInspect)
         local itemLevel = item:GetCurrentItemLevel()
         if itemLevel > 0 then -- positive value indicates item info has loaded
             local iLvlText = tostring(itemLevel)
-            if self.db.profile.useGradientColorsForILvl then
+            if self.db.profile.itemLevel.useGradientColors then
                 local equippedItemLevel = select(2, GetAverageItemLevel())
                 local color = (itemLevel < equippedItemLevel - 10 and "Error"
                     or itemLevel > equippedItemLevel + 10 and "Uncommon"
                     or "Info")
                 iLvlText = ColorText(iLvlText, color)
-            elseif self.db.profile.useQualityColorForILvl then
+            elseif self.db.profile.itemLevel.useQualityColor then
                 local qualityHex = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
                 iLvlText = "|c"..qualityHex..iLvlText.."|r"
-            elseif self.db.profile.useClassColorForILvl then
+            elseif self.db.profile.itemLevel.useClassColor then
                 local classFile = select(2, UnitClass("player"))
                 local classHexWithAlpha = select(4, GetClassColor(classFile))
                 iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
-            elseif self.db.profile.useCustomColorForILvl then
-                iLvlText = ColorText(iLvlText, self.db.profile.iLvlCustomColor)
+            elseif self.db.profile.itemLevel.useCustomColor then
+                iLvlText = ColorText(iLvlText, self.db.profile.itemLevel.customColor)
             end
 
             DebugPrint("Item Level text for slot", ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
@@ -66,7 +66,7 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
 
         if upgradeTrackText ~= "" then
             if upgradeColor:lower() ~= self.HexColorPresets.PrevSeasonGear:lower() then
-                if self.db.profile.useQualityScaleColorsForUpgradeTrack then
+                if self.db.profile.upgradeTrack.useQualityScaleColors then
                     -- Do something
                     if upgradeTrackText:match("E") or upgradeTrackText:match("A") then
                         upgradeColor = self.HexColorPresets.Priest
@@ -82,8 +82,8 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
                         -- If a match isn't found, fallback to the item quality color
                         upgradeColor = select(4, C_Item.GetItemQualityColor(item:GetItemQuality())):sub(3)
                     end
-                elseif self.db.profile.useCustomColorForUpgradeTrack then
-                    upgradeColor = self.db.profile.upgradeTrackCustomColor
+                elseif self.db.profile.upgradeTrack.useCustomColor then
+                    upgradeColor = self.db.profile.upgradeTrack.customColor
                 else
                     upgradeColor = select(4, C_Item.GetItemQualityColor(item:GetItemQuality())):sub(3)
                 end
@@ -137,10 +137,10 @@ function AddOn:GetGemsBySlot(slot, isInspect)
         end
 
         -- Indicates slots that can have sockets added to them
-        local showGems = (isInspect and self.db.profile.showInspectGems and not PlayerGetTimerunningSeasonID()) or self:ShouldShowGems()
-        if showGems and self.db.profile.showMissingGems and self:IsSocketableSlot(slot) and existingSocketCount < self.CurrentExpac.MaxSocketsPerItem then
+        local showGems = (isInspect and self.db.profile.inspect.showGems and not PlayerGetTimerunningSeasonID()) or self:ShouldShowGems()
+        if showGems and self.db.profile.gems.showMissing and self:IsSocketableSlot(slot) and existingSocketCount < self.CurrentExpac.MaxSocketsPerItem then
             local isCharacterMaxLevel = UnitLevel("player") == self.CurrentExpac.LevelCap
-            if (self.db.profile.missingGemsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingGemsMaxLevelOnly then
+            if (self.db.profile.gems.missingMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.gems.missingMaxLevelOnly then
                 for i = 1, self.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
                     DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
                     gemText = IsLeftSide and gemText..self.GetTextureAtlasString("Socket-Prismatic-Closed") or self.GetTextureAtlasString("Socket-Prismatic-Closed")..gemText
@@ -201,15 +201,15 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
                         end
                         texture = self.GetTextureString(textureID)
 
-                        enchText = (self.db.profile.collapseEnchants and not isInspect) and texture or (enchText..texture)
+                        enchText = (self.db.profile.enchants.collapse and not isInspect) and texture or (enchText..texture)
                     else
                         -- If the preference is to hide enchant text, only show the enchant quality
-                        enchText = (self.db.profile.collapseEnchants and not isInspect) and self.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", self.GetTextureAtlasString(texture))
+                        enchText = (self.db.profile.enchants.collapse and not isInspect) and self.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", self.GetTextureAtlasString(texture))
                     end
                     DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
     
-                    if self.db.profile.useCustomColorForEnchants then
-                        slot.PGVEnchant:SetFormattedText(ColorText(enchText, self.db.profile.enchCustomColor))
+                    if self.db.profile.enchants.useCustomColor then
+                        slot.PGVEnchant:SetFormattedText(ColorText(enchText, self.db.profile.enchants.customColor))
                     else
                         slot.PGVEnchant:SetFormattedText(ColorText(enchText, "Uncommon"))
                     end
@@ -219,11 +219,11 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
             end
         end
 
-        if not isEnchanted and self:IsEnchantableSlot(slot) and self.db.profile.showMissingEnchants then
+        if not isEnchanted and self:IsEnchantableSlot(slot) and self.db.profile.enchants.showMissing then
             local isCharacterMaxLevel = UnitLevel("player") == self.CurrentExpac.LevelCap
-            if (self.db.profile.missingEnchantsMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.missingEnchantsMaxLevelOnly then
+            if (self.db.profile.enchants.missingMaxLevelOnly and isCharacterMaxLevel) or not self.db.profile.enchants.missingMaxLevelOnly then
                 local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
-                if self.db.profile.collapseEnchants and not isInspect then
+                if self.db.profile.enchants.collapse and not isInspect then
                     -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
                     slot.PGVEnchant:SetFormattedText(self.GetTextureString(523826))
                 -- For left side and main hand slots, show the icon to the right of the text. For all other slots, show the icon to the left (better mirroring look and feel)
@@ -311,7 +311,7 @@ function AddOn:ShowDurabilityBySlot(slot)
         local cDur, mDur = GetInventoryItemDurability(slot:GetID())
         if cDur and mDur then
             local percent = cDur / mDur
-            if self.db.profile.showDurability and self.db.profile.showDurabilityAsBar then
+            if self.db.profile.durability.show and self.db.profile.durability.showAsBar then
                 -- Create or update bars
                 slot.PGVDurabilityBarBg = GetDurabilityBar(slot, true)
                 slot.PGVDurabilityBar = GetDurabilityBar(slot, false)
@@ -320,18 +320,18 @@ function AddOn:ShowDurabilityBySlot(slot)
                 slot.PGVDurabilityBar:SetValue(percent * 100)
                 slot.PGVDurabilityBar.percent = tostring(self.RoundNumber(percent * 100))
                 -- Set default bar colors in DB if not present
-                if not self.db.profile.durabilityColorHigh or not self.db.profile.durabilityColorMedium or not self.db.profile.durabilityColorLow then
-                    self.db.profile.durabilityColorHigh = self.HexColorPresets.Uncommon
-                    self.db.profile.durabilityColorMedium = self.HexColorPresets.Info
-                    self.db.profile.durabilityColorLow = self.HexColorPresets.Error
+                if not self.db.profile.durability.colorHigh or not self.db.profile.durability.colorMedium or not self.db.profile.durability.colorLow then
+                    self.db.profile.durability.colorHigh = self.HexColorPresets.Uncommon
+                    self.db.profile.durability.colorMedium = self.HexColorPresets.Info
+                    self.db.profile.durability.colorLow = self.HexColorPresets.Error
                 end
                 local r, g, b
                 if percent > 0.5 then
-                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorHigh)
+                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durability.colorHigh)
                 elseif percent > 0.25 then
-                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorMedium)
+                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durability.colorMedium)
                 else
-                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durabilityColorLow)
+                    r, g, b = AddOn.ConvertHexToRGB(self.db.profile.durability.colorLow)
                 end
                 if r ~= nil and g ~= nil and b ~= nil then
                     slot.PGVDurabilityBar:SetStatusBarColor(r, g, b, 1)
@@ -340,7 +340,7 @@ function AddOn:ShowDurabilityBySlot(slot)
                 else
                     self.DebugPrint("Unable to render durability bar due to invalid color value(s) - r, g, b =", r, g, b)
                 end
-            elseif self.db.profile.showDurability then
+            elseif self.db.profile.durability.show then
                 -- Hide both bars and clear value
                 if slot.PGVDurabilityBar then
                     slot.PGVDurabilityBar:SetValue(0)
@@ -360,8 +360,8 @@ function AddOn:ShowDurabilityBySlot(slot)
                 slot.PGVDurability:SetFont(dFont, dSize, "OUTLINE")
                 -- Set text scale based on user settings
                 local durTextScale = 0.9
-                if self.db.profile.durabilityScale and self.db.profile.durabilityScale > 0 then
-                    durTextScale = durTextScale * self.db.profile.durabilityScale
+                if self.db.profile.durability.scale and self.db.profile.durability.scale > 0 then
+                    durTextScale = durTextScale * self.db.profile.durability.scale
                 end
                 slot.PGVDurability:SetTextScale(durTextScale)
                 slot.PGVDurability:SetPoint("CENTER", slot, "BOTTOM", 0, 5)
@@ -369,11 +369,11 @@ function AddOn:ShowDurabilityBySlot(slot)
                 local durText = ""
                 local percentText = self.RoundNumber(percent * 100)
                 if percentText < 100 and percentText > 50 then
-                    durText = ColorText(percentText.."%%", self.db.profile.durabilityColorHigh)
+                    durText = ColorText(percentText.."%%", self.db.profile.durability.colorHigh)
                 elseif percentText < 100 and percentText > 25 then
-                    durText = ColorText(percentText.."%%", self.db.profile.durabilityColorMedium)
+                    durText = ColorText(percentText.."%%", self.db.profile.durability.colorMedium)
                 elseif percentText < 100 and percentText >= 0 then
-                    durText = ColorText(percentText.."%%", self.db.profile.durabilityColorLow)
+                    durText = ColorText(percentText.."%%", self.db.profile.durability.colorLow)
                 end
                 DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
                 slot.PGVDurability:SetFormattedText(durText)
@@ -435,8 +435,8 @@ function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
                     end
                     slot.PGVEmbellishmentTexture:SetSize(25, 25)
                     slot.PGVEmbellishmentTexture:ClearAllPoints()
-                    if self.db.profile.showiLvl and self.db.profile.iLvlOnItem then
-                        if self.db.profile.showDurabilityAsBar then
+                    if self.db.profile.itemLevel.show and self.db.profile.itemLevel.onItem then
+                        if self.db.profile.durability.showAsBar then
                             slot.PGVEmbellishmentTexture:SetSize(21, 21)
                             slot.PGVEmbellishmentTexture:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 2, 2) -- Move up
                         else

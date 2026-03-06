@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
@@ -10,7 +10,7 @@ local ColorText = AddOn.ColorText
 ---@param unitGUID string The Globally Unique Identifier (GUID) for the character being inspected
 ---@param forceUpdate? boolean Whether or not to force an update to the information displayed
 function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
-    local showOnInspect = self.db.profile.showOnInspect
+    local showOnInspect = self.db.profile.inspect.show
     -- Check for a force update even if the DB value is false (required for toggling inspect visibility via slash command)
     if not showOnInspect and not forceUpdate then
         DebugPrint("Gear info on inspect disabled")
@@ -31,11 +31,11 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     end
     DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
 
-    local showInspectItemLevel = showOnInspect and self.db.profile.showInspectiLvl
-    local showInspectUpgradeTrack = self.db.profile.showInspectUpgradeTrack and not PlayerGetTimerunningSeasonID()
-    local showInspectGems = showOnInspect and self.db.profile.showInspectGems and not PlayerGetTimerunningSeasonID()
-    local showInspectEnchants = showOnInspect and self.db.profile.showInspectEnchants and not PlayerGetTimerunningSeasonID()
-    local showInspectEmbellishments = showOnInspect and self.db.profile.showInspectEmbellishments and not PlayerGetTimerunningSeasonID()
+    local showInspectItemLevel = showOnInspect and self.db.profile.inspect.showILvl
+    local showInspectUpgradeTrack = self.db.profile.inspect.showUpgradeTrack and not PlayerGetTimerunningSeasonID()
+    local showInspectGems = showOnInspect and self.db.profile.inspect.showGems and not PlayerGetTimerunningSeasonID()
+    local showInspectEnchants = showOnInspect and self.db.profile.inspect.showEnchants and not PlayerGetTimerunningSeasonID()
+    local showInspectEmbellishments = showOnInspect and self.db.profile.inspect.showEmbellishments and not PlayerGetTimerunningSeasonID()
     for _, slotName in ipairs(self.InspectInfo.slots) do
         ---@type Slot
         local slot = _G[slotName]
@@ -47,15 +47,15 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             -- Outline text when placed on the gear icon
             local iFont, iSize = slot.PGVItemLevel:GetFont()
             ---@cast iFont string
-            if self.db.profile.iLvlOnItem then
+            if self.db.profile.itemLevel.onItem then
                 slot.PGVItemLevel:SetFont(iFont, iSize, "THICKOUTLINE")
             else
                 slot.PGVItemLevel:SetFont(iFont, iSize, "")
             end
             slot.PGVItemLevel:Hide()
             local iLvlTextScale = 1
-            if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
-                iLvlTextScale = iLvlTextScale * self.db.profile.iLvlScale
+            if self.db.profile.itemLevel.scale and self.db.profile.itemLevel.scale > 0 then
+                iLvlTextScale = iLvlTextScale * self.db.profile.itemLevel.scale
             end
             slot.PGVItemLevel:SetTextScale(iLvlTextScale)
             
@@ -72,8 +72,8 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             end
             slot.PGVUpgradeTrack:Hide()
             local upgradeTrackTextScale = 0.9
-            if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
-                upgradeTrackTextScale = upgradeTrackTextScale * self.db.profile.iLvlScale
+            if self.db.profile.itemLevel.scale and self.db.profile.itemLevel.scale > 0 then
+                upgradeTrackTextScale = upgradeTrackTextScale * self.db.profile.itemLevel.scale
             end
             slot.PGVUpgradeTrack:SetTextScale(upgradeTrackTextScale)
 
@@ -89,8 +89,8 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             end
             slot.PGVGems:Hide()
             local gemScale = 1
-            if self.db.profile.gemScale and self.db.profile.gemScale > 0 then
-                gemScale = gemScale * self.db.profile.gemScale
+            if self.db.profile.gems.scale and self.db.profile.gems.scale > 0 then
+                gemScale = gemScale * self.db.profile.gems.scale
             end
             slot.PGVGems:SetTextScale(gemScale)
 
@@ -109,8 +109,8 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             slot.PGVEnchant:SetFont(eFont, eSize, "OUTLINE")
             slot.PGVEnchant:Hide()
             local enchTextScale = 0.9
-            if self.db.profile.enchScale and self.db.profile.enchScale > 0 then
-                enchTextScale = enchTextScale * self.db.profile.enchScale
+            if self.db.profile.enchants.scale and self.db.profile.enchants.scale > 0 then
+                enchTextScale = enchTextScale * self.db.profile.enchants.scale
             end
             slot.PGVEnchant:SetTextScale(enchTextScale)
 
@@ -127,14 +127,14 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
         end
 
-        if self.db.profile.hideShirtTabardInfo and (slot == _G["InspectShirtSlot"] or slot == _G["InspectTabardSlot"]) then
+        if self.db.profile.general.hideShirtTabardInfo and (slot == _G["InspectShirtSlot"] or slot == _G["InspectTabardSlot"]) then
             if slot.PGVItemLevel then slot.PGVItemLevel:Hide() end
             if slot.PGVGems then slot.PGVGems:Hide() end
             if slot.PGVEnchant then slot.PGVEnchant:Hide() end
         end
     end
 
-    if self.db.profile.showInspectAvgILvl then
+    if self.db.profile.inspect.showAvgILvl then
         if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
             InspectPaperDollItemsFrame.PGVAverageItemLevel = InspectPaperDollItemsFrame:CreateFontString("PGVAverageItemLevel", "OVERLAY", "GameTooltipHeader")
         end
@@ -146,7 +146,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
         local classFile = select(2, UnitClass(token))
         local classHexWithAlpha = select(4, GetClassColor(classFile))
-        if self.db.profile.includeAvgLabel then
+        if self.db.profile.inspect.includeAvgLabel then
             DebugPrint("Include \"Avg: \" label")
             itemLevelText = L["Avg"]..": "..itemLevelText
         end

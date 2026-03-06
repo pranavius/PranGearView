@@ -1,22 +1,16 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local DebugPrint = AddOn.DebugPrint
-
----@class CharacterStatFrame : Frame
----@field Background Frame A highlight color that serves as a background for even-ordered displayed stats (helps with visual separation)
----@field Label FontString The name of the stat being shown
----@field Value FontString The displayed value of the stat being shown
----@field numericValue? number The true numeric value for the stat being shown
 
 ---Retrieves selectable values for stat order dropdowns based on currently chosen specialization in the Character Stats options group
 ---@return number[] options A list of the order in which options should appear in the dropdown
 function AddOn:GetStatOrderValuesHandler()
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
     local options = {}
-    for _, order in pairs(self.db.profile.customSpecStatOrders[specID]) do
+    for _, order in pairs(self.db.profile.characterStats.customSpecStatOrders[specID]) do
         options[order] = order
     end
     return options
@@ -27,7 +21,7 @@ end
 ---@return number order The order of a stat as per the database
 function AddOn:GetStatOrderHandler(item)
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
-    return self.db.profile.customSpecStatOrders[specID][item[#item]]
+    return self.db.profile.characterStats.customSpecStatOrders[specID][item[#item]]
 end
 
 ---Handles setting changes to stat order options
@@ -35,12 +29,12 @@ end
 ---@param val any The value to set in the database for the stat defined by `item`
 function AddOn:SetStatOrderHandler(item, val)
     local specID = self:GetSpecAndRoleForSelectedCharacterStatsOption()
-    local currentOrder = self.db.profile.customSpecStatOrders[specID][item[#item]]
-    self.db.profile.customSpecStatOrders[specID][item[#item]] = tonumber(val)
-    for stat, order in pairs(self.db.profile.customSpecStatOrders[specID]) do
+    local currentOrder = self.db.profile.characterStats.customSpecStatOrders[specID][item[#item]]
+    self.db.profile.characterStats.customSpecStatOrders[specID][item[#item]] = tonumber(val)
+    for stat, order in pairs(self.db.profile.characterStats.customSpecStatOrders[specID]) do
         if order == tonumber(val) and stat ~= item[#item] then
             DebugPrint("Duplicate order number found on stat:", stat)
-            self.db.profile.customSpecStatOrders[specID][stat] = currentOrder
+            self.db.profile.characterStats.customSpecStatOrders[specID][stat] = currentOrder
             break
         end
     end
@@ -67,13 +61,13 @@ function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     else
         specID, role = self:GetCharacterCurrentSpecIDAndRole()
     end
-    if not self.db.profile.customSpecStatOrders[specID] or reset then
-        self.db.profile.customSpecStatOrders[specID] = AddOn.DefaultStatOrder
+    if not self.db.profile.characterStats.customSpecStatOrders[specID] or reset then
+        self.db.profile.characterStats.customSpecStatOrders[specID] = AddOn.DefaultStatOrder
         -- Tanks have extra stats to consider, so only add those options for Tank specs
         if role == "TANK" then
-            self.db.profile.customSpecStatOrders[specID]["Dodge"] = AddOn.DefaultTankStatOrder["Dodge"]
-            self.db.profile.customSpecStatOrders[specID]["Parry"] = AddOn.DefaultTankStatOrder["Parry"]
-            self.db.profile.customSpecStatOrders[specID]["Block"] = AddOn.DefaultTankStatOrder["Block"]
+            self.db.profile.characterStats.customSpecStatOrders[specID]["Dodge"] = AddOn.DefaultTankStatOrder["Dodge"]
+            self.db.profile.characterStats.customSpecStatOrders[specID]["Parry"] = AddOn.DefaultTankStatOrder["Parry"]
+            self.db.profile.characterStats.customSpecStatOrders[specID]["Block"] = AddOn.DefaultTankStatOrder["Block"]
         end
     end
 end
@@ -84,8 +78,8 @@ end
 ---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     local specID, role
-    if self.db.profile.lastSelectedSpecID then
-        specID, _, _, _, role = GetSpecializationInfoByID(self.db.profile.lastSelectedSpecID)
+    if self.db.profile.characterStats.lastSelectedSpecID then
+        specID, _, _, _, role = GetSpecializationInfoByID(self.db.profile.characterStats.lastSelectedSpecID)
     else
         specID, role = self:GetCharacterCurrentSpecIDAndRole()
     end
@@ -118,8 +112,8 @@ function AddOn:ReorderStatFramesBySpec()
             if L[stat] == localeStatName then statName = stat break end
         end
         local order
-        if statName and self.db.profile.customSpecStatOrders[specID][statName] ~= nil then
-            order = self.db.profile.customSpecStatOrders[specID][statName]
+        if statName and self.db.profile.characterStats.customSpecStatOrders[specID][statName] ~= nil then
+            order = self.db.profile.characterStats.customSpecStatOrders[specID][statName]
         elseif statName then
             -- For non-tank classes with a "Tank" stat, simply append the stat to the end of the list of frames
             -- Adding 11 because there are currently 10 possible stats that can be shown, guaranteeing no overlap
@@ -152,7 +146,7 @@ function AddOn:ShowDecimalStatValues()
             -- decimal in the numeric value indicates a secondary/tertiary stat (main stats don't have decimal parts from what I've seen)
             -- search for decimal with punctuation character (%p)
             if tostring(frame.numericValue):match("%p") then
-                frame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForStats.."f%%", frame.numericValue)
+                frame.Value:SetFormattedText("%."..self.db.profile.characterStats.decimalPlaces.."f%%", frame.numericValue)
             end
         end
     end

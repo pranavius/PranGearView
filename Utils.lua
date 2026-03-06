@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
@@ -25,7 +25,7 @@ local ColorText = AddOn.ColorText
 ---@vararg string|number
 ---@see print
 function AddOn.DebugPrint(...)
-    if AddOn.db.profile.debug then
+    if AddOn.db.profile.general.debug then
 		print(ColorText("[PGV Debug]", "Heirloom"), ...)
 	end
 end
@@ -34,7 +34,7 @@ local DebugPrint = AddOn.DebugPrint
 ---Prints the contents of a Lua table as key-value pairs if the AddOn is in debugging mode.
 ---@param tbl table The table to print key-value pairs for
 function AddOn.DebugTable(tbl)
-    if AddOn.db.profile.debug then
+    if AddOn.db.profile.general.debug then
         print(ColorText("[PGV Debug Table: START]", "Heirloom"))
         for k, v in pairs(tbl) do
             print(k, "=", ColorText(v, "Info"))
@@ -143,21 +143,6 @@ function AddOn.CreateOptionsSpacer(order, width)
         width = width
     }
 end
-
----@class PGVDurabilityBar: StatusBar
----@field percent number
-
----@class Slot: Frame
----@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
----@field PGVItemLevel? FontString
----@field PGVUpgradeTrack? FontString
----@field PGVGems? FontString
----@field PGVEnchant? FontString
----@field PGVDurability? FontString
----@field PGVDurabilityBarBg? StatusBar
----@field PGVDurabilityBar? PGVDurabilityBar
----@field PGVEmbellishmentTexture? Texture
----@field PGVEmbellishmentShadow? Texture
 
 ---Indicates whether an item is equipped in a particular gear slot or not
 ---@param slot Slot The gear slot to check for an equipped item

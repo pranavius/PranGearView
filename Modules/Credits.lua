@@ -1,15 +1,9 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local ColorText = AddOn.ColorText
-
----@class (exact) Credit
----@field name string Contributor name
----@field race? string World of Warcraft race & gender they identify with in-game
----@field class? ClassIcons World of Warcraft class they identify with in-game
----@field color HexColorPresets Color to display the contributor's name in
 
 ---A list of individuals who have contributed, directly or indirectly, to the codebase.
 ---@see RaceGender

@@ -24,7 +24,9 @@ Localization\ptBR.lua
 Localization\ruRU.lua
 Localization\zhTW.lua
 Localization\deDE.lua
+
 Constants.lua
+Configs.lua
 Utils.lua
 Modules\ToggleEnchantButton.lua
 Modules\CharacterStats.lua
