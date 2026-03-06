@@ -3,7 +3,7 @@ local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
-AddOn.CurrentExpac = AddOn.ExpansionInfo.TheWarWithin
+AddOn.CurrentExpac = AddOn.ExpansionInfo.Midnight
 
 ---Formats `text` to be displayed in a specific color in-game. If the argument is a valid entry in the `HexColorPresets` table, that value will be used.
 ---Alternatively, a color's hexadecimal code can be provided for the `color` argument instead.
