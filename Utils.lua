@@ -166,7 +166,7 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it
----@param slot Slot The gear slot to check for socketable equipment
+---@param slot Slot|ItemSlot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket, `false` otherwise
 function AddOn:IsSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.SocketableSlots then
@@ -185,7 +185,7 @@ function AddOn:IsSocketableSlot(slot)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it via auxillary methods (example: S.A.D. in The War Within)
----@param slot Slot The gear slot to check for socketable equipment
+---@param slot Slot|ItemSlot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket via auxillary methods, `false` otherwise
 function AddOn:IsAuxSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.AuxSocketableSlots then
@@ -202,7 +202,7 @@ function AddOn:IsAuxSocketableSlot(slot)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can be enchanted or not
----@param slot Slot The gear slot to check for enchantable equipment
+---@param slot Slot|ItemSlot The gear slot to check for enchantable equipment
 ---@return boolean result `true` if the item can be enchanted, `false` otherwise
 function AddOn:IsEnchantableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.EnchantableSlots then
@@ -293,4 +293,24 @@ function AddOn:AbbreviateText(text, replacementTable)
         abbreviation = abbreviation:gsub(repl.original, repl.replacement)
     end
     return abbreviation
+end
+
+function AddOn:GetLegacyEnchantTextureID(enchantTextAbbr)
+    if enchantTextAbbr == AddOn.DKEnchantAbbr.Razorice then
+        return 135842 -- Interface/Icons/Spell_Frost_FrostArmor
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.Sanguination then
+        return 1778226 -- Interface/Icons/Ability_Argus_DeathFod
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.Spellwarding then
+        return 425952 -- Interface/Icons/Spell_Fire_TwilightFireward
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.Apocalypse then
+        return 237535 -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.FallenCrusader then
+        return 135957 -- Interface/Icons/Spell_Holy_RetributionAura
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.StoneskinGargoyle then
+        return 237480 -- Interface/Icons/Inv_Sword_130
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.UnendingThirst then
+        return 3163621 -- Interface/Icons/Spell_NZInsanity_Bloodthirst
+    else
+        return 628564 -- Interface/Scenarios/ScenarioIcon-Check
+    end
 end
