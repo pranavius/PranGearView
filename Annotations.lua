@@ -35,6 +35,7 @@
 ---@class PGVDurabilityBar: StatusBar
 ---@field percent number
 
+-- This annotation is deprecated, phase out in refactor
 ---@class Slot: Frame
 ---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
 ---@field PGVItemLevel? FontString
@@ -46,6 +47,23 @@
 ---@field PGVDurabilityBar? PGVDurabilityBar
 ---@field PGVEmbellishmentTexture? Texture
 ---@field PGVEmbellishmentShadow? Texture
+
+---@class ItemSlot: Frame
+---@field SocketDisplay Frame
+---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
+
+---@class (exact) PGVCharSlotMixin: Frame
+---@field IsLeftSideSlot boolean
+---@field IsBottomSlot boolean
+---@field ItemLevel FontString
+---@field UpgradeTrack FontString
+---@field Gems FontString
+---@field Enchant FontString
+---@field Durability FontString
+---@field DurabilityBarBg StatusBar
+---@field DurabilityBar StatusBar
+---@field EmbellishmentShadow Texture
+---@field Embellishment Texture
 
 ---@class CharacterStatFrame : Frame
 ---@field Background Frame A highlight color that serves as a background for even-ordered displayed stats (helps with visual separation)

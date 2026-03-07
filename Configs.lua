@@ -153,7 +153,7 @@ local migrationMap = {
 ---This only runs once per profile; the `_pgvMigrated` flag prevents re-migration.
 ---@param db table The AceDB database object
 function AddOn:MigrateProfileSettings(db)
-    for profileName, profile in pairs(db.profiles) do
+    for _, profile in pairs(db.profiles) do
         if not profile._pgvMigrated then
             for oldKey, path in pairs(migrationMap) do
                 if profile[oldKey] ~= nil then

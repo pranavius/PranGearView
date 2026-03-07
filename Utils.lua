@@ -145,7 +145,7 @@ function AddOn.CreateOptionsSpacer(order, width)
 end
 
 ---Indicates whether an item is equipped in a particular gear slot or not
----@param slot Slot The gear slot to check for an equipped item
+---@param slot Slot|ItemSlot The gear slot to check for an equipped item
 ---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean hasItem `true` if the slot has an item equipped in it, `false` otherwise
 ---@return ItemMixin item The equipped item. When `hasItem` is `false`, this is always an empty table
