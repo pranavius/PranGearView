@@ -18,17 +18,46 @@ function PGVCharSlotMixin:OnLoad()
     local hasItem, item = AddOn:IsItemEquippedInSlot(slot)
 
     if hasItem then
-        self:GetItemLevel(slot, item)
-        self:PositionItemLevel()
+        if AddOn.db.profile.itemLevel.show then
+            self:GetItemLevel(slot, item)
+            self:PositionItemLevel()
+        elseif self.ItemLevel:IsShown() then
+            self.ItemLevel:Hide()
+        end
         
-        self:GetUpgradeTrack(slot, item)
-        self:PositionUpgradeTrack(slot == CharacterMainHandSlot or slot == _G["InspectMainHandSlot"])
+        if AddOn.db.profile.upgradeTrack.show then
+            self:GetUpgradeTrack(slot, item)
+            self:PositionUpgradeTrack(slot == CharacterMainHandSlot or slot == _G["InspectMainHandSlot"])
+        elseif self.UpgradeTrack:IsShown() then
+            self.UpgradeTrack:Hide()
+        end
         
-        self:GetGems(slot, item)
-        self:PositionGems(slot == CharacterMainHandSlot or slot == _G["InspectMainHandSlot"])
+        if AddOn.db.profile.gems.show then
+            self:GetGems(slot, item)
+            self:PositionGems(slot == CharacterMainHandSlot or slot == _G["InspectMainHandSlot"])
+        elseif self.Gems:IsShown() then
+            self.Gems:Hide()
+        end
 
-        self:GetEnchant(slot, item)
-        self:PositionEnchant(slot)
+        if AddOn.db.profile.enchants.show then
+            self:GetEnchant(slot, item)
+            self:PositionEnchant(slot)
+        elseif self.Enchant:IsShown() then
+            self.Enchant:Hide()
+        end
+
+        if AddOn.db.profile.durability.show then
+            self:GetAndPositionDurability(slot)
+        elseif self.Durability:IsShown() or self.DurabilityBar:IsShown() then
+            self.Durability:Hide()
+            self.DurabilityBar:Hide()
+        end
+        
+        if AddOn.db.profile.general.showEmbellishments then
+            self:GetEmbellishments(slot, item)
+        elseif self.Embellishment:IsShown() then
+            self.Embellishment:Hide()
+        end
     end
 
 end
@@ -341,4 +370,155 @@ function PGVCharSlotMixin:PositionEnchant(slot)
     else
         self.Enchant:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self, self.IsLeftSideSlot and "RIGHT" or "LEFT", (self.IsLeftSideSlot and 1 or -1) * 10, 0)
     end
+end
+
+---Defines a durability bar for an item slot in the Character Info window
+---@param slot ItemSlot The gear slot to get a durability bar for
+---@param isBgBar boolean `true` if the bar is a background bar, `false` otherwise
+---@param durPercent? number The durability percentage for the item in the gear slot (only considered for non-background bars)
+function PGVCharSlotMixin:DefineDurabilityBar(slot, isBgBar, durPercent)
+    local bar = isBgBar and self.DurabilityBarBg or self.DurabilityBar
+    if isBgBar then
+        if bar.SetBackdrop then
+            bar:SetBackdrop({
+                bgFile = nil,
+                edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+                edgeSize = 8,
+                insets = { left = 0, right = 0, top = 0, bottom = 0 },
+            })
+            bar:SetBackdropBorderColor(0, 0, 0, 1)
+        end
+        bar:SetFrameLevel(slot:GetFrameLevel() + 1)
+    else
+        if bar.SetBackdrop then bar:SetBackdrop(nil) end
+        bar:SetFrameLevel(slot:GetFrameLevel() + 2)
+        bar:SetScript("OnEnter", function(durBar)
+            if durBar.percent then
+                GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
+                GameTooltip:AddLine(L["Durability: "]..durBar.percent.."%", 1, 1, 1)
+                GameTooltip:Show()
+            end
+        end)
+        bar:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        bar:SetValue(durPercent * 100)
+        -- Set default bar colors in DB if not present
+        if not AddOn.db.profile.durability.colorHigh or not AddOn.db.profile.durability.colorMedium or not AddOn.db.profile.durability.colorLow then
+            AddOn.db.profile.durability.colorHigh = AddOn.HexColorPresets.Uncommon
+            AddOn.db.profile.durability.colorMedium = AddOn.HexColorPresets.Info
+            AddOn.db.profile.durability.colorLow = AddOn.HexColorPresets.Error
+        end
+        local r, g, b
+        if durPercent > 0.5 then
+            r, g, b = AddOn.ConvertHexToRGB(AddOn.db.profile.durability.colorHigh)
+        elseif durPercent > 0.25 then
+            r, g, b = AddOn.ConvertHexToRGB(AddOn.db.profile.durability.colorMedium)
+        else
+            r, g, b = AddOn.ConvertHexToRGB(AddOn.db.profile.durability.colorLow)
+        end
+        if r ~= nil and g ~= nil and b ~= nil then
+            bar:SetStatusBarColor(r, g, b, 1)
+        else
+            AddOn.DebugPrint("Unable to render durability bar due to invalid color value(s) - r, g, b =", r, g, b)
+        end
+    end
+end
+
+---Fetch and format durability display for a gear slot
+---@param slot ItemSlot Gear slot frame
+function PGVCharSlotMixin:GetAndPositionDurability(slot)
+    -- Get current and max durability for the item
+    local cDur, mDur = GetInventoryItemDurability(slot:GetID())
+    if cDur and mDur then
+        local percent = cDur / mDur
+        if AddOn.db.profile.durability.show and AddOn.db.profile.durability.showAsBar then
+            self:DefineDurabilityBar(slot, true)
+            self:DefineDurabilityBar(slot, false, percent)
+            self.DurabilityBar:Show()
+        elseif AddOn.db.profile.durability.show then
+            self.Durability:Hide()
+            local font, dSize = self.Durability:GetFont()
+            ---@cast font string
+            self.Durability:SetFont(font, dSize, "OUTLINE")
+            -- Set text scale based on user settings
+            local durTextScale = 0.9
+            if AddOn.db.profile.durability.scale and AddOn.db.profile.durability.scale > 0 then
+                durTextScale = durTextScale * AddOn.db.profile.durability.scale
+            end
+            self.Durability:SetTextScale(durTextScale)
+            self.Durability:SetPoint("CENTER", self, "BOTTOM", 0, 5)
+            -- Calculate durability percent and choose color
+            local durText = ""
+            local percentText = AddOn.RoundNumber(percent * 100)
+            if percentText < 100 and percentText > 50 then
+                durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorHigh)
+            elseif percentText < 100 and percentText > 25 then
+                durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorMedium)
+            elseif percentText < 100 and percentText >= 0 then
+                durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorLow)
+            end
+            DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
+            if durText ~= "" then
+                self.Durability:SetFormattedText(durText)
+                self.Durability:Show()
+            end
+        end
+    elseif AddOn.db.profile.durability.show and AddOn.db.profile.durability.showAsBar then
+        self.DurabilityBar:Hide()
+        self.DurabilityBarBg:Hide()
+    elseif AddOn.db.profile.durability.show then
+        self.Durability:Hide()
+    end
+end
+
+---Show an icon/indicator for a gear slot containing an embellished item
+---@param slot ItemSlot Gear slot frame
+---@param item ItemMixin Equipped item
+function PGVCharSlotMixin:GetEmbellishments(slot, item)
+    local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+    if tooltip and tooltip.lines then
+        for _, ttdata in pairs(tooltip.lines) do
+            if ttdata and ttdata.leftText:find("Embellished") then
+                self.EmbellishmentShadow:Show()
+                -- Main embellishment star
+                self.Embellishment:ClearAllPoints()
+                if AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem then
+                    if AddOn.db.profile.durability.showAsBar then
+                        self.Embellishment:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 2, 2) -- Move up
+                    else
+                        self.Embellishment:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 2, -7)
+                    end
+                else
+                    self.Embellishment:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+                end
+                DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
+                self.Embellishment:Show()
+            else
+                self.EmbellishmentShadow:Hide()
+                self.Embellishment:Hide()
+            end
+        end
+    else
+        DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
+    end
+end
+
+function PGVCharSlotMixin:OnShowDurabilityBar()
+    self.DurabilityBarBg:Show()
+    self.Durability:Hide()
+end
+
+function PGVCharSlotMixin:OnHideDurabilityBar()
+    self.DurabilityBarBg:Hide()
+end
+
+function PGVCharSlotMixin:OnShowDurabilityText()
+    self.DurabilityBar:Hide()
+end
+
+function PGVCharSlotMixin:OnShowEmbellishment()
+    self.EmbellishmentShadow:Show()
+end
+
+function PGVCharSlotMixin:OnHideEmbellishment()
+    self.EmbellishmentShadow:Hide()
 end

@@ -17,15 +17,38 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Bliz
                 <Texture parentKey="EmbellishmentShadow" file="Interface/Buttons/WHITE8x8" setAllPoints="true" hidden="true">
                     <Color color="BLACK_FONT_COLOR" a="0.3"/>
                 </Texture>
-                <Texture parentKey="Embellishment" file="Interface/LootFrame/Toast-Star" setAllPoints="true" hidden="true">
-                    <Size x="25" y="25"/>
-                    <Color r="0" g="1" b="0.6" a="1"/>
+                <Texture parentKey="Embellishment" file="Interface/LootFrame/Toast-Star" hidden="true">
+                    <Size x="21" y="21"/>
+                    <Color r="0" g="1" b="0.6"/>
+                    <Scripts>
+                        <OnShow method="OnShowEmbellishment"/>
+                        <OnHide method="OnHideEmbellishment"/>
+                    </Scripts>
                 </Texture>
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar parentKey="DurabilityBarBg" inherits="TextStatusBar" hidden="true"/>
-            <StatusBar parentKey="DurabilityBar" inherits="TextStatusBar" hidden="true"/>
+            <StatusBar parentKey="DurabilityBarBg" inherits="TextStatusBar" hidden="true" defaultValue="100" minValue="0" maxValue="100">
+                <Size y="6.5"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="BOTTOMLEFT" x="2" y="6"/>
+                    <Anchor point="RIGHT" relativePoint="BOTTOMRIGHT" x="-2" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface/Buttons/WHITE8x8"/>
+                <BarColor r="0.8" g="0.8" b="0.8"/>
+            </StatusBar>
+            <StatusBar parentKey="DurabilityBar" inherits="TextStatusBar" hidden="true" enableMouse="true" minValue="0" maxValue="100">
+                <Size y="6.5"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="BOTTOMLEFT" x="2" y="6"/>
+                    <Anchor point="RIGHT" relativePoint="BOTTOMRIGHT" x="-2" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface/TARGETINGFRAME/UI-StatusBar"/>
+                <Scripts>
+                    <OnShow method="OnShowDurabilityBar"/>
+                    <OnHide method="OnHideDurabilityBar"/>
+                </Scripts>
+            </StatusBar>
         </Frames>
         <Scripts>
             <OnLoad method="OnLoad"/>

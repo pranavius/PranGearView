@@ -395,14 +395,14 @@ function AddOn:ShowDurabilityBySlot(slot)
         -- No item equipped, hide all
         DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "does not have an item equipped")
         if slot.PGVDurability then slot.PGVDurability:Hide() end
-            if slot.PGVDurabilityBar then
-                slot.PGVDurabilityBar:SetValue(0)
-                slot.PGVDurabilityBar:Hide()
-            end
-            if slot.PGVDurabilityBarBg then
-                slot.PGVDurabilityBarBg:SetValue(0)
-                slot.PGVDurabilityBarBg:Hide()
-            end
+        if slot.PGVDurabilityBar then
+            slot.PGVDurabilityBar:SetValue(0)
+            slot.PGVDurabilityBar:Hide()
+        end
+        if slot.PGVDurabilityBarBg then
+            slot.PGVDurabilityBarBg:SetValue(0)
+            slot.PGVDurabilityBarBg:Hide()
+        end
     end
 end
 
