@@ -45,8 +45,8 @@ end
 ---@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 ---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetCharacterCurrentSpecIDAndRole()
-    local specIndex = GetSpecialization()
-    local specID, _, _, _, role = GetSpecializationInfo(specIndex)
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    local specID, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
     return specID, role
 end
 
