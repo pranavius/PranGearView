@@ -1813,103 +1813,12 @@ function AddOn:UpdateEquippedGearInfo()
     end
     
     DebugPrint("Enchants collapsed:", self.db.profile.enchants.collapse)
-       for _, slot in ipairs(self.GearSlots) do
+    for _, slot in ipairs(self.GearSlots) do
         local slotID = slot:GetID()
-        if self.db.profile.itemLevel.show then
-            if not slot.PGVItemLevel then
-                slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            ---@type string, number
-            local iFont, iSize = slot.PGVItemLevel:GetFont()
-            slot.PGVItemLevel:SetFont(iFont, iSize, self.db.profile.itemLevel.outline)
-            slot.PGVItemLevel:Hide()
-            local iLvlTextScale = 1
-            if self.db.profile.itemLevel.scale and self.db.profile.itemLevel.scale > 0 then
-                iLvlTextScale = iLvlTextScale * self.db.profile.itemLevel.scale
-            end
-            slot.PGVItemLevel:SetTextScale(iLvlTextScale)
-
-            self:GetItemLevelBySlot(slot)
-            self:SetItemLevelPositionBySlot(slot)
-        elseif slot.PGVItemLevel then
-            slot.PGVItemLevel:Hide()
-        end
-
-        if self:ShouldShowUpgradeTrack() then
-            if not slot.PGVUpgradeTrack then
-                slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            ---@type string, number
-            local uFont, uSize = slot.PGVUpgradeTrack:GetFont()
-            slot.PGVUpgradeTrack:SetFont(uFont, uSize, self.db.profile.upgradeTrack.outline)
-            slot.PGVUpgradeTrack:Hide()
-            local upgradeTrackTextScale = 0.9
-            if self.db.profile.upgradeTrack.scale and self.db.profile.upgradeTrack.scale > 0 then
-                upgradeTrackTextScale = upgradeTrackTextScale * self.db.profile.upgradeTrack.scale
-            end
-            slot.PGVUpgradeTrack:SetTextScale(upgradeTrackTextScale)
-
-            self:GetUpgradeTrackBySlot(slot)
-            self:SetUpgradeTrackPositionBySlot(slot)
-        elseif slot.PGVUpgradeTrack then
-            slot.PGVUpgradeTrack:Hide()
-        end
-
-        if self:ShouldShowGems() then
-            if not slot.PGVGems then
-                slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            slot.PGVGems:Hide()
-            local gemScale = 1
-            if self.db.profile.gems.scale and self.db.profile.gems.scale > 0 then
-                gemScale = gemScale * self.db.profile.gems.scale
-            end
-            slot.PGVGems:SetTextScale(gemScale)
-
-            self:GetGemsBySlot(slot)
-            self:SetGemsPositionBySlot(slot)
-        elseif slot.PGVGems then
-            slot.PGVGems:Hide()
-        end
-
-        if self:ShouldShowEnchants() then
-            if not slot.PGVEnchant then
-                slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            ---@type string, number
-            local eFont, eSize = slot.PGVEnchant:GetFont()
-            slot.PGVEnchant:SetFont(eFont, eSize, self.db.profile.enchants.outline)
-            slot.PGVEnchant:Hide()
-            local enchTextScale = 0.9
-            if self.db.profile.enchants.scale and self.db.profile.enchants.scale > 0 then
-                enchTextScale = enchTextScale * self.db.profile.enchants.scale
-            end
-            slot.PGVEnchant:SetTextScale(enchTextScale)
-
-            self:GetEnchantmentBySlot(slot)
-            self:SetEnchantPositionBySlot(slot)
-        elseif slot.PGVEnchant then
-            slot.PGVEnchant:Hide()
-        end
-        
-        if self.db.profile.durability.show then
-            self:ShowDurabilityBySlot(slot)
-        elseif slot.PGVDurability then
-            slot.PGVDurability:Hide()
-        end
-
-        if self:ShouldShowEmbellishments() then
-            self:ShowEmbellishmentBySlot(slot)
-        else
-            if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
-            if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
-        end
-
-        if self.db.profile.general.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot) then
-            if slot.PGVItemLevel then slot.PGVItemLevel:Hide() end
-            if slot.PGVGems then slot.PGVGems:Hide() end
-            if slot.PGVEnchant then slot.PGVEnchant:Hide() end
-        end
+        ---@type PGVCharSlotMixin
+        local pgvFrame = CreateFrame("Frame", "PGVSlot"..slotID, slot, "PGVCharSlotTemplate")
+        pgvFrame:SetFontOptions()
+        slot.PGVCharSlot = pgvFrame
     end
     -- Manually force a stats update to update item level decimal places and stat ordering if needed
     PaperDollFrame_UpdateStats()

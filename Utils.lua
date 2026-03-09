@@ -263,7 +263,7 @@ function AddOn:IsEnchantableSlot(slot)
     return false
 end
 
----Indicates whether a gear slot is positioned to the left of the character model in the default Character Info/Inspect windows or not
+---@deprecated Indicates whether a gear slot is positioned to the left of the character model in the default Character Info/Inspect windows or not
 ---@param slot Slot The gear slot to check
 ---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean|nil result Returns `nil` if the slot is for a weapon or off-hand item, `true` if the slot is to the left of the character model, and `false` otherwise
@@ -295,6 +295,9 @@ function AddOn:AbbreviateText(text, replacementTable)
     return abbreviation
 end
 
+---Provides a texture ID to display for a Death Knight weapon enchant, or returns the texture ID for a checkmark if the enchants does not have an associated icon
+---@param enchantTextAbbr string
+---@return number textureID
 function AddOn:GetLegacyEnchantTextureID(enchantTextAbbr)
     if enchantTextAbbr == AddOn.DKEnchantAbbr.Razorice then
         return 135842 -- Interface/Icons/Spell_Frost_FrostArmor

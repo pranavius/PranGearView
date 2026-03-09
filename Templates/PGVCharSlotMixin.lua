@@ -11,13 +11,18 @@ PGVCharSlotMixin = {}
 
 function PGVCharSlotMixin:OnLoad()
     print("Slot onLoad")
+    self.Embellishment:SetScript("OnShow", function() self:OnShowEmbellishment() end)
+    self.Embellishment:SetScript("OnHide", function() self:OnHideEmbellishment() end)
+    self.DurabilityBar:SetScript("OnShow", function() self:OnShowDurabilityBar() end)
+    self.DurabilityBar:SetScript("OnHide", function() self:OnHideDurabilityBar() end)
     ---@type ItemSlot
     local slot = self:GetParent()
     self.IsLeftSideSlot = slot.IsLeftSide == true
     self.IsBottomSlot = slot.IsLeftSide == nil
     local hasItem, item = AddOn:IsItemEquippedInSlot(slot)
+    local shouldHideSlotDetails = AddOn.db.profile.general.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot)
 
-    if hasItem then
+    if hasItem and not shouldHideSlotDetails then
         if AddOn.db.profile.itemLevel.show then
             self:GetItemLevel(slot, item)
             self:PositionItemLevel()
@@ -435,16 +440,6 @@ function PGVCharSlotMixin:GetAndPositionDurability(slot)
             self:DefineDurabilityBar(slot, false, percent)
             self.DurabilityBar:Show()
         elseif AddOn.db.profile.durability.show then
-            self.Durability:Hide()
-            local font, dSize = self.Durability:GetFont()
-            ---@cast font string
-            self.Durability:SetFont(font, dSize, "OUTLINE")
-            -- Set text scale based on user settings
-            local durTextScale = 0.9
-            if AddOn.db.profile.durability.scale and AddOn.db.profile.durability.scale > 0 then
-                durTextScale = durTextScale * AddOn.db.profile.durability.scale
-            end
-            self.Durability:SetTextScale(durTextScale)
             self.Durability:SetPoint("CENTER", self, "BOTTOM", 0, 5)
             -- Calculate durability percent and choose color
             local durText = ""
@@ -521,4 +516,38 @@ end
 
 function PGVCharSlotMixin:OnHideEmbellishment()
     self.EmbellishmentShadow:Hide()
+end
+
+function PGVCharSlotMixin:SetFontOptions()
+    if AddOn.db.profile.itemLevel.show then
+        local iFont, iSize = self.ItemLevel:GetFont()
+        ---@cast iFont string
+        self.ItemLevel:SetFont(iFont, iSize, AddOn.db.profile.itemLevel.outline)
+        self.ItemLevel:SetTextScale(AddOn.db.profile.itemLevel.scale)
+    end
+
+    if AddOn.db.profile.upgradeTrack.show then
+        local uFont, uSize = self.UpgradeTrack:GetFont()
+        ---@cast uFont string
+        self.UpgradeTrack:SetFont(uFont, uSize, AddOn.db.profile.upgradeTrack.outline)
+        self.UpgradeTrack:SetTextScale(0.9 * AddOn.db.profile.upgradeTrack.scale)
+    end
+    
+    if AddOn.db.profile.gems.show then
+        self.Gems:SetTextScale(AddOn.db.profile.gems.scale)
+    end
+    
+    if AddOn.db.profile.enchants.show then
+        local eFont, eSize = self.Enchant:GetFont()
+        ---@cast eFont string
+        self.Enchant:SetFont(eFont, eSize, AddOn.db.profile.enchants.outline)
+        self.Enchant:SetTextScale(0.9 * AddOn.db.profile.enchants.scale)
+    end
+    
+    if AddOn.db.profile.durability.show and not AddOn.db.profile.durability.showAsBar then
+        local dFont, dSize = self.Durability:GetFont()
+        ---@cast dFont string
+        self.Durability:SetFont(dFont, dSize, "OUTLINE")
+        self.Durability:SetTextScale(0.9 * AddOn.db.profile.durability.scale)
+    end
 end

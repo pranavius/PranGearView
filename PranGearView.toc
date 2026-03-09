@@ -34,4 +34,8 @@ Modules\RetrieveGearInfo.lua
 Modules\PositionGearInfo.lua
 Modules\InspectFrame.lua
 Modules\Credits.lua
+
+Templates\PGVCharSlotMixin.lua
+Templates\PGVCharSlotTemplate.xml
+
 PranGearView.lua
