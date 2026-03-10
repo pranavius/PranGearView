@@ -6,16 +6,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
-local function ICH_GetTooltipInfo(itemLink)
-    --@retail@
-    return C_TooltipInfo.GetHyperLink(itemLink)
-    --@end-retail@
-    --@version-mists@
-    GameTooltip:SetHyperlink(itemLink)
-    return GameTooltip:GetItem(0)
-    --@end-version-mists@
-end
-
 ---Fetches and formats the item level for an item in the defined gear slot (if one exists)
 ---@param slot Slot The gear slot to get item level for
 ---@param isInspect? boolean Whether or not a character is currently being inspected
@@ -60,7 +50,7 @@ function AddOn:GetUpgradeTrackBySlot(slot, isInspect)
     if hasItem then
         local upgradeTrackText = ""
         local upgradeColor = ""
-        local tooltip = ICH_GetTooltipInfo(item:GetItemLink())
+        local tooltip = C_TooltipInfo.GetHyperLink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 if ttdata and ttdata.type and ttdata.type == self.TooltipDataType.UpgradeTrack then
@@ -114,7 +104,7 @@ function AddOn:GetGemsBySlot(slot, isInspect)
         local existingSocketCount = 0
         local gemText = ""
         local IsLeftSide = self:GetSlotIsLeftSide(slot, isInspect)
-        local tooltip = ICH_GetTooltipInfo(item:GetItemLink())
+        local tooltip = C_TooltipInfo.GetHyperLink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 if ttdata and ttdata.type and ttdata.type == self.TooltipDataType.Gem then
@@ -172,7 +162,7 @@ function AddOn:GetEnchantmentBySlot(slot, isInspect)
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem and self:IsEnchantableSlot(slot) then
         local isEnchanted = false
-        local tooltip = ICH_GetTooltipInfo(item:GetItemLink())
+        local tooltip = C_TooltipInfo.GetHyperLink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 if ttdata and ttdata.type and ttdata.type == self.TooltipDataType.Enchant then
@@ -424,7 +414,7 @@ function AddOn:ShowEmbellishmentBySlot(slot, isInspect)
     if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
     local hasItem, item = self:IsItemEquippedInSlot(slot, isInspect)
     if hasItem then
-        local tooltip = ICH_GetTooltipInfo(item:GetItemLink())
+        local tooltip = C_TooltipInfo.GetHyperLink(item:GetItemLink())
         if tooltip and tooltip.lines then
             for _, ttdata in pairs(tooltip.lines) do
                 if ttdata and ttdata.leftText:find("Embellished") then

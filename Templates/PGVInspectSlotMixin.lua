@@ -6,62 +6,61 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local DebugPrint = AddOn.DebugPrint
 local ColorText = AddOn.ColorText
 
----@class PGVCharSlotMixin
-PGVCharSlotMixin = {}
+---@class PGVInspectSlotMixin
+PGVInspectSlotMixin = {}
 
-function PGVCharSlotMixin:OnLoad()
-    self.Embellishment:SetScript("OnShow", function() self:OnShowEmbellishment() end)
-    self.Embellishment:SetScript("OnHide", function() self:OnHideEmbellishment() end)
-    self.DurabilityBar:SetScript("OnShow", function() self:OnShowDurabilityBar() end)
-    self.DurabilityBar:SetScript("OnHide", function() self:OnHideDurabilityBar() end)
+function PGVInspectSlotMixin:OnLoad()
     self:UpdateSlotInfo()
 end
 
-function PGVCharSlotMixin:UpdateSlotInfo()
+local function IsInspectSlotLeftSide(slot)
+    for _, bottomSlotName in ipairs(AddOn.InspectInfo.bottomSlots) do
+        if slot == _G[bottomSlotName] then return nil end
+    end
+    for _, leftSlotName in ipairs(AddOn.InspectInfo.leftSideSlots) do
+        if slot == _G[leftSlotName] then return true end
+    end
+    return false
+end
+
+function PGVInspectSlotMixin:UpdateSlotInfo()
     ---@type ItemSlot
     local slot = self:GetParent()
-    self.IsLeftSideSlot = slot.IsLeftSide == true
-    self.IsBottomSlot = slot.IsLeftSide == nil
-    local hasItem, item = AddOn:IsItemEquippedInSlot(slot)
-    local shouldHideSlotDetails = AddOn.db.profile.general.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot)
-
+    self.IsLeftSideSlot = IsInspectSlotLeftSide(slot) == true
+    self.IsBottomSlot = IsInspectSlotLeftSide(slot) == nil
+    local hasItem, item = AddOn:IsItemEquippedInSlot(slot, true)
+    local shouldHideSlotDetails = AddOn.db.profile.general.hideShirtTabardInfo and (slot == _G["InspectShirtSlot"] or slot == _G["InspectTabardSlot"])
+    
     if hasItem and not shouldHideSlotDetails then
-        if AddOn.db.profile.itemLevel.show then
+        if AddOn.db.profile.inspect.showILvl then
             self:GetItemLevel(slot, item)
             self:PositionItemLevel()
         elseif self.ItemLevel:IsShown() then
             self.ItemLevel:Hide()
         end
         
-        if AddOn.db.profile.upgradeTrack.show then
+        if AddOn.db.profile.inspect.showUpgradeTrack then
             self:GetUpgradeTrack(slot, item)
-            self:PositionUpgradeTrack(slot == CharacterMainHandSlot)
+            self:PositionUpgradeTrack(slot == _G["InspectMainHandSlot"])
         elseif self.UpgradeTrack:IsShown() then
             self.UpgradeTrack:Hide()
         end
         
-        if AddOn.db.profile.gems.show then
+        if AddOn.db.profile.inspect.showGems then
             self:GetGems(slot, item)
-            self:PositionGems(slot == CharacterMainHandSlot)
+            self:PositionGems(slot == _G["InspectMainHandSlot"])
         elseif self.Gems:IsShown() then
             self.Gems:Hide()
         end
-
-        if AddOn.db.profile.enchants.show then
+    
+        if AddOn.db.profile.inspect.showEnchants then
             self:GetEnchant(slot, item)
             self:PositionEnchant(slot)
         elseif self.Enchant:IsShown() then
             self.Enchant:Hide()
         end
-
-        if AddOn.db.profile.durability.show then
-            self:GetAndPositionDurability(slot)
-        elseif self.Durability:IsShown() or self.DurabilityBar:IsShown() then
-            self.Durability:Hide()
-            self.DurabilityBar:Hide()
-        end
         
-        if AddOn.db.profile.general.showEmbellishments then
+        if AddOn.db.profile.inspect.showEmbellishments then
             self:GetEmbellishments(slot, item)
         elseif self.Embellishment:IsShown() then
             self.Embellishment:Hide()
@@ -72,7 +71,7 @@ end
 ---Fetch and format item level text for a gear slot
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVCharSlotMixin:GetItemLevel(slot, item)
+function PGVInspectSlotMixin:GetItemLevel(slot, item)
     local itemLevel = item:GetCurrentItemLevel()
     if itemLevel > 0 then -- positive value indicates item info has loaded
         local iLvlText = tostring(itemLevel)
@@ -111,8 +110,8 @@ function PGVCharSlotMixin:GetItemLevel(slot, item)
     end
 end
 
----Set item level text position in the Character Info window
-function PGVCharSlotMixin:PositionItemLevel()
+---Set item level text position in the Inspect window
+function PGVInspectSlotMixin:PositionItemLevel()
     self.ItemLevel:ClearAllPoints()
 
     if AddOn.db.profile.itemLevel.onItem then
@@ -127,7 +126,7 @@ end
 ---Fetch and format upgrade track text for a gear slot
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVCharSlotMixin:GetUpgradeTrack(slot, item)
+function PGVInspectSlotMixin:GetUpgradeTrack(slot, item)
     local upgradeTrackText = ""
     local upgradeColor = ""
     local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
@@ -175,13 +174,13 @@ function PGVCharSlotMixin:GetUpgradeTrack(slot, item)
     end
 end
 
----Set upgrade track text position in the Character Info window
+---Set upgrade track text position in the Inspect window
 ---@param isMainHand boolean `true` if the slot represents the main-hand gear slot, `false` otherwise
-function PGVCharSlotMixin:PositionUpgradeTrack(isMainHand)
+function PGVInspectSlotMixin:PositionUpgradeTrack(isMainHand)
     self.UpgradeTrack:ClearAllPoints()
 
-    local itemLevelShown = AddOn.db.profile.itemLevel.show and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
-    local itemLevelShownOnItem = AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
+    local itemLevelShown = AddOn.db.profile.inspect.showILvl and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
+    local itemLevelShownOnItem = AddOn.db.profile.inspect.showILvl and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
 
     if self.IsBottomSlot then
         self.UpgradeTrack:SetPoint("CENTER", self, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
@@ -196,7 +195,7 @@ end
 ---If sockets are empty/can be addded to the item and the option to show missing sockets is enabled, this will also be indicated.
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVCharSlotMixin:GetGems(slot, item)
+function PGVInspectSlotMixin:GetGems(slot, item)
     local existingSocketCount = 0
     local gemText = ""
     local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
@@ -232,8 +231,8 @@ function PGVCharSlotMixin:GetGems(slot, item)
     end
 
     -- Indicate slots that can have sockets added to them
-    if AddOn:ShouldShowGems() and AddOn.db.profile.gems.showMissing and AddOn:IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
-        local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
+    if AddOn.db.profile.inspect.showGems and AddOn.db.profile.gems.showMissing and AddOn:IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
+        local isCharacterMaxLevel = UnitLevel(UnitTokenFromGUID(AddOn.inspectedUnitGUID)) == AddOn.CurrentExpac.LevelCap
         if (AddOn.db.profile.gems.missingMaxLevelOnly and isCharacterMaxLevel) or not AddOn.db.profile.gems.missingMaxLevelOnly then
             for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
                 DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
@@ -250,12 +249,12 @@ function PGVCharSlotMixin:GetGems(slot, item)
     end
 end
 
----Set gems text position in the Character Info window
+---Set gems text position in the Inspect window
 ---@param isMainHand boolean `true` if the slot represents the main-hand gear slot, `false` otherwise
-function PGVCharSlotMixin:PositionGems(isMainHand)
+function PGVInspectSlotMixin:PositionGems(isMainHand)
     self.Gems:ClearAllPoints()
-    local itemLevelShown = AddOn.db.profile.itemLevel.show and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
-    local itemLevelShownOnItem = AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
+    local itemLevelShown = AddOn.db.profile.inspect.showILvl and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
+    local itemLevelShownOnItem = AddOn.db.profile.inspect.showILvl and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local upgradeTrackShown = AddOn:ShouldShowUpgradeTrack() and self.UpgradeTrack:IsShown()
 
     -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
@@ -282,7 +281,7 @@ end
 ---If an item that can be enchanted isn't and the option to show missing enchants is enabled, this will also be indicated.
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVCharSlotMixin:GetEnchant(slot, item)
+function PGVInspectSlotMixin:GetEnchant(slot, item)
     local isEnchanted = false
     local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
     if tooltip and tooltip.lines then
@@ -304,10 +303,10 @@ function PGVCharSlotMixin:GetEnchant(slot, item)
                 -- If DK enchant, set texture based on the icon shown for each enchant in Runeforging
                 if not texture then
                     texture = AddOn.GetTextureString(AddOn:GetLegacyEnchantTextureID(enchText))
-                    enchText = AddOn.db.profile.enchants.collapse and texture or (enchText..texture)
+                    enchText = enchText..texture
                 else
                     -- If the preference is to hide enchant text, only show the enchant quality
-                    enchText = AddOn.db.profile.enchants.collapse and AddOn.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", AddOn.GetTextureAtlasString(texture))
+                    enchText = enchText:gsub(" |A:.-|a", AddOn.GetTextureAtlasString(texture))
                 end
                 DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
 
@@ -323,14 +322,12 @@ function PGVCharSlotMixin:GetEnchant(slot, item)
     end
 
     if not isEnchanted and AddOn:IsEnchantableSlot(slot) and AddOn.db.profile.enchants.showMissing then
-        local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
+        local isCharacterMaxLevel = UnitLevel(UnitTokenFromGUID(AddOn.inspectedUnitGUID)) == AddOn.CurrentExpac.LevelCap
         if (AddOn.db.profile.enchants.missingMaxLevelOnly and isCharacterMaxLevel) or not AddOn.db.profile.enchants.missingMaxLevelOnly then
-            if AddOn.db.profile.enchants.collapse then
-                -- Texture: Interface/EncounterJournal/UI-EJ-WarningTextIcon
-                self.Enchant:SetFormattedText(AddOn.GetTextureString(523826))
-            -- For left side and main hand slots, show the icon to the right of the text. For all other slots, show the icon to the left (better mirroring look and feel)
-            elseif self.IsLeftSideSlot or (self.IsBottomSlot and slot:GetID() == 16) then self.Enchant:SetFormattedText(ColorText(L["Enchant"], "Druid")..AddOn.GetTextureString(523826))
-            else self.Enchant:SetFormattedText(AddOn.GetTextureString(523826)..ColorText(L["Enchant"], "Druid"))
+            if self.IsLeftSideSlot or (self.IsBottomSlot and slot:GetID() == 16) then
+                self.Enchant:SetFormattedText(ColorText(L["Enchant"], "Druid")..AddOn.GetTextureString(523826))
+            else
+                self.Enchant:SetFormattedText(AddOn.GetTextureString(523826)..ColorText(L["Enchant"], "Druid"))
             end
             self.Enchant:Show()
         end
@@ -340,16 +337,16 @@ function PGVCharSlotMixin:GetEnchant(slot, item)
     end
 end
 
----Set enchant text position in the Character Info window
+---Set enchant text position in the Inspect window
 ---@param slot ItemSlot The gear slot to position enchant for
-function PGVCharSlotMixin:PositionEnchant(slot)
+function PGVInspectSlotMixin:PositionEnchant(slot)
     self.Enchant:ClearAllPoints()
 
     local itemLevelShown = AddOn.db.profile.itemLevel.show and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local itemLevelShownOnItem = AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local upgradeTrackShown = AddOn:ShouldShowUpgradeTrack() and self.UpgradeTrack:IsShown()
     local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and AddOn:ShouldShowGems())) and 10 or 25
-    local isMainHand = slot == CharacterMainHandSlot
+    local isMainHand = slot == _G["InspectMainHandSlot"]
 
     if AddOn.db.profile.enchants.collapse and self.IsBottomSlot and upgradeTrackShown then
         -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown
@@ -366,98 +363,10 @@ function PGVCharSlotMixin:PositionEnchant(slot)
     end
 end
 
----Defines a durability bar for an item slot in the Character Info window
----@param slot ItemSlot The gear slot to get a durability bar for
----@param isBgBar boolean `true` if the bar is a background bar, `false` otherwise
----@param durPercent? number The durability percentage for the item in the gear slot (only considered for non-background bars)
-function PGVCharSlotMixin:DefineDurabilityBar(slot, isBgBar, durPercent)
-    local bar = isBgBar and self.DurabilityBarBg or self.DurabilityBar
-    if isBgBar then
-        if bar.SetBackdrop then
-            bar:SetBackdrop({
-                bgFile = nil,
-                edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-                edgeSize = 8,
-                insets = { left = 0, right = 0, top = 0, bottom = 0 },
-            })
-            bar:SetBackdropBorderColor(0, 0, 0, 1)
-        end
-        bar:SetFrameLevel(slot:GetFrameLevel() + 1)
-    else
-        if bar.SetBackdrop then bar:SetBackdrop(nil) end
-        bar:SetFrameLevel(slot:GetFrameLevel() + 2)
-        bar:SetScript("OnEnter", function(durBar)
-            if durBar.percent then
-                GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
-                GameTooltip:AddLine(L["Durability: "]..durBar.percent.."%", 1, 1, 1)
-                GameTooltip:Show()
-            end
-        end)
-        bar:SetScript("OnLeave", function() GameTooltip:Hide() end)
-        bar:SetValue(durPercent * 100)
-        -- Set default bar colors in DB if not present
-        if not AddOn.db.profile.durability.colorHigh or not AddOn.db.profile.durability.colorMedium or not AddOn.db.profile.durability.colorLow then
-            AddOn.db.profile.durability.colorHigh = AddOn.HexColorPresets.Uncommon
-            AddOn.db.profile.durability.colorMedium = AddOn.HexColorPresets.Info
-            AddOn.db.profile.durability.colorLow = AddOn.HexColorPresets.Error
-        end
-        local r, g, b
-        if durPercent > 0.5 then
-            r, g, b = AddOn.ConvertHexToRGB(AddOn.db.profile.durability.colorHigh)
-        elseif durPercent > 0.25 then
-            r, g, b = AddOn.ConvertHexToRGB(AddOn.db.profile.durability.colorMedium)
-        else
-            r, g, b = AddOn.ConvertHexToRGB(AddOn.db.profile.durability.colorLow)
-        end
-        if r ~= nil and g ~= nil and b ~= nil then
-            bar:SetStatusBarColor(r, g, b, 1)
-        else
-            AddOn.DebugPrint("Unable to render durability bar due to invalid color value(s) - r, g, b =", r, g, b)
-        end
-    end
-end
-
----Fetch and format durability display for a gear slot
----@param slot ItemSlot Gear slot frame
-function PGVCharSlotMixin:GetAndPositionDurability(slot)
-    -- Get current and max durability for the item
-    local cDur, mDur = GetInventoryItemDurability(slot:GetID())
-    if cDur and mDur then
-        local percent = cDur / mDur
-        if AddOn.db.profile.durability.show and AddOn.db.profile.durability.showAsBar then
-            self:DefineDurabilityBar(slot, true)
-            self:DefineDurabilityBar(slot, false, percent)
-            self.DurabilityBar:Show()
-        elseif AddOn.db.profile.durability.show then
-            self.Durability:SetPoint("BOTTOM", self, "BOTTOM", 0, 2)
-            -- Calculate durability percent and choose color
-            local durText = ""
-            local percentText = AddOn.RoundNumber(percent * 100)
-            if percentText < 100 and percentText > 50 then
-                durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorHigh)
-            elseif percentText < 100 and percentText > 25 then
-                durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorMedium)
-            elseif percentText < 100 and percentText >= 0 then
-                durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorLow)
-            end
-            DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
-            if durText ~= "" then
-                self.Durability:SetFormattedText(durText)
-                self.Durability:Show()
-            end
-        end
-    elseif AddOn.db.profile.durability.show and AddOn.db.profile.durability.showAsBar then
-        self.DurabilityBar:Hide()
-        self.DurabilityBarBg:Hide()
-    elseif AddOn.db.profile.durability.show then
-        self.Durability:Hide()
-    end
-end
-
 ---Show an icon/indicator for a gear slot containing an embellished item
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVCharSlotMixin:GetEmbellishments(slot, item)
+function PGVInspectSlotMixin:GetEmbellishments(slot, item)
     local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
     if tooltip and tooltip.lines then
         for _, ttdata in pairs(tooltip.lines) do
@@ -486,57 +395,10 @@ function PGVCharSlotMixin:GetEmbellishments(slot, item)
     end
 end
 
-function PGVCharSlotMixin:OnShowDurabilityBar()
-    self.DurabilityBarBg:Show()
-    self.Durability:Hide()
-end
-
-function PGVCharSlotMixin:OnHideDurabilityBar()
-    self.DurabilityBarBg:Hide()
-end
-
-function PGVCharSlotMixin:OnShowDurabilityText()
-    self.DurabilityBar:Hide()
-end
-
-function PGVCharSlotMixin:OnShowEmbellishment()
+function PGVInspectSlotMixin:OnShowEmbellishment()
     self.EmbellishmentShadow:Show()
 end
 
-function PGVCharSlotMixin:OnHideEmbellishment()
+function PGVInspectSlotMixin:OnHideEmbellishment()
     self.EmbellishmentShadow:Hide()
-end
-
-function PGVCharSlotMixin:SetFontOptions()
-    if AddOn.db.profile.itemLevel.show then
-        local iFont, iSize = self.ItemLevel:GetFont()
-        ---@cast iFont string
-        self.ItemLevel:SetFont(iFont, iSize, AddOn.db.profile.itemLevel.outline)
-        self.ItemLevel:SetTextScale(AddOn.db.profile.itemLevel.scale)
-    end
-
-    if AddOn.db.profile.upgradeTrack.show then
-        local uFont, uSize = self.UpgradeTrack:GetFont()
-        ---@cast uFont string
-        self.UpgradeTrack:SetFont(uFont, uSize, AddOn.db.profile.upgradeTrack.outline)
-        self.UpgradeTrack:SetTextScale(0.9 * AddOn.db.profile.upgradeTrack.scale)
-    end
-    
-    if AddOn.db.profile.gems.show then
-        self.Gems:SetTextScale(AddOn.db.profile.gems.scale)
-    end
-    
-    if AddOn.db.profile.enchants.show then
-        local eFont, eSize = self.Enchant:GetFont()
-        ---@cast eFont string
-        self.Enchant:SetFont(eFont, eSize, AddOn.db.profile.enchants.outline)
-        self.Enchant:SetTextScale(0.9 * AddOn.db.profile.enchants.scale)
-    end
-    
-    if AddOn.db.profile.durability.show and not AddOn.db.profile.durability.showAsBar then
-        local dFont, dSize = self.Durability:GetFont()
-        ---@cast dFont string
-        self.Durability:SetFont(dFont, dSize, "OUTLINE")
-        self.Durability:SetTextScale(0.9 * AddOn.db.profile.durability.scale)
-    end
 end

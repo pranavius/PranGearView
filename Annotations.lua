@@ -52,6 +52,7 @@
 ---@field SocketDisplay Frame
 ---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
 ---@field PGVCharSlot? PGVCharSlotMixin
+---@field PGVInspectSlot? PGVInspectSlotMixin
 
 ---@class (exact) PGVCharSlotMixin: Frame
 ---@field IsLeftSideSlot boolean
@@ -63,6 +64,16 @@
 ---@field Durability FontString
 ---@field DurabilityBarBg StatusBar
 ---@field DurabilityBar StatusBar
+---@field EmbellishmentShadow Texture
+---@field Embellishment Texture
+
+---@class (exact) PGVInspectSlotMixin: Frame
+---@field IsLeftSideSlot boolean
+---@field IsBottomSlot boolean
+---@field ItemLevel FontString
+---@field UpgradeTrack FontString
+---@field Gems FontString
+---@field Enchant FontString
 ---@field EmbellishmentShadow Texture
 ---@field Embellishment Texture
 
