@@ -30,8 +30,6 @@ Configs.lua
 Utils.lua
 Modules\ToggleEnchantButton.lua
 Modules\CharacterStats.lua
-Modules\RetrieveGearInfo.lua
-Modules\PositionGearInfo.lua
 Modules\InspectFrame.lua
 Modules\Credits.lua
 

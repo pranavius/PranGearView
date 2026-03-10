@@ -1405,7 +1405,6 @@ local OptionsTable = {
                         AddOn.db.profile.general.showEmbellishments = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 },
                 showCharacteriLvlDecimal = {
                     type = "toggle",

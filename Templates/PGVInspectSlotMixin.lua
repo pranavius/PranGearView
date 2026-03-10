@@ -105,7 +105,7 @@ function PGVInspectSlotMixin:GetItemLevel(slot, item)
         end
         self.ItemLevel:Show()
     else
-        DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", ColorText(slot:GetID(), "Heirloom"))
+        DebugPrint("Item Level less than 0 found, retry GetItemLevel for slot", ColorText(slot:GetID(), "Heirloom"))
         C_Timer.After(0.5, function() self:GetItemLevel(slot, item) end)
     end
 end

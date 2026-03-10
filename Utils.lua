@@ -207,11 +207,7 @@ end
 function AddOn:IsEnchantableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.EnchantableSlots) do
-            -- Check for available head enchants when inspecting another player (Horrific Visions, Amirdrassil, etc.)
-            if gearSlot == "InspectHeadSlot" and slot == _G[gearSlot] then
-                return self.CurrentExpac.HeadEnchantAvailable
-            -- Check for available shield or off-hand enchants when inspecting another player
-            elseif gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
+            if gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
                 local _, item = self:IsItemEquippedInSlot(slot, true)
                 if self.GetTableSize(item) > 0 then
                     local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(item:GetItemLink()))
@@ -233,11 +229,7 @@ function AddOn:IsEnchantableSlot(slot)
                 DebugPrint("Inspect Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
                 return true
             end
-            -- Check for available head enchants for current character (Horrific Visions, Amirdrassil, etc.)
-            if slot == gearSlot and slot == CharacterHeadSlot and GetInventoryItemID("player", slot:GetID()) then
-                return self.CurrentExpac.HeadEnchantAvailable
-            -- Check for available shield or off-hand enchants for current character
-            elseif slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
+            if slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
                 local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
                 local isOffhand = itemClassID == 4 and itemSubclassID == 0

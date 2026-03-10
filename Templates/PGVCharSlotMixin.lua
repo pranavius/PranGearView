@@ -62,7 +62,7 @@ function PGVCharSlotMixin:UpdateSlotInfo()
         end
         
         if AddOn.db.profile.general.showEmbellishments then
-            self:GetEmbellishments(slot, item)
+            self:GetEmbellishment(slot, item)
         elseif self.Embellishment:IsShown() then
             self.Embellishment:Hide()
         end
@@ -106,7 +106,7 @@ function PGVCharSlotMixin:GetItemLevel(slot, item)
         end
         self.ItemLevel:Show()
     else
-        DebugPrint("Item Level less than 0 found, retry self:GetItemLevelBySlot for slot", ColorText(slot:GetID(), "Heirloom"))
+        DebugPrint("Item Level less than 0 found, retry GetItemLevel for slot", ColorText(slot:GetID(), "Heirloom"))
         C_Timer.After(0.5, function() self:GetItemLevel(slot, item) end)
     end
 end
@@ -386,15 +386,13 @@ function PGVCharSlotMixin:DefineDurabilityBar(slot, isBgBar, durPercent)
     else
         if bar.SetBackdrop then bar:SetBackdrop(nil) end
         bar:SetFrameLevel(slot:GetFrameLevel() + 2)
+        bar:SetValue(durPercent * 100)
         bar:SetScript("OnEnter", function(durBar)
-            if durBar.percent then
-                GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
-                GameTooltip:AddLine(L["Durability: "]..durBar.percent.."%", 1, 1, 1)
-                GameTooltip:Show()
-            end
+            GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
+            GameTooltip:AddLine(L["Durability: "]..AddOn.RoundNumber(durBar:GetValue()).."%", 1, 1, 1)
+            GameTooltip:Show()
         end)
         bar:SetScript("OnLeave", function() GameTooltip:Hide() end)
-        bar:SetValue(durPercent * 100)
         -- Set default bar colors in DB if not present
         if not AddOn.db.profile.durability.colorHigh or not AddOn.db.profile.durability.colorMedium or not AddOn.db.profile.durability.colorLow then
             AddOn.db.profile.durability.colorHigh = AddOn.HexColorPresets.Uncommon
@@ -457,13 +455,12 @@ end
 ---Show an icon/indicator for a gear slot containing an embellished item
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVCharSlotMixin:GetEmbellishments(slot, item)
+function PGVCharSlotMixin:GetEmbellishment(slot, item)
     local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+    local isEmbellished = false
     if tooltip and tooltip.lines then
         for _, ttdata in pairs(tooltip.lines) do
             if ttdata and ttdata.leftText:find("Embellished") then
-                self.EmbellishmentShadow:Show()
-                -- Main embellishment star
                 self.Embellishment:ClearAllPoints()
                 if AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem then
                     if AddOn.db.profile.durability.showAsBar then
@@ -475,15 +472,14 @@ function PGVCharSlotMixin:GetEmbellishments(slot, item)
                     self.Embellishment:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
                 end
                 DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
-                self.Embellishment:Show()
-            else
-                self.EmbellishmentShadow:Hide()
-                self.Embellishment:Hide()
+                isEmbellished = true
             end
         end
     else
         DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
     end
+
+    if isEmbellished then self.Embellishment:Show() else self.Embellishment:Hide() end
 end
 
 function PGVCharSlotMixin:OnShowDurabilityBar()
