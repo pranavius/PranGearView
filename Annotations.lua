@@ -8,13 +8,13 @@
 ---@field bottomSlots string[] A list of all slots that appear on the bottom of the character model when inspecting a character
 
 ---@class (exact) ExpansionDetails
+---@field NameAbbr string Abbreviation for the expansion name (primarily used for debugging purposes)
 ---@field LevelCap number The maximum reachable level for the expansion
 ---@field SocketableSlots any[] A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 ---@field AuxSocketableSlots any[] A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
 ---@field MaxSocketsPerItem number The maximum number of sockets an item can have
 ---@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
 ---@field EnchantableSlots any[] A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
----@field HeadEnchantAvailable boolean Indicates whether or not a head enchant from the expansion is currently available in-game
 ---@field ShieldEnchantAvailable boolean Indicates whether or not a shield enchant from the expansion is currently available in-game
 ---@field OffhandEnchantAvailable boolean Indicates whether or not an off-hand enchant from the expansion is currently available in-game
 

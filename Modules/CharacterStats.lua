@@ -33,7 +33,7 @@ function AddOn:SetStatOrderHandler(item, val)
     self.db.profile.characterStats.customSpecStatOrders[specID][item[#item]] = tonumber(val)
     for stat, order in pairs(self.db.profile.characterStats.customSpecStatOrders[specID]) do
         if order == tonumber(val) and stat ~= item[#item] then
-            DebugPrint("Duplicate order number found on stat:", stat)
+            DebugPrint("SetStatOrderHandler: Duplicate order number found on stat:", stat)
             self.db.profile.characterStats.customSpecStatOrders[specID][stat] = currentOrder
             break
         end

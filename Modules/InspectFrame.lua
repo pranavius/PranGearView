@@ -13,15 +13,15 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     local showOnInspect = self.db.profile.inspect.show
     -- Check for a force update even if the DB value is false (required for toggling inspect visibility via slash command)
     if not showOnInspect and not forceUpdate then
-        DebugPrint("Gear info on inspect disabled")
+        DebugPrint("UpdateInspectedGearInfo: Gear info on inspect disabled")
         return
     end
     if not IsInRaid() and not IsInGroup() and (InspectFrame.unit and UnitGUID(InspectFrame.unit)) ~= unitGUID then
-        DebugPrint("Cannot find inspected unit")
+        DebugPrint("UpdateInspectedGearInfo: Cannot find inspected unit")
         return
     end
     if not self.InspectInfo or not self.InspectInfo.slots then
-        DebugPrint("Inspect slots table not found")
+        DebugPrint("UpdateInspectedGearInfo: Inspect slots table not found")
         return
     end
     
@@ -29,7 +29,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     if self.inspectedUnitGUID ~= unitGUID then
         self.inspectedUnitGUID = unitGUID
     end
-    DebugPrint("Currently inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
+    DebugPrint("UpdateInspectedGearInfo: Inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
     for _, slotName in ipairs(self.InspectInfo.slots) do
         ---@type ItemSlot
         local slot = _G[slotName]
@@ -50,12 +50,12 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
         local token = UnitTokenFromGUID(self.inspectedUnitGUID)
         ---@cast token string
-        DebugPrint("Inspected unit token for average item level:", ColorText(token, "Heirloom"))
+        DebugPrint("UpdateInspectedGearInfo: Inspected unit token -", ColorText(token, "Heirloom"))
         local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
         local classFile = select(2, UnitClass(token))
         local classHexWithAlpha = select(4, GetClassColor(classFile))
         if self.db.profile.inspect.includeAvgLabel then
-            DebugPrint("Include \"Avg: \" label")
+            DebugPrint("UpdateInspectedGearInfo: Include \"Avg: \" label")
             itemLevelText = L["Avg"]..": "..itemLevelText
         end
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetFormattedText("|c"..classHexWithAlpha..itemLevelText.."|r")

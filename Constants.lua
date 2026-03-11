@@ -256,7 +256,9 @@ AddOn.InspectInfo = {
 ---@see Frame for generic definition along without common functions and variables available for all Frames
 ---@see InspectInfo for a list of Frame names available when the Inspect window is open
 AddOn.ExpansionInfo = {
+    ---@type ExpansionDetails
     Midnight = {
+        NameAbbr = "MIDNIGHT",
         LevelCap = 90,
         SocketableSlots = {
             CharacterNeckSlot,
@@ -302,7 +304,9 @@ AddOn.ExpansionInfo = {
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false
     },
+    ---@type ExpansionDetails
     TheWarWithin = {
+        NameAbbr = "TWW",
         LevelCap = 80,
         SocketableSlots = {
             CharacterNeckSlot,

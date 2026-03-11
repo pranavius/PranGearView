@@ -1100,7 +1100,8 @@ local OptionsTable = {
                             local defaultStatUnordered = not isTankStat and order ~= AddOn.DefaultStatOrder[stat]
                             local tankStatUnordered = isTankStat and order ~= AddOn.DefaultTankStatOrder[stat]
                             if defaultStatUnordered or tankStatUnordered then
-                                DebugPrint(ColorText(stat.." is unordered!", "Legendary"),
+                                DebugPrint("ResetOrderButtonDisabled:",
+                                    ColorText(stat.." is unordered!", "Legendary"),
                                     "Expected order:",
                                     ColorText(AddOn.DefaultStatOrder[stat] or AddOn.DefaultTankStatOrder[stat] or "unknown", "Uncommon"),
                                     "and actual order:",
@@ -1658,7 +1659,7 @@ function AddOn:OnInitialize()
     self.ShowEnchants = self.db.profile.enchants.show and not PlayerGetTimerunningSeasonID()
 
     if self.db.profile.enchants.collapse then
-        DebugPrint("Enchant text is collapsed, update button text accordingly")
+        DebugPrint("OnInit: Enchant text is collapsed, update button text accordingly")
         AddOn.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
     end
 
@@ -1686,7 +1687,7 @@ function AddOn:OnInitialize()
             InspectFrame:HookScript("OnHide", function()
                 AddOn.inspectedUnitGUID = nil
                 ClearInspectPlayer()
-                DebugPrint("InspectFrame hidden, DB value and InspectPlayer cleared")
+                DebugPrint("InspectFrame OnHide: Cleared InspectPlayer and inspectedUnitGUID variable")
             end)
 
             self:UpdateInspectedGearInfo(unitGUID)
@@ -1711,10 +1712,10 @@ function AddOn:OnInitialize()
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
         if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.general.increaseCharacterInfoSize then
             local actor = cms:GetPlayerActor()
-            DebugPrint("CMS Transition: requested scale before mod - ", actor:GetRequestedScale())
+            DebugPrint("CMS TransitionToModelSceneID: requested scale before modification -", actor:GetRequestedScale())
             actor:SetRequestedScale(actor:GetRequestedScale() * 0.8)
             actor:UpdateScale()
-            DebugPrint("Updated requested scale to", actor:GetRequestedScale())
+            DebugPrint("CMS TransitionToModelSceneID: Updated requested scale to", actor:GetRequestedScale())
             local posX, posY, posZ = actor:GetPosition()
             -- Apply a offeset to the vertical positioning so that more of the model is visible (feet are not covered)
             actor:SetPosition(posX, posY, posZ + 0.25)
@@ -1763,9 +1764,9 @@ end
 
 ---Handles changing the Character Info window size when the option to use the larger character window is checked
 function AddOn:AdjustCharacterInfoWindowSize()
-    DebugPrint("AdjustCharacterInfoWindowSize - Refreshing display")
+    DebugPrint("AdjustCharacterInfoWindowSize: Refreshing display")
     if PaperDollFrame:IsVisible() and self.db.profile.general.increaseCharacterInfoSize then
-        DebugPrint("Larger character info window enabled")
+        DebugPrint("AdjustCharacterInfoWindowSize: Larger character info window enabled")
         -- Overwrite defined character frame width and adjust positioning of frames within CharacterFrame
         CharacterFrame:SetWidth(650)
         CharacterFrameInset:SetPoint("BOTTOMRIGHT", CharacterFrame, "BOTTOMLEFT", 450, 4)
@@ -1774,7 +1775,7 @@ function AddOn:AdjustCharacterInfoWindowSize()
         CharacterModelFrameBackgroundTopLeft:SetWidth(331)
         CharacterModelFrameBackgroundBotLeft:SetWidth(331)
     elseif PaperDollFrame:IsVisible() then
-        DebugPrint("Larger character info window disabled. Resetting any adjusted values.")
+        DebugPrint("AdjustCharacterInfoWindowSize: Larger character info window disabled. Resetting any adjusted values.")
         -- Undo all changes made for displaying the larger window
         -- Sources: /fstack in-game and https://www.townlong-yak.com/framexml/live/Blizzard_UIPanels_Game/PaperDollFrame.xml
         local charFrameInsetBotRightXOffset = select(4, CharacterFrameInset:GetPointByName("BOTTOMRIGHT"))
@@ -1798,11 +1799,11 @@ end
 ---Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
 function AddOn:HandleEquipmentOrSettingsChange()
     if PaperDollFrame:IsVisible() then
-        DebugPrint("Changed equipped item or AddOn setting, updating gear information")
+        DebugPrint("HandleEquipmentOrSettingsChange: Updating character gear information")
         self:UpdateEquippedGearInfo();
     end
     if InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
-        DebugPrint("Changed AddOn setting for inspect window, updating inspect gear information")
+        DebugPrint("HandleEquipmentOrSettingsChange: Updating inspected gear information")
         self:UpdateInspectedGearInfo(self.inspectedUnitGUID, true)
     end
 end
@@ -1810,11 +1811,11 @@ end
 ---Updates information displayed in the Character Info window
 function AddOn:UpdateEquippedGearInfo()
     if not self.GearSlots then
-        DebugPrint("Gear slots table not found")
+        DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
         return
     end
     
-    DebugPrint("Enchants collapsed:", self.db.profile.enchants.collapse)
+    DebugPrint("UpdateEquippedGearInfo: Enchants collapsed -", self.db.profile.enchants.collapse)
     for _, slot in ipairs(self.GearSlots) do
         local slotID = slot:GetID()
         if not slot.PGVCharSlot then

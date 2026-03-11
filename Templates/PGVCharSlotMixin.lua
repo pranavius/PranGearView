@@ -93,7 +93,7 @@ function PGVCharSlotMixin:GetItemLevel(slot, item)
             iLvlText = ColorText(iLvlText, AddOn.db.profile.itemLevel.customColor)
         end
 
-        DebugPrint("Item Level text for slot", ColorText(slot:GetID(), "Heirloom"), "=", iLvlText)
+        DebugPrint("GetItemLevel: Slot", ColorText(slot:GetName(), "Heirloom"), "item level is", iLvlText)
         self.ItemLevel:SetFormattedText(iLvlText)
         self.ItemLevel:ClearAllPoints()
 
@@ -106,7 +106,7 @@ function PGVCharSlotMixin:GetItemLevel(slot, item)
         end
         self.ItemLevel:Show()
     else
-        DebugPrint("Item Level less than 0 found, retry GetItemLevel for slot", ColorText(slot:GetID(), "Heirloom"))
+        DebugPrint("GetItemLevel: Negative item level returned, retry GetItemLevel for slot", ColorText(slot:GetName(), "Heirloom"))
         C_Timer.After(0.5, function() self:GetItemLevel(slot, item) end)
     end
 end
@@ -139,7 +139,7 @@ function PGVCharSlotMixin:GetUpgradeTrack(slot, item)
                 local upgradeText = ttdata.leftText
                 upgradeText = AddOn:AbbreviateText(upgradeText, AddOn.UpgradeTextReplacements)
                 upgradeTrackText = upgradeText
-                DebugPrint("Upgrade track for item", ColorText(slot:GetID(), "Heirloom"), "=", upgradeText)
+                DebugPrint("GetUpgradeTrack: Slot", ColorText(slot:GetName(), "Heirloom"), "upgrade track is", upgradeText)
             end
         end
     end
@@ -203,27 +203,26 @@ function PGVCharSlotMixin:GetGems(slot, item)
     if tooltip and tooltip.lines then
         for _, ttdata in pairs(tooltip.lines) do
             if ttdata and ttdata.type and ttdata.type == AddOn.TooltipDataType.Gem then
-                -- Socketed item's TooltipData will have gemIcon variable
                 if ttdata.gemIcon and self.IsLeftSideSlot then
-                    DebugPrint("Found Gem Icon on left side slot:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, AddOn.GetTextureString(ttdata.gemIcon))
+                    DebugPrint("GetGems: Gem", ttdata.gemIcon, "found on left side slot:", ColorText(slot:GetName(), "Heirloom"), AddOn.GetTextureString(ttdata.gemIcon))
                     gemText = gemText..AddOn.GetTextureString(ttdata.gemIcon)
                 elseif ttdata.gemIcon then
-                    DebugPrint("Found Gem Icon:", ColorText(slot:GetID(), "Heirloom"), ttdata.gemIcon, AddOn.GetTextureString(ttdata.gemIcon))
+                    DebugPrint("GetGems: Gem", ttdata.gemIcon, "found on slot:", ColorText(slot:GetName(), "Heirloom"), AddOn.GetTextureString(ttdata.gemIcon))
                     gemText = AddOn.GetTextureString(ttdata.gemIcon)..gemText
                 -- Two conditions below check for tinker sockets
                 elseif ttdata.socketType and self.IsLeftSideSlot then
-                    DebugPrint("Empty tinker socket for in slot on left side:", ColorText(slot:GetID(), "Heirloom"), AddOn.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType))
+                    DebugPrint("GetGems: Empty tinker socket", ttdata.socketType, "found on left side slot:", ColorText(slot:GetName(), "Heirloom"), AddOn.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType))
                     gemText = gemText..AddOn.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType)
                 elseif ttdata.socketType then
-                    DebugPrint("Empty tinker socket found in slot:", ColorText(slot:GetID(), "Heirloom"), AddOn.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType))
+                    DebugPrint("GetGems: Empty tinker socket", ttdata.socketType, "found on slot:", ColorText(slot:GetName(), "Heirloom"), AddOn.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType))
                     gemText = AddOn.GetTextureString("Interface/ItemSocketingFrame/UI-EmptySocket-"..ttdata.socketType)..gemText
                 -- The two conditions below indicate that there is an empty socket on the item
                 elseif self.IsLeftSideSlot then
-                    DebugPrint("Empty socket found in slot on left side:", ColorText(slot:GetID(), "Heirloom"), AddOn.GetTextureString(458977))
+                    DebugPrint("GetGems: Empty socket found on left side slot:", ColorText(slot:GetName(), "Heirloom"))
                     -- Texture: Interface/ItemSocketingFrame/UI-EmptySocket-Prismatic
                     gemText = gemText..AddOn.GetTextureString(458977)
                 else
-                    DebugPrint("Empty socket found in slot:", ColorText(slot:GetID(), "Heirloom"), AddOn.GetTextureString(458977))
+                    DebugPrint("GetGems: Empty socket found on slot:", ColorText(slot:GetName(), "Heirloom"))
                     gemText = AddOn.GetTextureString(458977)..gemText
                 end
                 existingSocketCount = existingSocketCount + 1
@@ -236,7 +235,7 @@ function PGVCharSlotMixin:GetGems(slot, item)
         local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
         if (AddOn.db.profile.gems.missingMaxLevelOnly and isCharacterMaxLevel) or not AddOn.db.profile.gems.missingMaxLevelOnly then
             for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "can add", i, i == 1 and "socket" or "sockets")
+                DebugPrint("GetGems: Slot", ColorText(slot:GetName(), "Heirloom"), "can have", i, i == 1 and "socket" or "sockets")
                 gemText = self.IsLeftSideSlot and gemText..AddOn.GetTextureAtlasString("Socket-Prismatic-Closed") or AddOn.GetTextureAtlasString("Socket-Prismatic-Closed")..gemText
             end
         end
@@ -288,9 +287,9 @@ function PGVCharSlotMixin:GetEnchant(slot, item)
     if tooltip and tooltip.lines then
         for _, ttdata in pairs(tooltip.lines) do
             if ttdata and ttdata.type and ttdata.type == AddOn.TooltipDataType.Enchant then
-                DebugPrint("Item in slot", ColorText(slot:GetID(), "Heirloom"), "is enchanted")
+                DebugPrint("GetEnchant: Item in slot", ColorText(slot:GetName(), "Heirloom"), "is enchanted")
                 local enchText = ttdata.leftText
-                DebugPrint("Original enchantment text:", ColorText(enchText, "Uncommon"))
+                DebugPrint("GetEnchant: Original enchantment text:", ColorText(enchText, "Info"))
                 enchText = AddOn:AbbreviateText(enchText, AddOn.EnchantTextReplacements)
                 -- Perform locale replacements specific to ptBR to further shorten and fix some abbreviations
                 if GetLocale() == "ptBR" then enchText = AddOn:AbbreviateText(enchText, AddOn.ptbrEnchantTextReplacements)
@@ -309,7 +308,7 @@ function PGVCharSlotMixin:GetEnchant(slot, item)
                     -- If the preference is to hide enchant text, only show the enchant quality
                     enchText = AddOn.db.profile.enchants.collapse and AddOn.GetTextureAtlasString(texture) or enchText:gsub(" |A:.-|a", AddOn.GetTextureAtlasString(texture))
                 end
-                DebugPrint("Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
+                DebugPrint("GetEnchant: Abbreviated enchantment text:", ColorText(enchText, "Uncommon"))
 
                 if AddOn.db.profile.enchants.useCustomColor then
                     self.Enchant:SetFormattedText(ColorText(enchText, AddOn.db.profile.enchants.customColor))
@@ -352,12 +351,8 @@ function PGVCharSlotMixin:PositionEnchant(slot)
     local isMainHand = slot == CharacterMainHandSlot
 
     if AddOn.db.profile.enchants.collapse and self.IsBottomSlot and upgradeTrackShown then
-        -- Update positioning for main and off-hand slot enchants when collapsed and upgrade track is shown
-        DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         self.Enchant:SetPoint("CENTER", self, "TOP", 0, 25)
     elseif AddOn.db.profile.enchants.collapse and self.IsBottomSlot then
-        -- Update positioning for main and off-hand slot enchants when collapsed
-        DebugPrint("Adjusting positions for main and off-hand slots with enchant text collapsed")
         self.Enchant:SetPoint("CENTER", self, "TOP", 0, defaultYOffset)
     elseif not self.IsBottomSlot then
         self.Enchant:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self, self.IsLeftSideSlot and "RIGHT" or "LEFT", (self.IsLeftSideSlot and 1 or -1) * 10, (self.ItemLevel:GetHeight() / 1.5) * -1)
@@ -410,7 +405,7 @@ function PGVCharSlotMixin:DefineDurabilityBar(slot, isBgBar, durPercent)
         if r ~= nil and g ~= nil and b ~= nil then
             bar:SetStatusBarColor(r, g, b, 1)
         else
-            AddOn.DebugPrint("Unable to render durability bar due to invalid color value(s) - r, g, b =", r, g, b)
+            DebugPrint("DefineDurabilityBar: Unable to render durability bar due to invalid color value(s) -", r, g, b)
         end
     end
 end
@@ -438,7 +433,7 @@ function PGVCharSlotMixin:GetAndPositionDurability(slot)
             elseif percentText < 100 and percentText >= 0 then
                 durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorLow)
             end
-            DebugPrint("Durability for slot", ColorText(slot:GetID(), "Heirloom"), "=", durText)
+            DebugPrint("GetAndPositionDurability: Durability for slot", ColorText(slot:GetName(), "Heirloom"), "is", durText)
             if durText ~= "" then
                 self.Durability:SetFormattedText(durText)
                 self.Durability:Show()
@@ -471,12 +466,12 @@ function PGVCharSlotMixin:GetEmbellishment(slot, item)
                 else
                     self.Embellishment:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
                 end
-                DebugPrint("Showing embellishments enabled, embellishment found on slot |cFF00ccff"..slot:GetID().."|r")
+                DebugPrint("GetEmbellishment: Embellishment found on slot", ColorText(slot:GetName(), "Heirloom"))
                 isEmbellished = true
             end
         end
     else
-        DebugPrint("Tooltip information could not be obtained for slot |cFFc00ccff"..slot:GetID().."|r")
+        DebugPrint("GetEmbellishment: Tooltip information not obtained for slot", ColorText(slot:GetName(), "Heirloom"))
     end
 
     if isEmbellished then self.Embellishment:Show() else self.Embellishment:Hide() end

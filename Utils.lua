@@ -152,7 +152,6 @@ end
 function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
-        DebugPrint("Inspected unit GUID:", self.inspectedUnitGUID)
         local token = InspectFrame.unit
         if UnitGUID(InspectFrame.unit) ~= self.inspectedUnitGUID then token = UnitTokenFromGUID(self.inspectedUnitGUID) end
         ---@cast token string
@@ -172,14 +171,12 @@ function AddOn:IsSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.SocketableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.SocketableSlots) do
             if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable")
+                DebugPrint("IsSocketableSlot: Slot", ColorText(slot:GetName(), "Heirloom"), "is socketable in", self.CurrentExpac.NameAbbr)
                 return true
             end
         end
     elseif self:IsAuxSocketableSlot(slot) then
         return true
-    else
-        DebugPrint(ColorText("SocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
@@ -191,12 +188,10 @@ function AddOn:IsAuxSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.AuxSocketableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.AuxSocketableSlots) do
             if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable (aux)")
+                DebugPrint("IsAuxSocketableSlot: Slot", ColorText(slot:GetName(), "Heirloom"), "can have sockets added in", self.CurrentExpac.NameAbbr)
                 return true
             end
         end
-    else
-        DebugPrint(ColorText("AuxSocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
@@ -224,11 +219,6 @@ function AddOn:IsEnchantableSlot(slot)
                     end
                 end
             end
-            -- Check for any other available enchants when inspecting another player
-            if type(gearSlot) == "string" and slot == _G[gearSlot] then
-                DebugPrint("Inspect Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
-                return true
-            end
             if slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
                 local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
@@ -243,34 +233,14 @@ function AddOn:IsEnchantableSlot(slot)
                     return false
                 end
             end
-            -- Check for any other available enchants for current character
-            if slot == gearSlot then
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
+            -- Check for other available enchants
+            if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
+                DebugPrint("IsEnchantableSlot: Slot", ColorText(slot:GetName(), "Heirloom"), "is enchantable")
                 return true
             end
         end
-    else
-        DebugPrint(ColorText("EnchantableSlots not found in expansion info table", "Error"))
     end
     return false
-end
-
----@deprecated Indicates whether a gear slot is positioned to the left of the character model in the default Character Info/Inspect windows or not
----@param slot Slot The gear slot to check
----@param isInspect? boolean Whether a player is being inspected or not
----@return boolean|nil result Returns `nil` if the slot is for a weapon or off-hand item, `true` if the slot is to the left of the character model, and `false` otherwise
-function AddOn:GetSlotIsLeftSide(slot, isInspect)
-    if isInspect then
-        for _, bottomSlotName in ipairs(self.InspectInfo.bottomSlots) do
-            if slot == _G[bottomSlotName] then return nil end
-        end
-        for _, leftSlotName in ipairs(self.InspectInfo.leftSideSlots) do
-            if slot == _G[leftSlotName] then return true end
-        end
-        return false
-    else
-        return slot.IsLeftSide
-    end
 end
 
 ---Abbreviates `text` using the provided `replacementTable`
