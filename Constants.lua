@@ -192,7 +192,7 @@ AddOn.HexColorPresets = {
 }
 
 ---A list of character gear slots visible in the Character Info window
----@type Slot|ItemSlot[]
+---@type ItemSlot[]
 AddOn.GearSlots = {
     CharacterHeadSlot,
     CharacterNeckSlot,

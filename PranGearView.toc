@@ -26,8 +26,8 @@ Localization\zhTW.lua
 Localization\deDE.lua
 
 Constants.lua
-Configs.lua
 Utils.lua
+Configs.lua
 Modules\ToggleEnchantButton.lua
 Modules\CharacterStats.lua
 Modules\InspectFrame.lua

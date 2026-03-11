@@ -33,21 +33,21 @@ function PGVCharSlotMixin:UpdateSlotInfo()
             self.ItemLevel:Hide()
         end
         
-        if AddOn.db.profile.upgradeTrack.show then
+        if AddOn:AreUpgradeTracksShownForCharacter() then
             self:GetUpgradeTrack(slot, item)
             self:PositionUpgradeTrack(slot == CharacterMainHandSlot)
         elseif self.UpgradeTrack:IsShown() then
             self.UpgradeTrack:Hide()
         end
         
-        if AddOn.db.profile.gems.show then
+        if AddOn:AreGemsShownForCharacter() then
             self:GetGems(slot, item)
             self:PositionGems(slot == CharacterMainHandSlot)
         elseif self.Gems:IsShown() then
             self.Gems:Hide()
         end
 
-        if AddOn.db.profile.enchants.show then
+        if AddOn:AreEnchantsShownForCharacter() then
             self:GetEnchant(slot, item)
             self:PositionEnchant(slot)
         elseif self.Enchant:IsShown() then
@@ -61,7 +61,7 @@ function PGVCharSlotMixin:UpdateSlotInfo()
             self.DurabilityBar:Hide()
         end
         
-        if AddOn.db.profile.general.showEmbellishments then
+        if AddOn:AreEmbellishmentsShownForCharacter() then
             self:GetEmbellishment(slot, item)
         elseif self.Embellishment:IsShown() then
             self.Embellishment:Hide()
@@ -231,7 +231,7 @@ function PGVCharSlotMixin:GetGems(slot, item)
     end
 
     -- Indicate slots that can have sockets added to them
-    if AddOn:ShouldShowGems() and AddOn.db.profile.gems.showMissing and AddOn:IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
+    if AddOn:AreGemsShownForCharacter() and AddOn.db.profile.gems.showMissing and AddOn:IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
         local isCharacterMaxLevel = UnitLevel("player") == AddOn.CurrentExpac.LevelCap
         if (AddOn.db.profile.gems.missingMaxLevelOnly and isCharacterMaxLevel) or not AddOn.db.profile.gems.missingMaxLevelOnly then
             for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
@@ -255,7 +255,7 @@ function PGVCharSlotMixin:PositionGems(isMainHand)
     self.Gems:ClearAllPoints()
     local itemLevelShown = AddOn.db.profile.itemLevel.show and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local itemLevelShownOnItem = AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
-    local upgradeTrackShown = AddOn:ShouldShowUpgradeTrack() and self.UpgradeTrack:IsShown()
+    local upgradeTrackShown = AddOn:AreUpgradeTracksShownForCharacter() and self.UpgradeTrack:IsShown()
 
     -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
     if upgradeTrackShown and self.IsBottomSlot then
@@ -346,8 +346,8 @@ function PGVCharSlotMixin:PositionEnchant(slot)
 
     local itemLevelShown = AddOn.db.profile.itemLevel.show and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local itemLevelShownOnItem = AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
-    local upgradeTrackShown = AddOn:ShouldShowUpgradeTrack() and self.UpgradeTrack:IsShown()
-    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and AddOn:ShouldShowGems())) and 10 or 25
+    local upgradeTrackShown = AddOn:AreUpgradeTracksShownForCharacter() and self.UpgradeTrack:IsShown()
+    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and AddOn:AreGemsShownForCharacter())) and 10 or 25
     local isMainHand = slot == CharacterMainHandSlot
 
     if AddOn.db.profile.enchants.collapse and self.IsBottomSlot and upgradeTrackShown then
@@ -506,18 +506,18 @@ function PGVCharSlotMixin:SetFontOptions()
         self.ItemLevel:SetTextScale(AddOn.db.profile.itemLevel.scale)
     end
 
-    if AddOn.db.profile.upgradeTrack.show then
+    if AddOn:AreUpgradeTracksShownForCharacter() then
         local uFont, uSize = self.UpgradeTrack:GetFont()
         ---@cast uFont string
         self.UpgradeTrack:SetFont(uFont, uSize, AddOn.db.profile.upgradeTrack.outline)
         self.UpgradeTrack:SetTextScale(0.9 * AddOn.db.profile.upgradeTrack.scale)
     end
     
-    if AddOn.db.profile.gems.show then
+    if AddOn:AreGemsShownForCharacter() then
         self.Gems:SetTextScale(AddOn.db.profile.gems.scale)
     end
     
-    if AddOn.db.profile.enchants.show then
+    if AddOn:AreEnchantsShownForCharacter() then
         local eFont, eSize = self.Enchant:GetFont()
         ---@cast eFont string
         self.Enchant:SetFont(eFont, eSize, AddOn.db.profile.enchants.outline)

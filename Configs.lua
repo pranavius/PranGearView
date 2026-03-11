@@ -151,7 +151,7 @@ local migrationMap = {
 
 ---Migrates the saved profile from the old flat key structure to the new grouped structure.
 ---This only runs once per profile; the `_pgvMigrated` flag prevents re-migration.
----@param db table The AceDB database object
+---@param db AceDBObject-3.0 The AceDB database object
 function AddOn:MigrateProfileSettings(db)
     for _, profile in pairs(db.profiles) do
         if not profile._pgvMigrated then
@@ -166,4 +166,5 @@ function AddOn:MigrateProfileSettings(db)
             profile._pgvMigrated = true
         end
     end
+    self.DebugPrint("Migrated profiles")
 end

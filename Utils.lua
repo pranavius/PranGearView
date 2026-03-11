@@ -145,7 +145,7 @@ function AddOn.CreateOptionsSpacer(order, width)
 end
 
 ---Indicates whether an item is equipped in a particular gear slot or not
----@param slot Slot|ItemSlot The gear slot to check for an equipped item
+---@param slot ItemSlot The gear slot to check for an equipped item
 ---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean hasItem `true` if the slot has an item equipped in it, `false` otherwise
 ---@return ItemMixin item The equipped item. When `hasItem` is `false`, this is always an empty table
@@ -165,7 +165,7 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it
----@param slot Slot|ItemSlot The gear slot to check for socketable equipment
+---@param slot ItemSlot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket, `false` otherwise
 function AddOn:IsSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.SocketableSlots then
@@ -182,7 +182,7 @@ function AddOn:IsSocketableSlot(slot)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it via auxillary methods (example: S.A.D. in The War Within)
----@param slot Slot|ItemSlot The gear slot to check for socketable equipment
+---@param slot ItemSlot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket via auxillary methods, `false` otherwise
 function AddOn:IsAuxSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.AuxSocketableSlots then
@@ -197,7 +197,7 @@ function AddOn:IsAuxSocketableSlot(slot)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can be enchanted or not
----@param slot Slot|ItemSlot The gear slot to check for enchantable equipment
+---@param slot ItemSlot The gear slot to check for enchantable equipment
 ---@return boolean result `true` if the item can be enchanted, `false` otherwise
 function AddOn:IsEnchantableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.EnchantableSlots then
@@ -278,4 +278,30 @@ function AddOn:GetLegacyEnchantTextureID(enchantTextAbbr)
     else
         return 628564 -- Interface/Scenarios/ScenarioIcon-Check
     end
+end
+
+PlayerGetTimerunningSeasonID = PlayerGetTimerunningSeasonID or function() return nil end
+
+---Dynamically determine whether upgrade track info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreUpgradeTracksShownForCharacter()
+    return self.db.profile.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
+end
+
+---Dynamically determine whether gem info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreGemsShownForCharacter()
+    return self.db.profile.gems.show and PlayerGetTimerunningSeasonID() == nil
+end
+
+---Dynamically determine whether enchant info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreEnchantsShownForCharacter()
+    return self.db.profile.enchants.show and PlayerGetTimerunningSeasonID() == nil
+end
+
+---Dynamically determine whether embellishment info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreEmbellishmentsShownForCharacter()
+    return self.db.profile.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
 end

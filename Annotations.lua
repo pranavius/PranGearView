@@ -35,19 +35,6 @@
 ---@class PGVDurabilityBar: StatusBar
 ---@field percent number
 
----This annotation is deprecated, phase out in refactor
----@class Slot: Frame
----@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
----@field PGVItemLevel? FontString
----@field PGVUpgradeTrack? FontString
----@field PGVGems? FontString
----@field PGVEnchant? FontString
----@field PGVDurability? FontString
----@field PGVDurabilityBarBg? StatusBar
----@field PGVDurabilityBar? PGVDurabilityBar
----@field PGVEmbellishmentTexture? Texture
----@field PGVEmbellishmentShadow? Texture
-
 ---@class ItemSlot: Frame
 ---@field SocketDisplay Frame
 ---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows

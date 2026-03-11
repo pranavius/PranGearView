@@ -258,7 +258,7 @@ function PGVInspectSlotMixin:PositionGems(isMainHand)
     self.Gems:ClearAllPoints()
     local itemLevelShown = AddOn.db.profile.inspect.showILvl and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local itemLevelShownOnItem = AddOn.db.profile.inspect.showILvl and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
-    local upgradeTrackShown = AddOn:ShouldShowUpgradeTrack() and self.UpgradeTrack:IsShown()
+    local upgradeTrackShown = AddOn:AreUpgradeTracksShownForCharacter() and self.UpgradeTrack:IsShown()
 
     -- Gems on weapon/shield/off-hand slots (not possible as far as I am aware, but you never know)
     if upgradeTrackShown and self.IsBottomSlot then
@@ -347,8 +347,8 @@ function PGVInspectSlotMixin:PositionEnchant(slot)
 
     local itemLevelShown = AddOn.db.profile.itemLevel.show and not AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
     local itemLevelShownOnItem = AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem and self.ItemLevel:IsShown()
-    local upgradeTrackShown = AddOn:ShouldShowUpgradeTrack() and self.UpgradeTrack:IsShown()
-    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and AddOn:ShouldShowGems())) and 10 or 25
+    local upgradeTrackShown = AddOn:AreUpgradeTracksShownForCharacter() and self.UpgradeTrack:IsShown()
+    local defaultYOffset = (itemLevelShownOnItem or (not itemLevelShown and AddOn:AreGemsShownForCharacter())) and 10 or 25
     local isMainHand = slot == _G["InspectMainHandSlot"]
 
     if AddOn.db.profile.enchants.collapse and self.IsBottomSlot and upgradeTrackShown then

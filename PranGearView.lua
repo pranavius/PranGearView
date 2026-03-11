@@ -41,7 +41,7 @@ local OptionsTable = {
                 AddOn.db.profile.upgradeTrack.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return AddOn:AreUpgradeTracksShownForCharacter() end
         },
         showGems = {
             type = "toggle",
@@ -53,7 +53,7 @@ local OptionsTable = {
                 AddOn.db.profile.gems.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return AddOn:AreGemsShownForCharacter() end
         },
         showEnchants = {
             type = "toggle",
@@ -70,7 +70,7 @@ local OptionsTable = {
                 end
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return AddOn:AreEnchantsShownForCharacter() or false end
         },
         showDurability = {
             type = "toggle",
@@ -81,8 +81,7 @@ local OptionsTable = {
             set = function(_, val)
                 AddOn.db.profile.durability.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
-            end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            end
         },
         divider = {
             type = "header",
@@ -437,7 +436,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 }
             },
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return AddOn:AreUpgradeTracksShownForCharacter() end
         },
         gemOptions = {
             type = "group",
@@ -498,7 +497,7 @@ local OptionsTable = {
                     order = orderCounter()
                 }
             },
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return AddOn:AreGemsShownForCharacter() end
         },
         enchantOptions = {
             type = "group",
@@ -673,7 +672,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 }
             },
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return AddOn:AreEnchantsShownForCharacter() end
         },
         durabilityOptions = {
             type = "group",
@@ -884,8 +883,7 @@ local OptionsTable = {
                     end,
                     disabled = function() return not AddOn.db.profile.durability.show end
                 }
-            },
-            hidden = function() return AddOn.IsTimerunner or false end
+            }
         },
         inspectOptions = {
             type = "group",
@@ -957,7 +955,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    hidden = function() return AddOn:AreUpgradeTracksShownForCharacter() end
                 },
                 showInspectGems = {
                     type = "toggle",
@@ -970,7 +968,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    hidden = function() return AddOn:AreGemsShownForCharacter() end
                 },
                 showInspectEnchants = {
                     type = "toggle",
@@ -983,7 +981,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    hidden = function() return AddOn:AreEnchantsShownForCharacter() end
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
@@ -997,7 +995,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    hidden = function() return AddOn:AreEmbellishmentsShownForCharacter() end
                 },
             }
         },
@@ -1594,34 +1592,9 @@ local SlashOptions = {
 
 local SlashCmds = { "prangearview", "pgv" }
 
-PlayerGetTimerunningSeasonID = PlayerGetTimerunningSeasonID or function() return nil end
-
--- START: Temporary Timerunner character functions
-function AddOn:CheckIfTimerunner()
-    local timerunningID = PlayerGetTimerunningSeasonID()
-    self.IsTimerunner = timerunningID ~= nil
-end
-
-function AddOn:ShouldShowGems()
-    return self.db.profile.gems.show and not self.IsTimerunner
-end
-
-function AddOn:ShouldShowEnchants()
-    return self.db.profile.enchants.show and not self.IsTimerunner
-end
-
-function AddOn:ShouldShowEmbellishments()
-    return self.db.profile.general.showEmbellishments and not self.IsTimerunner
-end
-
-function AddOn:ShouldShowUpgradeTrack()
-    return self.db.profile.upgradeTrack.show and not self.IsTimerunner
-end
--- END: Temporary Timerunner character functions
-
 function AddOn:OnInitialize()
     -- Load database
-	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", AddOn.DatabaseDefaults, true)
+	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", self.DatabaseDefaults, true)
     self:MigrateProfileSettings(self.db)
 
     -- Data broker registration for minimap icon
@@ -1655,23 +1628,20 @@ function AddOn:OnInitialize()
     _, self.categoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
 
-    self.IsTimerunner = false
-    self.ShowEnchants = self.db.profile.enchants.show and not PlayerGetTimerunningSeasonID()
-
     if self.db.profile.enchants.collapse then
         DebugPrint("OnInit: Enchant text is collapsed, update button text accordingly")
-        AddOn.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
+        self.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
     end
 
-    AddOn.PGVToggleEnchantButton:SetScript("OnClick", function(button)
-        local collapseEnchants = not AddOn.db.profile.enchants.collapse
-        AddOn.db.profile.enchants.collapse = collapseEnchants
-        AddOn.UpdateEquippedGearInfo(AddOn)
+    self.PGVToggleEnchantButton:SetScript("OnClick", function(button)
+        local collapseEnchants = not self.db.profile.enchants.collapse
+        self.db.profile.enchants.collapse = collapseEnchants
+        self.UpdateEquippedGearInfo(self)
         button:UpdateTooltipText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
-    if (not self.db.profile.enchants.show or (self.db.profile.enchants.show and not self.db.profile.enchants.showTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
-        AddOn.PGVToggleEnchantButton:Hide()
+    if (not self:AreEnchantsShownForCharacter() or (self:AreEnchantsShownForCharacter() and not self.db.profile.enchants.showTextButton)) and self.PGVToggleEnchantButton:IsShown() then
+        self.PGVToggleEnchantButton:Hide()
     end
 
     self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "HandleEquipmentOrSettingsChange")
@@ -1685,7 +1655,7 @@ function AddOn:OnInitialize()
     self:RegisterEvent("INSPECT_READY", function(_, unitGUID)
         if InspectFrame and InspectFrame.unit then
             InspectFrame:HookScript("OnHide", function()
-                AddOn.inspectedUnitGUID = nil
+                self.inspectedUnitGUID = nil
                 ClearInspectPlayer()
                 DebugPrint("InspectFrame OnHide: Cleared InspectPlayer and inspectedUnitGUID variable")
             end)
@@ -1698,17 +1668,12 @@ function AddOn:OnInitialize()
     -- Hook into necessary secure functions
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
-            self:CheckIfTimerunner()
             self:UpdateEquippedGearInfo()
         end
     end)
     hooksecurefunc(CharacterFrame, "RefreshDisplay", function()
-            self:CheckIfTimerunner()
-            if self.IsTimerunner then
-                AddOn.PGVToggleEnchantButton:Hide()
-            end
-            self:AdjustCharacterInfoWindowSize()
-        end)
+        self:AdjustCharacterInfoWindowSize()
+    end)
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
         if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.general.increaseCharacterInfoSize then
             local actor = cms:GetPlayerActor()
@@ -1732,12 +1697,11 @@ function AddOn:OnInitialize()
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
     -- it shows the character's current specialization options by default
     SettingsPanel:HookScript("OnShow", function()
-        self:CheckIfTimerunner()
-        local specID = AddOn.GetCharacterCurrentSpecIDAndRole(AddOn)
-        if AddOn.SpecOptionKeys[specID] and specID ~= AddOn.db.profile.characterStats.lastSelectedSpecID then
-            AddOn.db.profile.characterStats.lastSelectedSpecID = specID
+        local specID = self:GetCharacterCurrentSpecIDAndRole()
+        if self.SpecOptionKeys[specID] and specID ~= self.db.profile.characterStats.lastSelectedSpecID then
+            self.db.profile.characterStats.lastSelectedSpecID = specID
         else
-            AddOn.db.profile.characterStats.lastSelectedSpecID = nil
+            self.db.profile.characterStats.lastSelectedSpecID = nil
         end
         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
