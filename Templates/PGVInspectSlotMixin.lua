@@ -68,6 +68,8 @@ function PGVInspectSlotMixin:UpdateSlotInfo()
         elseif self.Embellishment:IsShown() then
             self.Embellishment:Hide()
         end
+    elseif not hasItem then
+        self:HideAllFrames()
     end
 end
 
@@ -88,7 +90,7 @@ function PGVInspectSlotMixin:GetItemLevel(slot, item)
             local qualityHex = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
             iLvlText = "|c"..qualityHex..iLvlText.."|r"
         elseif AddOn.db.profile.itemLevel.useClassColor then
-            local classFile = select(2, UnitClass("player"))
+            local classFile = select(2, UnitClass(UnitTokenFromGUID(AddOn.inspectedUnitGUID)))
             local classHexWithAlpha = select(4, GetClassColor(classFile))
             iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
         elseif AddOn.db.profile.itemLevel.useCustomColor then
@@ -400,4 +402,39 @@ end
 
 function PGVInspectSlotMixin:OnHideEmbellishment()
     self.EmbellishmentShadow:Hide()
+end
+
+function PGVInspectSlotMixin:SetFontOptions()
+    if AddOn.db.profile.inspect.showILvl then
+        local iFont, iSize = self.ItemLevel:GetFont()
+        ---@cast iFont string
+        self.ItemLevel:SetFont(iFont, iSize, AddOn.db.profile.itemLevel.outline)
+        self.ItemLevel:SetTextScale(AddOn.db.profile.itemLevel.scale)
+    end
+
+    if AddOn.db.profile.inspect.showUpgradeTrack and AddOn:AreUpgradeTracksShownForCharacter() then
+        local uFont, uSize = self.UpgradeTrack:GetFont()
+        ---@cast uFont string
+        self.UpgradeTrack:SetFont(uFont, uSize, AddOn.db.profile.upgradeTrack.outline)
+        self.UpgradeTrack:SetTextScale(0.9 * AddOn.db.profile.upgradeTrack.scale)
+    end
+    
+    if AddOn.db.profile.inspect.showGems and AddOn:AreGemsShownForCharacter() then
+        self.Gems:SetTextScale(AddOn.db.profile.gems.scale)
+    end
+    
+    if AddOn.db.profile.inspect.showEnchants and AddOn:AreEnchantsShownForCharacter() then
+        local eFont, eSize = self.Enchant:GetFont()
+        ---@cast eFont string
+        self.Enchant:SetFont(eFont, eSize, AddOn.db.profile.enchants.outline)
+        self.Enchant:SetTextScale(0.9 * AddOn.db.profile.enchants.scale)
+    end
+end
+
+function PGVInspectSlotMixin:HideAllFrames()
+    self.ItemLevel:Hide()
+    self.UpgradeTrack:Hide()
+    self.Gems:Hide()
+    self.Enchant:Hide()
+    self.Embellishment:Hide()
 end

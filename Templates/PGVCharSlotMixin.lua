@@ -66,6 +66,8 @@ function PGVCharSlotMixin:UpdateSlotInfo()
         elseif self.Embellishment:IsShown() then
             self.Embellishment:Hide()
         end
+    elseif not hasItem then
+        self:HideAllFrames()
     end
 end
 
@@ -530,4 +532,14 @@ function PGVCharSlotMixin:SetFontOptions()
         self.Durability:SetFont(dFont, dSize, "OUTLINE")
         self.Durability:SetTextScale(0.9 * AddOn.db.profile.durability.scale)
     end
+end
+
+function PGVCharSlotMixin:HideAllFrames()
+    self.ItemLevel:Hide()
+    self.UpgradeTrack:Hide()
+    self.Gems:Hide()
+    self.Enchant:Hide()
+    self.Durability:Hide()
+    self.DurabilityBar:Hide()
+    self.Embellishment:Hide()
 end

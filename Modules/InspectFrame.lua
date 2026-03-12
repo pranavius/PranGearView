@@ -40,6 +40,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         else
             slot.PGVInspectSlot:UpdateSlotInfo()
         end
+        slot.PGVInspectSlot:SetFontOptions()
     end
 
     if self.db.profile.inspect.showAvgILvl then

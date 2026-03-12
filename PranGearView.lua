@@ -41,7 +41,7 @@ local OptionsTable = {
                 AddOn.db.profile.upgradeTrack.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn:AreUpgradeTracksShownForCharacter() end
+            hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
         },
         showGems = {
             type = "toggle",
@@ -53,7 +53,7 @@ local OptionsTable = {
                 AddOn.db.profile.gems.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn:AreGemsShownForCharacter() end
+            hidden = function() return not AddOn:AreGemsShownForCharacter() end
         },
         showEnchants = {
             type = "toggle",
@@ -70,7 +70,7 @@ local OptionsTable = {
                 end
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn:AreEnchantsShownForCharacter() or false end
+            hidden = function() return not AddOn:AreEnchantsShownForCharacter() or false end
         },
         showDurability = {
             type = "toggle",
@@ -436,7 +436,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 }
             },
-            hidden = function() return AddOn:AreUpgradeTracksShownForCharacter() end
+            hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
         },
         gemOptions = {
             type = "group",
@@ -497,7 +497,7 @@ local OptionsTable = {
                     order = orderCounter()
                 }
             },
-            hidden = function() return AddOn:AreGemsShownForCharacter() end
+            hidden = function() return not AddOn:AreGemsShownForCharacter() end
         },
         enchantOptions = {
             type = "group",
@@ -672,7 +672,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 }
             },
-            hidden = function() return AddOn:AreEnchantsShownForCharacter() end
+            hidden = function() return not AddOn:AreEnchantsShownForCharacter() end
         },
         durabilityOptions = {
             type = "group",
@@ -955,7 +955,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn:AreUpgradeTracksShownForCharacter() end
+                    hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
                 },
                 showInspectGems = {
                     type = "toggle",
@@ -968,7 +968,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn:AreGemsShownForCharacter() end
+                    hidden = function() return not AddOn:AreGemsShownForCharacter() end
                 },
                 showInspectEnchants = {
                     type = "toggle",
@@ -981,7 +981,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn:AreEnchantsShownForCharacter() end
+                    hidden = function() return not AddOn:AreEnchantsShownForCharacter() end
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
@@ -995,7 +995,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return AddOn:AreEmbellishmentsShownForCharacter() end
+                    hidden = function() return not AddOn:AreEmbellishmentsShownForCharacter() end
                 },
             }
         },

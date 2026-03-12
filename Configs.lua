@@ -86,7 +86,7 @@ AddOn.DatabaseDefaults = {
 }
 
 -- Migration map: old flat key -> new nested path
-local migrationMap = {
+local databaseMigrationMap = {
     showiLvl                            = { "itemLevel", "show" },
     iLvlScale                           = { "itemLevel", "scale" },
     iLvlOutline                         = { "itemLevel", "outline" },
@@ -153,9 +153,10 @@ local migrationMap = {
 ---This only runs once per profile; the `_pgvMigrated` flag prevents re-migration.
 ---@param db AceDBObject-3.0 The AceDB database object
 function AddOn:MigrateProfileSettings(db)
+    local migratedProfiles = 0
     for _, profile in pairs(db.profiles) do
         if not profile._pgvMigrated then
-            for oldKey, path in pairs(migrationMap) do
+            for oldKey, path in pairs(databaseMigrationMap) do
                 if profile[oldKey] ~= nil then
                     local group, key = path[1], path[2]
                     if not profile[group] then profile[group] = {} end
@@ -163,8 +164,12 @@ function AddOn:MigrateProfileSettings(db)
                     profile[oldKey] = nil
                 end
             end
+            self.DebugPrint("Migrated database profile from flat key to grouped key structure")
             profile._pgvMigrated = true
+            migratedProfiles = migratedProfiles + 1
         end
     end
-    self.DebugPrint("Migrated profiles")
+    if migratedProfiles > 0 then
+        print(self.ColorText("["..addonName.."]", "Heirloom"), "AddOn database structure has been updated. This should not affect any of your profiles' settings.")
+    end
 end
