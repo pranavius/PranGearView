@@ -1,3 +1,10 @@
+**2.0.0**
+- Internal AddOn refactor (no functionality changes)
+- Multiple bug fixes:
+  - Options panel can now always be opened from the minimap button
+  - When inspecting another player while the "Use Class Colors" option is enabled for item level, the color of the item levels now matches the inspected player's class
+  - Any custom font modifications applied to the Character Info window now also apply to the Inspect window
+
 **1.12.1**
 - Add expansion gear information for Midnight
 - Add Midnight enchants and abbreviations

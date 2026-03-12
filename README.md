@@ -2,7 +2,6 @@
 *A lightweight, customizable way to view your equipped gear*
 
 ## Highlights
-- **NEW**: Updated for compatibility with the Midnight expansion (Patch 12.0.0)
 - Allows for a wide range of text customization (size, color, outline, and more to come!)
 - Lets you know when items are missing sockets, gems, and enchants
 - Can show gear information when inspecting players
