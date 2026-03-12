@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local LDB = LibStub("LibDataBroker-1.1")
@@ -25,9 +25,9 @@ local OptionsTable = {
             name = L["Item Level"],
             desc = L["Display item levels for equipped items"],
             order = orderCounter(),
-            get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val)
-                AddOn.db.profile[item[#item]] = val
+            get = function() return AddOn.db.profile.itemLevel.show end,
+            set = function(_, val)
+                AddOn.db.profile.itemLevel.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end
         },
@@ -36,33 +36,33 @@ local OptionsTable = {
             name = L["Upgrade Track"],
             desc = L["Display upgrade track and progress for equipped items"],
             order = orderCounter(),
-            get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val)
-                AddOn.db.profile[item[#item]] = val
+            get = function() return AddOn.db.profile.upgradeTrack.show end,
+            set = function(_, val)
+                AddOn.db.profile.upgradeTrack.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
         },
         showGems = {
             type = "toggle",
             name = L["Gems"],
             desc = L["Display gem and socket information for equipped items"],
             order = orderCounter(),
-            get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val)
-                AddOn.db.profile[item[#item]] = val
+            get = function() return AddOn.db.profile.gems.show end,
+            set = function(_, val)
+                AddOn.db.profile.gems.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return not AddOn:AreGemsShownForCharacter() end
         },
         showEnchants = {
             type = "toggle",
             name = L["Enchants"],
             desc = L["Display enchant information for equipped items"],
             order = orderCounter(),
-            get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val)
-                AddOn.db.profile[item[#item]] = val
+            get = function() return AddOn.db.profile.enchants.show end,
+            set = function(_, val)
+                AddOn.db.profile.enchants.show = val
                 if not val and AddOn.PGVToggleEnchantButton:IsShown() then
                     AddOn.PGVToggleEnchantButton:Hide()
                 elseif val and not AddOn.PGVToggleEnchantButton:IsShown() then
@@ -70,19 +70,18 @@ local OptionsTable = {
                 end
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return not AddOn:AreEnchantsShownForCharacter() or false end
         },
         showDurability = {
             type = "toggle",
             name = L["Durability"],
             desc = L["Display durability percentages for equipped items"],
             order = orderCounter(),
-            get = function(item) return AddOn.db.profile[item[#item]] end,
-            set = function(item, val)
-                AddOn.db.profile[item[#item]] = val
+            get = function() return AddOn.db.profile.durability.show end,
+            set = function(_, val)
+                AddOn.db.profile.durability.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
-            end,
-            hidden = function() return AddOn.IsTimerunner or false end
+            end
         },
         divider = {
             type = "header",
@@ -102,12 +101,12 @@ local OptionsTable = {
                     min = 0.1,
                     max = 2,
                     step = 0.05,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.itemLevel.scale end,
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.scale = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 smallSpacer = AddOn.CreateOptionsSpacer(orderCounter(), 0.25),
                 iLvlOutline = {
@@ -122,18 +121,18 @@ local OptionsTable = {
                         end
                         return options
                     end,
-                    get = function(item)
-                        if not AddOn.db.profile[item[#item]] then
-                            AddOn.db.profile[item[#item]] = ""
+                    get = function()
+                        if not AddOn.db.profile.itemLevel.outline then
+                            AddOn.db.profile.itemLevel.outline = ""
                         end
 
-                        return AddOn.db.profile[item[#item]]
+                        return AddOn.db.profile.itemLevel.outline
                     end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.outline = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 iLvlOnItem = {
@@ -142,12 +141,12 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Display item levels on top of equipment icons"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.itemLevel.onItem end,
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.onItem = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 iLvlColorOptionsDesc = {
@@ -161,51 +160,51 @@ local OptionsTable = {
                     name = L["Use Item Quality Color"],
                     desc = L["Color item levels based on item quality"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.itemLevel.useQualityColor end,
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.useQualityColor = val
                         if val then
-                            AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useGradientColorsForILvl = false
-                            AddOn.db.profile.useCustomColorForILvl = false
+                            AddOn.db.profile.itemLevel.useClassColor = false
+                            AddOn.db.profile.itemLevel.useGradientColors = false
+                            AddOn.db.profile.itemLevel.useCustomColor = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 useClassColorForILvl = {
                     type = "toggle",
                     name = L["Use Class Color"],
                     desc = L["Color item levels based on the character's class"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.itemLevel.useClassColor end,
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.useClassColor = val
                         if val then
-                            AddOn.db.profile.useQualityColorForILvl = false
-                            AddOn.db.profile.useGradientColorsForILvl = false
-                            AddOn.db.profile.useCustomColorForILvl = false
+                            AddOn.db.profile.itemLevel.useQualityColor = false
+                            AddOn.db.profile.itemLevel.useGradientColors = false
+                            AddOn.db.profile.itemLevel.useCustomColor = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 useGradientColorsForILvl = {
                     type = "toggle",
                     name = L["Use Item Level Gradient"],
                     desc = L["Color highest item level in green, lowest item level in red, and the rest in yellow."].."\n\n"..L["This color scheme follows a similar pattern to the Shadow & Light plugin for ElvUI"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.itemLevel.useGradientColors end,
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.useGradientColors = val
                         if val then
-                            AddOn.db.profile.useQualityColorForILvl = false
-                            AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useCustomColorForILvl = false
+                            AddOn.db.profile.itemLevel.useQualityColor = false
+                            AddOn.db.profile.itemLevel.useClassColor = false
+                            AddOn.db.profile.itemLevel.useCustomColor = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 useCustomColorForILvl = {
                     type = "toggle",
@@ -213,42 +212,42 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Customize item level color"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.itemLevel.useCustomColor end,
+                    set = function(_, val)
+                        AddOn.db.profile.itemLevel.useCustomColor = val
                         if val then
-                            AddOn.db.profile.useQualityColorForILvl = false
-                            AddOn.db.profile.useClassColorForILvl = false
-                            AddOn.db.profile.useGradientColorsForILvl = false
+                            AddOn.db.profile.itemLevel.useQualityColor = false
+                            AddOn.db.profile.itemLevel.useClassColor = false
+                            AddOn.db.profile.itemLevel.useGradientColors = false
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show end
                 },
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
                     order = orderCounter(),
-                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
+                    hidden = function() return not AddOn.db.profile.itemLevel.useCustomColor end
                 },
                 iLvlCustomColor = {
                     type = "color",
                     name = L["Choose a Color"],
                     order = orderCounter(),
                     hasAlpha = false,
-                    get = function(item)
-                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
-                        local hex = AddOn.db.profile[item[#item]]
+                    get = function()
+                        if not AddOn.db.profile.itemLevel.customColor then AddOn.db.profile.itemLevel.customColor = AddOn.HexColorPresets.Priest end
+                        local hex = AddOn.db.profile.itemLevel.customColor
                         return AddOn.ConvertHexToRGB(hex)
                     end,
-                    set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                    set = function(_, r, g, b)
+                        AddOn.db.profile.itemLevel.customColor = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show or not AddOn.db.profile.itemLevel.useCustomColor end,
+                    hidden = function() return not AddOn.db.profile.itemLevel.useCustomColor end
                 },
                 customColorHex = {
                     type = "input",
@@ -256,21 +255,21 @@ local OptionsTable = {
                     width = 0.65,
                     order = orderCounter(),
                     get = function()
-                        if not AddOn.db.profile.iLvlCustomColor then
-                            AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
+                        if not AddOn.db.profile.itemLevel.customColor then
+                            AddOn.db.profile.itemLevel.customColor = AddOn.HexColorPresets.Priest
                         end
-                        return "#"..AddOn.db.profile.iLvlCustomColor
+                        return "#"..AddOn.db.profile.itemLevel.customColor
                     end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
-                            AddOn.db.profile.iLvlCustomColor = val:gsub("#", "")
+                            AddOn.db.profile.itemLevel.customColor = val:gsub("#", "")
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or not AddOn.db.profile.useCustomColorForILvl end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show or not AddOn.db.profile.itemLevel.useCustomColor end,
+                    hidden = function() return not AddOn.db.profile.itemLevel.useCustomColor end
                 },
                 resetCustomColor = {
                     type = "execute",
@@ -278,16 +277,16 @@ local OptionsTable = {
                     width = "half",
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.iLvlCustomColor = AddOn.HexColorPresets.Priest
+                        AddOn.db.profile.itemLevel.customColor = AddOn.HexColorPresets.Priest
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        local itemLevelShown = AddOn.db.profile.showiLvl
-                        local usingCustomColor = AddOn.db.profile.useCustomColorForILvl
-                        local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.iLvlCustomColor == AddOn.HexColorPresets.Priest
+                        local itemLevelShown = AddOn.db.profile.itemLevel.show
+                        local usingCustomColor = AddOn.db.profile.itemLevel.useCustomColor
+                        local customColorIsDefault = itemLevelShown and usingCustomColor and AddOn.db.profile.itemLevel.customColor == AddOn.HexColorPresets.Priest
                         return not itemLevelShown or not usingCustomColor or customColorIsDefault
                     end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForILvl end
+                    hidden = function() return not AddOn.db.profile.itemLevel.useCustomColor end
                 }
             }
         },
@@ -304,12 +303,12 @@ local OptionsTable = {
                     min = 0.1,
                     max = 2,
                     step = 0.05,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.upgradeTrack.scale end,
+                    set = function(_, val)
+                        AddOn.db.profile.upgradeTrack.scale = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.upgradeTrack.show end
                 },
                 smallSpacer = AddOn.CreateOptionsSpacer(orderCounter(), 0.25),
                 upgradeTrackOutline = {
@@ -324,18 +323,18 @@ local OptionsTable = {
                         end
                         return options
                     end,
-                    get = function(item)
-                        if not AddOn.db.profile[item[#item]] then
-                            AddOn.db.profile[item[#item]] = ""
+                    get = function()
+                        if not AddOn.db.profile.upgradeTrack.outline then
+                            AddOn.db.profile.upgradeTrack.outline = ""
                         end
 
-                        return AddOn.db.profile[item[#item]]
+                        return AddOn.db.profile.upgradeTrack.outline
                     end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    set = function(_, val)
+                        AddOn.db.profile.upgradeTrack.outline = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show or AddOn.db.profile.itemLevel.onItem end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 upgradeTrackColorDesc = {
@@ -350,13 +349,13 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Use the item quality color scale when showing upgrade tracks"].."\n\n"..ColorText(strtrim(L["Explorer "]), "Priest").."\n"..ColorText(strtrim(L["Adventurer "]), "Priest").."\n"..ColorText(strtrim(L["Veteran "]), "Uncommon").."\n"..ColorText(strtrim(L["Champion "]), "Rare").."\n"..ColorText(strtrim(L["Hero "]), "Epic").."\n"..ColorText(strtrim(L["Myth "]), "Legendary"),
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
-                        if val then AddOn.db.profile.useCustomColorForUpgradeTrack = false end
+                    get = function() return AddOn.db.profile.upgradeTrack.useQualityScaleColors end,
+                    set = function(_, val)
+                        AddOn.db.profile.upgradeTrack.useQualityScaleColors = val
+                        if val then AddOn.db.profile.upgradeTrack.useCustomColor = false end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.upgradeTrack.show end
                 },
                 useCustomColorForUpgradeTrack = {
                     type = "toggle",
@@ -364,38 +363,38 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Customize upgrade track color for current season items"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
-                        if val then AddOn.db.profile.useQualityScaleColorsForUpgradeTrack = false end
+                    get = function() return AddOn.db.profile.upgradeTrack.useCustomColor end,
+                    set = function(_, val)
+                        AddOn.db.profile.upgradeTrack.useCustomColor = val
+                        if val then AddOn.db.profile.upgradeTrack.useQualityScaleColors = false end
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.upgradeTrack.show end
                 },
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
                     order = orderCounter(),
-                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
+                    hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 },
                 upgradeTrackCustomColor = {
                     type = "color",
                     name = L["Choose a Color"],
                     order = orderCounter(),
                     hasAlpha = false,
-                    get = function(item)
-                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Priest end
-                        local hex = AddOn.db.profile[item[#item]]
+                    get = function()
+                        if not AddOn.db.profile.upgradeTrack.customColor then AddOn.db.profile.upgradeTrack.customColor = AddOn.HexColorPresets.Priest end
+                        local hex = AddOn.db.profile.upgradeTrack.customColor
                         return AddOn.ConvertHexToRGB(hex)
                     end,
-                    set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                    set = function(_, r, g, b)
+                        AddOn.db.profile.upgradeTrack.customColor = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForUpgradeTrack end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.upgradeTrack.show or not AddOn.db.profile.upgradeTrack.useCustomColor end,
+                    hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 },
                 upgradeTrackCustomColorHex = {
                     type = "input",
@@ -403,21 +402,21 @@ local OptionsTable = {
                     width = 0.65,
                     order = orderCounter(),
                     get = function()
-                        if not AddOn.db.profile.upgradeTrackCustomColor then
-                            AddOn.db.profile.upgradeTrackCustomColor = AddOn.HexColorPresets.Priest
+                        if not AddOn.db.profile.upgradeTrack.customColor then
+                            AddOn.db.profile.upgradeTrack.customColor = AddOn.HexColorPresets.Priest
                         end
-                        return "#"..AddOn.db.profile.upgradeTrackCustomColor
+                        return "#"..AddOn.db.profile.upgradeTrack.customColor
                     end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
-                            AddOn.db.profile.upgradeTrackCustomColor = val:gsub("#", "")
+                            AddOn.db.profile.upgradeTrack.customColor = val:gsub("#", "")
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.showUpgradeTrack or not AddOn.db.profile.useCustomColorForILvl end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
+                    disabled = function() return not AddOn.db.profile.upgradeTrack.show or not AddOn.db.profile.itemLevel.useCustomColor end,
+                    hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 },
                 resetUpgradeTrackCustomColor = {
                     type = "execute",
@@ -425,19 +424,19 @@ local OptionsTable = {
                     width = "half",
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.upgradeTrackCustomColor = AddOn.HexColorPresets.Priest
+                        AddOn.db.profile.upgradeTrack.customColor = AddOn.HexColorPresets.Priest
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        local upgradeTrackShown = AddOn.db.profile.showUpgradeTrack
-                        local usingCustomColor = AddOn.db.profile.useCustomColorForUpgradeTrack
-                        local customColorIsDefault = upgradeTrackShown and usingCustomColor and AddOn.db.profile.upgradeTrackCustomColor == AddOn.HexColorPresets.Priest
+                        local upgradeTrackShown = AddOn.db.profile.upgradeTrack.show
+                        local usingCustomColor = AddOn.db.profile.upgradeTrack.useCustomColor
+                        local customColorIsDefault = upgradeTrackShown and usingCustomColor and AddOn.db.profile.upgradeTrack.customColor == AddOn.HexColorPresets.Priest
                         return not upgradeTrackShown or not usingCustomColor or customColorIsDefault
                     end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
+                    hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 }
             },
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
         },
         gemOptions = {
             type = "group",
@@ -452,12 +451,12 @@ local OptionsTable = {
                     min = 0.1,
                     max = 2,
                     step = 0.05,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.gems.scale end,
+                    set = function(_, val)
+                        AddOn.db.profile.gems.scale = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showGems end
+                    disabled = function() return not AddOn.db.profile.gems.show end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 showMissingGems = {
@@ -466,12 +465,12 @@ local OptionsTable = {
                     desc = L["Show when an item is missing gems or sockets"],
                     width = "full",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.gems.showMissing end,
+                    set = function(_, val)
+                        AddOn.db.profile.gems.showMissing = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showGems end
+                    disabled = function() return not AddOn.db.profile.gems.show end
                 },
                 missingGemsMaxLevelOnly = {
                     type = "toggle",
@@ -479,12 +478,12 @@ local OptionsTable = {
                     desc = L["Hide missing gem & socket info for characters under the level cap"],
                     width = "double",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.gems.missingMaxLevelOnly end,
+                    set = function(_, val)
+                        AddOn.db.profile.gems.missingMaxLevelOnly = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showGems or (AddOn.db.profile.showGems and not AddOn.db.profile.showMissingGems) end
+                    disabled = function() return not AddOn.db.profile.gems.show or (AddOn.db.profile.gems.show and not AddOn.db.profile.gems.showMissing) end
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 missingGemsDesc = {
@@ -498,7 +497,7 @@ local OptionsTable = {
                     order = orderCounter()
                 }
             },
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return not AddOn:AreGemsShownForCharacter() end
         },
         enchantOptions = {
             type = "group",
@@ -513,12 +512,12 @@ local OptionsTable = {
                     min = 0.1,
                     max = 2,
                     step = 0.05,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.enchants.scale end,
+                    set = function(_, val)
+                        AddOn.db.profile.enchants.scale = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showEnchants end
+                    disabled = function() return not AddOn.db.profile.enchants.show end
                 },
                 smallSpacer = AddOn.CreateOptionsSpacer(orderCounter(), 0.25),
                 enchantOutline = {
@@ -533,31 +532,32 @@ local OptionsTable = {
                         end
                         return options
                     end,
-                    get = function(item)
-                        if not AddOn.db.profile[item[#item]] then
-                            AddOn.db.profile[item[#item]] = "OUTLINE"
+                    get = function()
+                        if not AddOn.db.profile.enchants.outline then
+                            AddOn.db.profile.enchants.outline = "OUTLINE"
                         end
 
-                        return AddOn.db.profile[item[#item]]
+                        return AddOn.db.profile.enchants.outline
                     end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    set = function(_, val)
+                        AddOn.db.profile.enchants.outline = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showiLvl or AddOn.db.profile.iLvlOnItem end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show or AddOn.db.profile.itemLevel.onItem end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 showMissingEnchants = {
                     type = "toggle",
                     name = L["Missing Enchant Indicator"],
                     desc = L["Show when an item is missing an enchant with a warning symbol"],
+                    width="full",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.enchants.showMissing end,
+                    set = function(_, val)
+                        AddOn.db.profile.enchants.showMissing = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showEnchants end
+                    disabled = function() return not AddOn.db.profile.enchants.show end
                 },
                 missingEnchantsMaxLevelOnly = {
                     type = "toggle",
@@ -565,12 +565,12 @@ local OptionsTable = {
                     desc = L["Hide missing enchant info for characters under the level cap"],
                     width = "full",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.enchants.missingMaxLevelOnly end,
+                    set = function(_, val)
+                        AddOn.db.profile.enchants.missingMaxLevelOnly = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showEnchants or (AddOn.db.profile.showEnchants and not AddOn.db.profile.showMissingEnchants) end
+                    disabled = function() return not AddOn.db.profile.enchants.show or (AddOn.db.profile.enchants.show and not AddOn.db.profile.enchants.showMissing) end
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
                 -- Options to toggle enchant button visibility
@@ -580,14 +580,14 @@ local OptionsTable = {
                     desc = L["Display a button to show or hide enchant text in the Character Info window"],
                     width = "full",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.enchants.showTextButton end,
+                    set = function(_, val)
+                        AddOn.db.profile.enchants.showTextButton = val
                         -- Hide if unchecked, regardless of whether showEnchants is checked or not
                         if not val and AddOn.PGVToggleEnchantButton:IsShown() then
                             AddOn.PGVToggleEnchantButton:Hide()
                         -- Show if checked, showEnchants is checked, and button is not already shown
-                        elseif val and AddOn.db.profile.showEnchants and not AddOn.PGVToggleEnchantButton:IsShown() then
+                        elseif val and AddOn.db.profile.enchants.show and not AddOn.PGVToggleEnchantButton:IsShown() then
                             AddOn.PGVToggleEnchantButton:Show()
                         end
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -606,54 +606,54 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Customize enchant text color"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.enchants.useCustomColor end,
+                    set = function(_, val)
+                        AddOn.db.profile.enchants.useCustomColor = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showEnchants end
+                    disabled = function() return not AddOn.db.profile.enchants.show end
                 },
                 customColorDesc = {
                     type = "description",
                     name = "\n"..L["Choose from the color picker or enter the hex code for a specific color."].."\n"..L["Color codes should be entered in the format #RRGGBB"].."\n\n",
                     order = orderCounter(),
-                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
+                    hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 },
                 enchCustomColor = {
                     type = "color",
                     name = L["Choose a Color"],
                     order = orderCounter(),
                     hasAlpha = false,
-                    get = function(item)
-                        if not AddOn.db.profile[item[#item]] then AddOn.db.profile[item[#item]] = AddOn.HexColorPresets.Uncommon end
-                        local hex = AddOn.db.profile[item[#item]]
+                    get = function()
+                        if not AddOn.db.profile.enchants.customColor then AddOn.db.profile.enchants.customColor = AddOn.HexColorPresets.Uncommon end
+                        local hex = AddOn.db.profile.enchants.customColor
                         return AddOn.ConvertHexToRGB(hex)
                     end,
-                    set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                    set = function(_, r, g, b)
+                        AddOn.db.profile.enchants.customColor = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
+                    disabled = function() return not AddOn.db.profile.enchants.show or not AddOn.db.profile.enchants.useCustomColor end,
+                    hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 },
                 customColorHex = {
                     type = "input",
                     name = "",
                     width = 0.65,
                     order = orderCounter(),
-                    get = function() return "#"..AddOn.db.profile.enchCustomColor end,
+                    get = function() return "#"..AddOn.db.profile.enchants.customColor end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
-                            AddOn.db.profile.enchCustomColor = val:gsub("#", "")
+                            AddOn.db.profile.enchants.customColor = val:gsub("#", "")
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.showEnchants or not AddOn.db.profile.useCustomColorForEnchants end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
+                    disabled = function() return not AddOn.db.profile.enchants.show or not AddOn.db.profile.enchants.useCustomColor end,
+                    hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 },
                 resetCustomColor = {
                     type = "execute",
@@ -661,19 +661,19 @@ local OptionsTable = {
                     width = "half",
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.enchCustomColor = AddOn.HexColorPresets.Uncommon
+                        AddOn.db.profile.enchants.customColor = AddOn.HexColorPresets.Uncommon
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        local enchantsShown = AddOn.db.profile.showEnchants
-                        local usingCustomEnchColor = AddOn.db.profile.useCustomColorForEnchants
-                        local enchCustomColorIsDefault = enchantsShown and usingCustomEnchColor and AddOn.db.profile.enchCustomColor == AddOn.HexColorPresets.Uncommon
+                        local enchantsShown = AddOn.db.profile.enchants.show
+                        local usingCustomEnchColor = AddOn.db.profile.enchants.useCustomColor
+                        local enchCustomColorIsDefault = enchantsShown and usingCustomEnchColor and AddOn.db.profile.enchants.customColor == AddOn.HexColorPresets.Uncommon
                         return not enchantsShown or not usingCustomEnchColor or enchCustomColorIsDefault
                     end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForEnchants end
+                    hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 }
             },
-            hidden = function() return AddOn.IsTimerunner or false end
+            hidden = function() return not AddOn:AreEnchantsShownForCharacter() end
         },
         durabilityOptions = {
             type = "group",
@@ -694,12 +694,12 @@ local OptionsTable = {
                     min = 0.1,
                     max = 2,
                     step = 0.05,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.durability.scale end,
+                    set = function(_, val)
+                        AddOn.db.profile.durability.scale = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showDurability end
+                    disabled = function() return not AddOn.db.profile.durability.show end
                 },
                 spacerThree = AddOn.CreateOptionsSpacer(orderCounter()),
                 durabilityColorChart = {
@@ -713,12 +713,12 @@ local OptionsTable = {
                     name = L["High"],
                     order = orderCounter(),
                     hasAlpha = false,
-                    get = function(item)
-                        local hex = AddOn.db.profile[item[#item]] or "1EFF00"
+                    get = function()
+                        local hex = AddOn.db.profile.durability.colorHigh or "1EFF00"
                         return AddOn.ConvertHexToRGB(hex)
                     end,
-                    set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                    set = function(_, r, g, b)
+                        AddOn.db.profile.durability.colorHigh = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -730,16 +730,16 @@ local OptionsTable = {
                     width = 0.65,
                     order = orderCounter(),
                     get = function()
-                        if not AddOn.db.profile.durabilityColorHigh then
-                            AddOn.db.profile.durabilityColorHigh = AddOn.HexColorPresets.Uncommon
+                        if not AddOn.db.profile.durability.colorHigh then
+                            AddOn.db.profile.durability.colorHigh = AddOn.HexColorPresets.Uncommon
                         end
-                        return "#"..AddOn.db.profile.durabilityColorHigh
+                        return "#"..AddOn.db.profile.durability.colorHigh
                     end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
-                            AddOn.db.profile.durabilityColorHigh = val:gsub("#", "")
+                            AddOn.db.profile.durability.colorHigh = val:gsub("#", "")
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end
@@ -750,11 +750,11 @@ local OptionsTable = {
                     width = "half",
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.durabilityColorHigh = AddOn.HexColorPresets.Uncommon
+                        AddOn.db.profile.durability.colorHigh = AddOn.HexColorPresets.Uncommon
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        return AddOn.db.profile.durabilityColorHigh == AddOn.HexColorPresets.Uncommon
+                        return AddOn.db.profile.durability.colorHigh == AddOn.HexColorPresets.Uncommon
                     end
                 },
                 durabilityColorMedium = {
@@ -762,12 +762,12 @@ local OptionsTable = {
                     name = L["Medium"],
                     order = orderCounter(),
                     hasAlpha = false,
-                    get = function(item)
-                        local hex = AddOn.db.profile[item[#item]] or "FFD100"
+                    get = function()
+                        local hex = AddOn.db.profile.durability.colorMedium or "FFD100"
                         return AddOn.ConvertHexToRGB(hex)
                     end,
-                    set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                    set = function(_, r, g, b)
+                        AddOn.db.profile.durability.colorMedium = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -779,16 +779,16 @@ local OptionsTable = {
                     width = 0.65,
                     order = orderCounter(),
                     get = function()
-                        if not AddOn.db.profile.durabilityColorMedium then
-                            AddOn.db.profile.durabilityColorMedium = AddOn.HexColorPresets.Info
+                        if not AddOn.db.profile.durability.colorMedium then
+                            AddOn.db.profile.durability.colorMedium = AddOn.HexColorPresets.Info
                         end
-                        return "#"..AddOn.db.profile.durabilityColorMedium
+                        return "#"..AddOn.db.profile.durability.colorMedium
                     end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
-                            AddOn.db.profile.durabilityColorMedium = val:gsub("#", "")
+                            AddOn.db.profile.durability.colorMedium = val:gsub("#", "")
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end
@@ -799,11 +799,11 @@ local OptionsTable = {
                     width = "half",
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.durabilityColorMedium = AddOn.HexColorPresets.Info
+                        AddOn.db.profile.durability.colorMedium = AddOn.HexColorPresets.Info
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        return AddOn.db.profile.durabilityColorMedium == AddOn.HexColorPresets.Info
+                        return AddOn.db.profile.durability.colorMedium == AddOn.HexColorPresets.Info
                     end
                 },
                 durabilityColorLow = {
@@ -811,12 +811,12 @@ local OptionsTable = {
                     name = L["Low"],
                     order = orderCounter(),
                     hasAlpha = false,
-                    get = function(item)
-                        local hex = AddOn.db.profile[item[#item]] or "FF3300"
+                    get = function()
+                        local hex = AddOn.db.profile.durability.colorLow or "FF3300"
                         return AddOn.ConvertHexToRGB(hex)
                     end,
-                    set = function(item, r, g, b)
-                        AddOn.db.profile[item[#item]] = AddOn.ConvertRGBToHex(r, g, b)
+                    set = function(_, r, g, b)
+                        AddOn.db.profile.durability.colorLow = AddOn.ConvertRGBToHex(r, g, b)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
                         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                         AddOn:HandleEquipmentOrSettingsChange()
@@ -828,16 +828,16 @@ local OptionsTable = {
                     width = 0.65,
                     order = orderCounter(),
                     get = function()
-                        if not AddOn.db.profile.durabilityColorLow then
-                            AddOn.db.profile.durabilityColorLow = AddOn.HexColorPresets.Error
+                        if not AddOn.db.profile.durability.colorLow then
+                            AddOn.db.profile.durability.colorLow = AddOn.HexColorPresets.Error
                         end
-                        return "#"..AddOn.db.profile.durabilityColorLow
+                        return "#"..AddOn.db.profile.durability.colorLow
                     end,
                     set = function(_, val)
                         -- Validate that the provided hex code can be converted to an RGB color before setting
                         local r, g, b = AddOn.ConvertHexToRGB(val:gsub("#", ""))
                         if r ~= nil and g ~= nil and b ~= nil then
-                            AddOn.db.profile.durabilityColorLow = val:gsub("#", "")
+                            AddOn.db.profile.durability.colorLow = val:gsub("#", "")
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end
@@ -848,11 +848,11 @@ local OptionsTable = {
                     width = "half",
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.durabilityColorLow = AddOn.HexColorPresets.Error
+                        AddOn.db.profile.durability.colorLow = AddOn.HexColorPresets.Error
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        return AddOn.db.profile.durabilityColorLow == AddOn.HexColorPresets.Error
+                        return AddOn.db.profile.durability.colorLow == AddOn.HexColorPresets.Error
                     end
                 },
                 spacerFive = AddOn.CreateOptionsSpacer(orderCounter()),
@@ -861,13 +861,13 @@ local OptionsTable = {
                     name = L["Reset All"],
                     order = orderCounter(),
                     func = function()
-                        AddOn.db.profile.durabilityColorHigh = AddOn.HexColorPresets.Uncommon
-                        AddOn.db.profile.durabilityColorMedium = AddOn.HexColorPresets.Info
-                        AddOn.db.profile.durabilityColorLow = AddOn.HexColorPresets.Error
+                        AddOn.db.profile.durability.colorHigh = AddOn.HexColorPresets.Uncommon
+                        AddOn.db.profile.durability.colorMedium = AddOn.HexColorPresets.Info
+                        AddOn.db.profile.durability.colorLow = AddOn.HexColorPresets.Error
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function()
-                        return AddOn.db.profile.durabilityColorLow == AddOn.HexColorPresets.Error and AddOn.db.profile.durabilityColorMedium == AddOn.HexColorPresets.Info and AddOn.db.profile.durabilityColorHigh == AddOn.HexColorPresets.Uncommon
+                        return AddOn.db.profile.durability.colorLow == AddOn.HexColorPresets.Error and AddOn.db.profile.durability.colorMedium == AddOn.HexColorPresets.Info and AddOn.db.profile.durability.colorHigh == AddOn.HexColorPresets.Uncommon
                     end
                 },
                 spacerTwo = AddOn.CreateOptionsSpacer(orderCounter()),
@@ -877,15 +877,14 @@ local OptionsTable = {
                     desc = L["Display durability as a bar instead of text over gear icons"],
                     width = "full",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.durability.showAsBar end,
+                    set = function(_, val)
+                        AddOn.db.profile.durability.showAsBar = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showDurability end
+                    disabled = function() return not AddOn.db.profile.durability.show end
                 }
-            },
-            hidden = function() return AddOn.IsTimerunner or false end
+            }
         },
         inspectOptions = {
             type = "group",
@@ -898,9 +897,9 @@ local OptionsTable = {
                     desc = L["Displays information about equipped gear when inspecting another player"],
                     order = orderCounter(),
                     width = "full",
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.show end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.show = val
                     end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
@@ -915,75 +914,75 @@ local OptionsTable = {
                     name = L["Average Item Level"],
                     desc = L["Display average item level in the character's class color"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.showAvgILvl end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.showAvgILvl = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                    disabled = function() return not AddOn.db.profile.inspect.show end
                 },
                 includeAvgLabel = {
                     type = "toggle",
                     name = L["Include \"Avg\" Label"],
                     desc = L["Adds the text \"Avg: \" before the average item level."].."\n\n"..L["This can help easily identify the average item level when there is a lot of information shown in the Inspect window."],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.includeAvgLabel end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.includeAvgLabel = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect or not AddOn.db.profile.showInspectAvgILvl end
+                    disabled = function() return not AddOn.db.profile.inspect.show or not AddOn.db.profile.inspect.showAvgILvl end
                 },
                 showInspectiLvl = {
                     type = "toggle",
                     name = L["Item Level"],
                     desc = L["Display item levels for equipped items"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.showILvl end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.showILvl = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end
+                    disabled = function() return not AddOn.db.profile.inspect.show end
                 },
                 showInspectUpgradeTrack = {
                     type = "toggle",
                     name = L["Upgrade Track"],
                     desc = L["Display upgrade track and progress for equipped items"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.showUpgradeTrack end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.showUpgradeTrack = val
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    disabled = function() return not AddOn.db.profile.inspect.show end,
+                    hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
                 },
                 showInspectGems = {
                     type = "toggle",
                     name = L["Gems"],
                     desc = L["Display gem and socket information for equipped items"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.showGems end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.showGems = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    disabled = function() return not AddOn.db.profile.inspect.show end,
+                    hidden = function() return not AddOn:AreGemsShownForCharacter() end
                 },
                 showInspectEnchants = {
                     type = "toggle",
                     name = L["Enchants"],
                     desc = L["Display enchant information for equipped items"].."\n\n".."Enchant text is always shown when inspecting another player",
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.showEnchants end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.showEnchants = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    disabled = function() return not AddOn.db.profile.inspect.show end,
+                    hidden = function() return not AddOn:AreEnchantsShownForCharacter() end
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
@@ -991,13 +990,13 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.inspect.showEmbellishments end,
+                    set = function(_, val)
+                        AddOn.db.profile.inspect.showEmbellishments = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showOnInspect end,
-                    hidden = function() return AddOn.IsTimerunner or false end
+                    disabled = function() return not AddOn.db.profile.inspect.show end,
+                    hidden = function() return not AddOn:AreEmbellishmentsShownForCharacter() end
                 },
             }
         },
@@ -1012,9 +1011,9 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Show your character's stats with decimal places"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.characterStats.showDecimals end,
+                    set = function(_, val)
+                        AddOn.db.profile.characterStats.showDecimals = val
                         AddOn:ShowDecimalStatValues()
                         AddOn:HandleEquipmentOrSettingsChange()
                     end
@@ -1027,14 +1026,14 @@ local OptionsTable = {
                     min = 1,
                     max = 3,
                     step = 1,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.characterStats.decimalPlaces end,
+                    set = function(_, val)
+                        AddOn.db.profile.characterStats.decimalPlaces = val
                         AddOn:ShowDecimalStatValues()
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showDecimalsForStats end,
-                    hidden = function() return not AddOn.db.profile.showDecimalsForStats end
+                    disabled = function() return not AddOn.db.profile.characterStats.showDecimals end,
+                    hidden = function() return not AddOn.db.profile.characterStats.showDecimals end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 statUsageDesc = {
@@ -1060,8 +1059,8 @@ local OptionsTable = {
                         return options
                     end,
                     get = function()
-                        if AddOn.db.profile.lastSelectedSpecID then
-                            return AddOn.db.profile.lastSelectedSpecID
+                        if AddOn.db.profile.characterStats.lastSelectedSpecID then
+                            return AddOn.db.profile.characterStats.lastSelectedSpecID
                         end
 
                         local specID = AddOn:GetCharacterCurrentSpecIDAndRole()
@@ -1072,7 +1071,7 @@ local OptionsTable = {
                         end
                     end,
                     set = function(_, val)
-                        AddOn.db.profile.lastSelectedSpecID = val
+                        AddOn.db.profile.characterStats.lastSelectedSpecID = val
                         AddOn:InitializeCustomSpecStatOrderDB(val)
                     end
                 },
@@ -1093,14 +1092,15 @@ local OptionsTable = {
                     end,
                     disabled = function()
                         local specID, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
-                        if AddOn.db.profile.customSpecStatOrders[specID] == nil then AddOn:InitializeCustomSpecStatOrderDB(specID, true) end
-                        local dbStatOrder = AddOn.db.profile.customSpecStatOrders[specID]
+                        if AddOn.db.profile.characterStats.customSpecStatOrders[specID] == nil then AddOn:InitializeCustomSpecStatOrderDB(specID, true) end
+                        local dbStatOrder = AddOn.db.profile.characterStats.customSpecStatOrders[specID]
                         for stat, order in pairs(dbStatOrder) do
                             local isTankStat = stat == "Dodge" or stat == "Parry" or stat == "Block"
                             local defaultStatUnordered = not isTankStat and order ~= AddOn.DefaultStatOrder[stat]
                             local tankStatUnordered = isTankStat and order ~= AddOn.DefaultTankStatOrder[stat]
                             if defaultStatUnordered or tankStatUnordered then
-                                DebugPrint(ColorText(stat.." is unordered!", "Legendary"),
+                                DebugPrint("ResetOrderButtonDisabled:",
+                                    ColorText(stat.." is unordered!", "Legendary"),
                                     "Expected order:",
                                     ColorText(AddOn.DefaultStatOrder[stat] or AddOn.DefaultTankStatOrder[stat] or "unknown", "Uncommon"),
                                     "and actual order:",
@@ -1372,9 +1372,9 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Show an icon on the minimap to open the AddOn settings"],
                     order = orderCounter(),
-                    get = function() return not AddOn.db.profile.minimap.hide end,
+                    get = function() return not AddOn.db.profile.general.minimap.hide end,
                     set = function(_, val)
-                        AddOn.db.profile.minimap.hide = not val
+                        AddOn.db.profile.general.minimap.hide = not val
                         if val then
                             LDBIcon:Show(addonName)
                         else
@@ -1388,9 +1388,9 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Increase the size of the Character Info window"].."\n\n"..L["This can help reduce text overlap with the character model and make reading text easier."],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.general.increaseCharacterInfoSize end,
+                    set = function(_, val)
+                        AddOn.db.profile.general.increaseCharacterInfoSize = val
                         AddOn:AdjustCharacterInfoWindowSize()
                     end
                 },
@@ -1400,12 +1400,11 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Show a green star in the top-left corner of embellished equipment"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.general.showEmbellishments end,
+                    set = function(_, val)
+                        AddOn.db.profile.general.showEmbellishments = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    hidden = function() return not AddOn.db.profile.useCustomColorForUpgradeTrack end
                 },
                 showCharacteriLvlDecimal = {
                     type = "toggle",
@@ -1413,9 +1412,9 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Show your character's average equipped item level with decimal places"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.general.showCharacteriLvlDecimal end,
+                    set = function(_, val)
+                        AddOn.db.profile.general.showCharacteriLvlDecimal = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end
                 },
@@ -1427,13 +1426,13 @@ local OptionsTable = {
                     min = 1,
                     max = 3,
                     step = 1,
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.general.decimalPlacesForCharacteriLvl end,
+                    set = function(_, val)
+                        AddOn.db.profile.general.decimalPlacesForCharacteriLvl = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showCharacteriLvlDecimal end,
-                    hidden = function() return not AddOn.db.profile.showCharacteriLvlDecimal end
+                    disabled = function() return not AddOn.db.profile.general.showCharacteriLvlDecimal end,
+                    hidden = function() return not AddOn.db.profile.general.showCharacteriLvlDecimal end
                 },
                 spacer = AddOn.CreateOptionsSpacer(orderCounter()),
                 hideShirtTabardInfo = {
@@ -1442,20 +1441,20 @@ local OptionsTable = {
                     width = "full",
                     desc = L["Hide information for equipped shirt & tabard"],
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val)
-                        AddOn.db.profile[item[#item]] = val
+                    get = function() return AddOn.db.profile.general.hideShirtTabardInfo end,
+                    set = function(_, val)
+                        AddOn.db.profile.general.hideShirtTabardInfo = val
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
-                    disabled = function() return not AddOn.db.profile.showiLvl and not AddOn.db.profile.showGems and not AddOn.db.profile.showEnchants end
+                    disabled = function() return not AddOn.db.profile.itemLevel.show and not AddOn.db.profile.gems.show and not AddOn.db.profile.enchants.show end
                 },
                 debug = {
                     type = "toggle",
                     name = L["Debug Mode"],
                     desc = L["Display debugging messages in the default chat window"].."\n\n"..ColorText(L["You should never need to enable this"], "DeathKnight"),
                     order = orderCounter(),
-                    get = function(item) return AddOn.db.profile[item[#item]] end,
-                    set = function(item, val) AddOn.db.profile[item[#item]] = val end
+                    get = function() return AddOn.db.profile.general.debug end,
+                    set = function(_, val) AddOn.db.profile.general.debug = val end
                 },
             }
         },
@@ -1463,78 +1462,23 @@ local OptionsTable = {
     }
 }
 
-local DBDefaults = {
-    profile = {
-        showiLvl = true,
-        showUpgradeTrack = true,
-        showGems = true,
-        showEnchants = true,
-        showDurability = false,
-        debug = false,
-        iLvlScale = 1,
-        iLvlOutline = "",
-        useQualityColorForILvl = true,
-        useClassColorForILvl = false,
-        useGradientColorsForILvl = false,
-        useCustomColorForILvl = false,
-        iLvlCustomColor = AddOn.HexColorPresets.Priest,
-        upgradeTrackScale = 1,
-        upgradeTrackOutline = "",
-        useQualityScaleColorsForUpgradeTrack = false,
-        useCustomColorForUpgradeTrack = false,
-        upgradeTrackCustomColor = AddOn.HexColorPresets.Priest,
-        gemScale = 1,
-        showMissingGems = true,
-        missingGemsMaxLevelOnly = true,
-        enchScale = 1,
-        enchantOutline = "OUTLINE",
-        showMissingEnchants = true,
-        missingEnchantsMaxLevelOnly = true,
-        useCustomColorForEnchants = false,
-        enchCustomColor = AddOn.HexColorPresets.Uncommon,
-        durabilityScale = 1,
-        lastSelectedSpecID = nil,
-        showDecimalsForStats = false,
-        decimalPlacesForStats = 2,
-        showOnInspect = false,
-        showInspectAvgILvl = true,
-        includeAvgLabel = false,
-        showInspectiLvl = true,
-        showInspectUpgradeTrack = true,
-        showInspectGems = true,
-        showInspectEnchants = true,
-        showInspectEmbellishments = true,
-        customSpecStatOrders = {},
-        iLvlOnItem = false,
-        showEmbellishments = true,
-        showCharacteriLvlDecimal = false,
-        decimalPlacesForCharacteriLvl = 2,
-        hideShirtTabardInfo = false,
-        collapseEnchants = false,
-        minimap = { hide = true },
-        increaseCharacterInfoSize = true,
-        showEnchantTextButton = true,
-        durabilityColorHigh = AddOn.HexColorPresets.Uncommon,
-        durabilityColorMedium = AddOn.HexColorPresets.Info,
-        durabilityColorLow = AddOn.HexColorPresets.Error,
-    }
-}
+-- DBDefaults now defined in Configs.lua as AddOn.DatabaseDefaults
 
 local incrementSlashOptionOrder = CreateCounter();
 local SlashOptions = {
 	type = "group",
 	handler = AddOn,
-	get = function(item) return AddOn.db.profile[item[#item]] end,
-	set = function(item, value) AddOn.db.profile[item[#item]] = value end,
+	get = function() end, -- individual args override this
+	set = function() end, -- individual args override this
 	args = {
         ilvl = {
             type = "toggle",
             name = "ilvl",
             desc = L["Toggle showing item level"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.showiLvl end,
+            get = function() return AddOn.db.profile.itemLevel.show end,
 	        set = function()
-                AddOn.db.profile.showiLvl = not AddOn.db.profile.showiLvl
+                AddOn.db.profile.itemLevel.show = not AddOn.db.profile.itemLevel.show
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
@@ -1544,9 +1488,9 @@ local SlashOptions = {
             name = "track",
             desc = L["Toggle showing upgrade track"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.showUpgradeTrack end,
+            get = function() return AddOn.db.profile.upgradeTrack.show end,
 	        set = function()
-                AddOn.db.profile.showUpgradeTrack = not AddOn.db.profile.showUpgradeTrack
+                AddOn.db.profile.upgradeTrack.show = not AddOn.db.profile.upgradeTrack.show
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
@@ -1556,9 +1500,9 @@ local SlashOptions = {
             name = "gems",
             desc = L["Toggle showing gem info"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.showGems end,
+            get = function() return AddOn.db.profile.gems.show end,
 	        set = function()
-                AddOn.db.profile.showGems = not AddOn.db.profile.showGems
+                AddOn.db.profile.gems.show = not AddOn.db.profile.gems.show
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
@@ -1568,14 +1512,14 @@ local SlashOptions = {
             name = "ench",
             desc = L["Toggle showing enchant info"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.showEnchants end,
+            get = function() return AddOn.db.profile.enchants.show end,
 	        set = function()
-                AddOn.db.profile.showEnchants = not AddOn.db.profile.showEnchants
+                AddOn.db.profile.enchants.show = not AddOn.db.profile.enchants.show
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
-                if not AddOn.db.profile.showEnchants and AddOn.PGVToggleEnchantButton:IsShown() then
+                if not AddOn.db.profile.enchants.show and AddOn.PGVToggleEnchantButton:IsShown() then
                     AddOn.PGVToggleEnchantButton:Hide()
-                elseif AddOn.db.profile.showEnchants and not AddOn.PGVToggleEnchantButton:IsShown() then
+                elseif AddOn.db.profile.enchants.show and not AddOn.PGVToggleEnchantButton:IsShown() then
                     AddOn.PGVToggleEnchantButton:Show()
                 end
             end
@@ -1585,9 +1529,9 @@ local SlashOptions = {
             name = "dur",
             desc = L["Toggle showing durability percentages"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.showDurability end,
+            get = function() return AddOn.db.profile.durability.show end,
             set = function()
-                AddOn.db.profile.showDurability = not AddOn.db.profile.showDurability
+                AddOn.db.profile.durability.show = not AddOn.db.profile.durability.show
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
@@ -1597,9 +1541,9 @@ local SlashOptions = {
             name = "etext",
             desc = L["Toggle showing enchant text in the Character Info window"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.collapseEnchants end,
+            get = function() return AddOn.db.profile.enchants.collapse end,
             set = function()
-                AddOn.db.profile.collapseEnchants = not AddOn.db.profile.collapseEnchants
+                AddOn.db.profile.enchants.collapse = not AddOn.db.profile.enchants.collapse
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
@@ -1609,9 +1553,9 @@ local SlashOptions = {
             name = "inspect",
             desc = L["Toggle showing gear info when inspecting another player"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.showOnInspect end,
+            get = function() return AddOn.db.profile.inspect.show end,
             set = function()
-                AddOn.db.profile.showOnInspect = not AddOn.db.profile.showOnInspect
+                AddOn.db.profile.inspect.show = not AddOn.db.profile.inspect.show
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:HandleEquipmentOrSettingsChange()
             end
@@ -1621,9 +1565,9 @@ local SlashOptions = {
             name = "expand",
             desc = L["Toggle using the larger Character Info window"],
             order = incrementSlashOptionOrder(),
-            get = function() return AddOn.db.profile.increaseCharacterInfoSize end,
+            get = function() return AddOn.db.profile.general.increaseCharacterInfoSize end,
             set = function()
-                AddOn.db.profile.increaseCharacterInfoSize = not AddOn.db.profile.increaseCharacterInfoSize
+                AddOn.db.profile.general.increaseCharacterInfoSize = not AddOn.db.profile.general.increaseCharacterInfoSize
                 LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
                 AddOn:AdjustCharacterInfoWindowSize()
             end
@@ -1633,10 +1577,10 @@ local SlashOptions = {
             name = "minimap",
             desc = L["Show/hide the minimap icon"],
             order = incrementSlashOptionOrder(),
-            get = function() return not AddOn.db.profile.minimap.hide end,
+            get = function() return not AddOn.db.profile.general.minimap.hide end,
             set = function()
-                AddOn.db.profile.minimap.hide = not AddOn.db.profile.minimap.hide
-                if AddOn.db.profile.minimap.hide then
+                AddOn.db.profile.general.minimap.hide = not AddOn.db.profile.general.minimap.hide
+                if AddOn.db.profile.general.minimap.hide then
                     LDBIcon:Hide(addonName)
                 else
                     LDBIcon:Show(addonName)
@@ -1649,31 +1593,10 @@ local SlashOptions = {
 
 local SlashCmds = { "prangearview", "pgv" }
 
--- Temporarily using for Timerunning characters
-function AddOn:CheckIfTimerunner()
-    local timerunningID = PlayerGetTimerunningSeasonID()
-    self.IsTimerunner = timerunningID ~= nil
-end
-
-function AddOn:ShouldShowGems()
-    return self.db.profile.showGems and not self.IsTimerunner
-end
-
-function AddOn:ShouldShowEnchants()
-    return self.db.profile.showEnchants and not self.IsTimerunner
-end
-
-function AddOn:ShouldShowEmbellishments()
-    return self.db.profile.showEmbellishments and not self.IsTimerunner
-end
-
-function AddOn:ShouldShowUpgradeTrack()
-    return self.db.profile.showUpgradeTrack and not self.IsTimerunner
-end
-
 function AddOn:OnInitialize()
     -- Load database
-	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", DBDefaults, true)
+	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", self.DatabaseDefaults, true)
+    self:MigrateProfileSettings(self.db)
 
     -- Data broker registration for minimap icon
     local broker = LDB:NewDataObject(addonName, {
@@ -1682,14 +1605,14 @@ function AddOn:OnInitialize()
     icon = "Interface/AddOns/PranGearView/Media/PranGearViewIcon",
     OnClick = function()
       -- Open options window
-      Settings.OpenToCategory(addonName)
+      Settings.OpenToCategory(self.categoryID)
     end,
     OnTooltipShow = function(tt)
       tt:AddLine(addonName)
       tt:AddLine(L["Open the AddOn options window"], 1,1,1)
     end,
   })
-  LDBIcon:Register(addonName, broker, self.db.profile.minimap)
+  LDBIcon:Register(addonName, broker, self.db.profile.general.minimap)
 
     -- Setup config options
     local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
@@ -1706,23 +1629,20 @@ function AddOn:OnInitialize()
     _, self.categoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVOptions", addonName)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PGVProfiles", "Profiles", addonName);
 
-    self.IsTimerunner = false
-    self.ShowEnchants = self.db.profile.showEnchants and not PlayerGetTimerunningSeasonID()
-
-    if self.db.profile.collapseEnchants then
-        DebugPrint("Enchant text is collapsed, update button text accordingly")
-        AddOn.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
+    if self.db.profile.enchants.collapse then
+        DebugPrint("OnInit: Enchant text is collapsed, update button text accordingly")
+        self.PGVToggleEnchantButton:UpdateTooltipText(L["Show Enchant Text"])
     end
 
-    AddOn.PGVToggleEnchantButton:SetScript("OnClick", function(button)
-        local collapseEnchants = not AddOn.db.profile.collapseEnchants
-        AddOn.db.profile.collapseEnchants = collapseEnchants
-        AddOn.UpdateEquippedGearInfo(AddOn)
+    self.PGVToggleEnchantButton:SetScript("OnClick", function(button)
+        local collapseEnchants = not self.db.profile.enchants.collapse
+        self.db.profile.enchants.collapse = collapseEnchants
+        self.UpdateEquippedGearInfo(self)
         button:UpdateTooltipText(collapseEnchants and L["Show Enchant Text"] or L["Hide Enchant Text"])
     end)
 
-    if (not self.db.profile.showEnchants or (self.db.profile.showEnchants and not self.db.profile.showEnchantTextButton)) and AddOn.PGVToggleEnchantButton:IsShown() then
-        AddOn.PGVToggleEnchantButton:Hide()
+    if (not self:AreEnchantsShownForCharacter() or (self:AreEnchantsShownForCharacter() and not self.db.profile.enchants.showTextButton)) and self.PGVToggleEnchantButton:IsShown() then
+        self.PGVToggleEnchantButton:Hide()
     end
 
     self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "HandleEquipmentOrSettingsChange")
@@ -1736,9 +1656,9 @@ function AddOn:OnInitialize()
     self:RegisterEvent("INSPECT_READY", function(_, unitGUID)
         if InspectFrame and InspectFrame.unit then
             InspectFrame:HookScript("OnHide", function()
-                AddOn.inspectedUnitGUID = nil
+                self.inspectedUnitGUID = nil
                 ClearInspectPlayer()
-                DebugPrint("InspectFrame hidden, DB value and InspectPlayer cleared")
+                DebugPrint("InspectFrame OnHide: Cleared InspectPlayer and inspectedUnitGUID variable")
             end)
 
             self:UpdateInspectedGearInfo(unitGUID)
@@ -1749,24 +1669,19 @@ function AddOn:OnInitialize()
     -- Hook into necessary secure functions
     hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
         if subFrame == "PaperDollFrame" then
-            self:CheckIfTimerunner()
             self:UpdateEquippedGearInfo()
         end
     end)
     hooksecurefunc(CharacterFrame, "RefreshDisplay", function()
-            self:CheckIfTimerunner()
-            if self.IsTimerunner then
-                AddOn.PGVToggleEnchantButton:Hide()
-            end
-            self:AdjustCharacterInfoWindowSize()
-        end)
+        self:AdjustCharacterInfoWindowSize()
+    end)
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
-        if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
+        if sceneID == 595 and PaperDollFrame:IsVisible() and self.db.profile.general.increaseCharacterInfoSize then
             local actor = cms:GetPlayerActor()
-            DebugPrint("CMS Transition: requested scale before mod - ", actor:GetRequestedScale())
+            DebugPrint("CMS TransitionToModelSceneID: requested scale before modification -", actor:GetRequestedScale())
             actor:SetRequestedScale(actor:GetRequestedScale() * 0.8)
             actor:UpdateScale()
-            DebugPrint("Updated requested scale to", actor:GetRequestedScale())
+            DebugPrint("CMS TransitionToModelSceneID: Updated requested scale to", actor:GetRequestedScale())
             local posX, posY, posZ = actor:GetPosition()
             -- Apply a offeset to the vertical positioning so that more of the model is visible (feet are not covered)
             actor:SetPosition(posX, posY, posZ + 0.25)
@@ -1774,21 +1689,20 @@ function AddOn:OnInitialize()
     end)
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
         self:ReorderStatFramesBySpec()
-        if CharacterStatsPane and self.db.profile.showDecimalsForStats then self:ShowDecimalStatValues() end
-        if CharacterStatsPane and self.db.profile.showCharacteriLvlDecimal then
-            CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
+        if CharacterStatsPane and self.db.profile.characterStats.showDecimals then self:ShowDecimalStatValues() end
+        if CharacterStatsPane and self.db.profile.general.showCharacteriLvlDecimal then
+            CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..self.db.profile.general.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
         end
     end)
 
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
     -- it shows the character's current specialization options by default
     SettingsPanel:HookScript("OnShow", function()
-        self:CheckIfTimerunner()
-        local specID = AddOn.GetCharacterCurrentSpecIDAndRole(AddOn)
-        if AddOn.SpecOptionKeys[specID] and specID ~= AddOn.db.profile.lastSelectedSpecID then
-            AddOn.db.profile.lastSelectedSpecID = specID
+        local specID = self:GetCharacterCurrentSpecIDAndRole()
+        if self.SpecOptionKeys[specID] and specID ~= self.db.profile.characterStats.lastSelectedSpecID then
+            self.db.profile.characterStats.lastSelectedSpecID = specID
         else
-            AddOn.db.profile.lastSelectedSpecID = nil
+            self.db.profile.characterStats.lastSelectedSpecID = nil
         end
         LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
         LibStub("AceConfigRegistry-3.0"):NotifyChange("PGVOptions")
@@ -1815,9 +1729,9 @@ end
 
 ---Handles changing the Character Info window size when the option to use the larger character window is checked
 function AddOn:AdjustCharacterInfoWindowSize()
-    DebugPrint("AdjustCharacterInfoWindowSize - Refreshing display")
-    if PaperDollFrame:IsVisible() and self.db.profile.increaseCharacterInfoSize then
-        DebugPrint("Larger character info window enabled")
+    DebugPrint("AdjustCharacterInfoWindowSize: Refreshing display")
+    if PaperDollFrame:IsVisible() and self.db.profile.general.increaseCharacterInfoSize then
+        DebugPrint("AdjustCharacterInfoWindowSize: Larger character info window enabled")
         -- Overwrite defined character frame width and adjust positioning of frames within CharacterFrame
         CharacterFrame:SetWidth(650)
         CharacterFrameInset:SetPoint("BOTTOMRIGHT", CharacterFrame, "BOTTOMLEFT", 450, 4)
@@ -1826,7 +1740,7 @@ function AddOn:AdjustCharacterInfoWindowSize()
         CharacterModelFrameBackgroundTopLeft:SetWidth(331)
         CharacterModelFrameBackgroundBotLeft:SetWidth(331)
     elseif PaperDollFrame:IsVisible() then
-        DebugPrint("Larger character info window disabled. Resetting any adjusted values.")
+        DebugPrint("AdjustCharacterInfoWindowSize: Larger character info window disabled. Resetting any adjusted values.")
         -- Undo all changes made for displaying the larger window
         -- Sources: /fstack in-game and https://www.townlong-yak.com/framexml/live/Blizzard_UIPanels_Game/PaperDollFrame.xml
         local charFrameInsetBotRightXOffset = select(4, CharacterFrameInset:GetPointByName("BOTTOMRIGHT"))
@@ -1850,11 +1764,11 @@ end
 ---Handles changes to equipped gear or AddOn settings when Character Info and/or Inspect window is visible
 function AddOn:HandleEquipmentOrSettingsChange()
     if PaperDollFrame:IsVisible() then
-        DebugPrint("Changed equipped item or AddOn setting, updating gear information")
+        DebugPrint("HandleEquipmentOrSettingsChange: Updating character gear information")
         self:UpdateEquippedGearInfo();
     end
     if InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
-        DebugPrint("Changed AddOn setting for inspect window, updating inspect gear information")
+        DebugPrint("HandleEquipmentOrSettingsChange: Updating inspected gear information")
         self:UpdateInspectedGearInfo(self.inspectedUnitGUID, true)
     end
 end
@@ -1862,108 +1776,20 @@ end
 ---Updates information displayed in the Character Info window
 function AddOn:UpdateEquippedGearInfo()
     if not self.GearSlots then
-        DebugPrint("Gear slots table not found")
+        DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
         return
     end
     
-    DebugPrint("Enchants collapsed:", self.db.profile.collapseEnchants)
-       for _, slot in ipairs(self.GearSlots) do
+    DebugPrint("UpdateEquippedGearInfo: Enchants collapsed -", self.db.profile.enchants.collapse)
+    for _, slot in ipairs(self.GearSlots) do
         local slotID = slot:GetID()
-        if self.db.profile.showiLvl then
-            if not slot.PGVItemLevel then
-                slot.PGVItemLevel = slot:CreateFontString("PGVItemLevel"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            ---@type string, number
-            local iFont, iSize = slot.PGVItemLevel:GetFont()
-            slot.PGVItemLevel:SetFont(iFont, iSize, self.db.profile.iLvlOutline)
-            slot.PGVItemLevel:Hide()
-            local iLvlTextScale = 1
-            if self.db.profile.iLvlScale and self.db.profile.iLvlScale > 0 then
-                iLvlTextScale = iLvlTextScale * self.db.profile.iLvlScale
-            end
-            slot.PGVItemLevel:SetTextScale(iLvlTextScale)
-
-            self:GetItemLevelBySlot(slot)
-            self:SetItemLevelPositionBySlot(slot)
-        elseif slot.PGVItemLevel then
-            slot.PGVItemLevel:Hide()
-        end
-
-        if self:ShouldShowUpgradeTrack() then
-            if not slot.PGVUpgradeTrack then
-                slot.PGVUpgradeTrack = slot:CreateFontString("PGVUpgradeTrack"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            ---@type string, number
-            local uFont, uSize = slot.PGVUpgradeTrack:GetFont()
-            slot.PGVUpgradeTrack:SetFont(uFont, uSize, self.db.profile.upgradeTrackOutline)
-            slot.PGVUpgradeTrack:Hide()
-            local upgradeTrackTextScale = 0.9
-            if self.db.profile.upgradeTrackScale and self.db.profile.upgradeTrackScale > 0 then
-                upgradeTrackTextScale = upgradeTrackTextScale * self.db.profile.upgradeTrackScale
-            end
-            slot.PGVUpgradeTrack:SetTextScale(upgradeTrackTextScale)
-
-            self:GetUpgradeTrackBySlot(slot)
-            self:SetUpgradeTrackPositionBySlot(slot)
-        elseif slot.PGVUpgradeTrack then
-            slot.PGVUpgradeTrack:Hide()
-        end
-
-        if self:ShouldShowGems() then
-            if not slot.PGVGems then
-                slot.PGVGems = slot:CreateFontString("PGVGems"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            slot.PGVGems:Hide()
-            local gemScale = 1
-            if self.db.profile.gemScale and self.db.profile.gemScale > 0 then
-                gemScale = gemScale * self.db.profile.gemScale
-            end
-            slot.PGVGems:SetTextScale(gemScale)
-
-            self:GetGemsBySlot(slot)
-            self:SetGemsPositionBySlot(slot)
-        elseif slot.PGVGems then
-            slot.PGVGems:Hide()
-        end
-
-        if self:ShouldShowEnchants() then
-            if not slot.PGVEnchant then
-                slot.PGVEnchant = slot:CreateFontString("PGVEnchant"..slotID, "OVERLAY", "GameTooltipText")
-            end
-            ---@type string, number
-            local eFont, eSize = slot.PGVEnchant:GetFont()
-            slot.PGVEnchant:SetFont(eFont, eSize, self.db.profile.enchantOutline)
-            slot.PGVEnchant:Hide()
-            local enchTextScale = 0.9
-            if self.db.profile.enchScale and self.db.profile.enchScale > 0 then
-                enchTextScale = enchTextScale * self.db.profile.enchScale
-            end
-            slot.PGVEnchant:SetTextScale(enchTextScale)
-
-            self:GetEnchantmentBySlot(slot)
-            self:SetEnchantPositionBySlot(slot)
-        elseif slot.PGVEnchant then
-            slot.PGVEnchant:Hide()
-        end
-        
-        if self.db.profile.showDurability then
-            self:ShowDurabilityBySlot(slot)
-        elseif slot.PGVDurability then
-            slot.PGVDurability:Hide()
-        end
-
-        if self:ShouldShowEmbellishments() then
-            self:ShowEmbellishmentBySlot(slot)
+        if not slot.PGVCharSlot then
+            ---@type PGVCharSlotMixin
+            slot.PGVCharSlot = CreateFrame("Frame", "PGVSlot"..slotID, slot, "PGVCharSlotTemplate")
         else
-            if slot.PGVEmbellishmentTexture then slot.PGVEmbellishmentTexture:Hide() end
-            if slot.PGVEmbellishmentShadow then slot.PGVEmbellishmentShadow:Hide() end
+            slot.PGVCharSlot:UpdateSlotInfo()
         end
-
-        if self.db.profile.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot) then
-            if slot.PGVItemLevel then slot.PGVItemLevel:Hide() end
-            if slot.PGVGems then slot.PGVGems:Hide() end
-            if slot.PGVEnchant then slot.PGVEnchant:Hide() end
-        end
+        slot.PGVCharSlot:SetFontOptions()
     end
     -- Manually force a stats update to update item level decimal places and stat ordering if needed
     PaperDollFrame_UpdateStats()

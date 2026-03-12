@@ -1,0 +1,49 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+    <Frame name="PGVCharSlotTemplate" parentKey="PGVCharSlot" virtual="true" setAllPoints="true" mixin="PGVCharSlotMixin">
+        <KeyValues>
+            <KeyValue key="IsLeftSideSlot" type="boolean" value="false"/>
+            <KeyValue key="IsBottomSlot" type="boolean" value="false"/>
+        </KeyValues>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="ItemLevel" inherits="GameTooltipText" text="" hidden="true"/>
+                <FontString parentKey="UpgradeTrack" inherits="GameTooltipText" text="" hidden="true"/>
+                <FontString parentKey="Gems" inherits="GameTooltipText" text="" hidden="true"/>
+                <FontString parentKey="Enchant" inherits="GameTooltipText" text="" hidden="true"/>
+                <FontString parentKey="Durability" inherits="GameTooltipText" text="" hidden="true" justifyH="CENTER"/>
+                <Texture parentKey="Embellishment" file="Interface/LootFrame/Toast-Star" hidden="true">
+                    <Size x="21" y="21"/>
+                    <Color r="0" g="1" b="0.6" a="1"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="EmbellishmentShadow" file="Interface/Buttons/WHITE8x8" setAllPoints="true" hidden="true">
+                    <Color color="BLACK_FONT_COLOR" a="0.3"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="DurabilityBarBg" inherits="TextStatusBar" hidden="true" defaultValue="100" minValue="0" maxValue="100">
+                <Size y="6.5"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="BOTTOMLEFT" x="2" y="6"/>
+                    <Anchor point="RIGHT" relativePoint="BOTTOMRIGHT" x="-2" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface/Buttons/WHITE8x8"/>
+                <BarColor color="BLACK_FONT_COLOR" a="0.8"/>
+            </StatusBar>
+            <StatusBar parentKey="DurabilityBar" inherits="TextStatusBar" hidden="true" enableMouse="true" minValue="0" maxValue="100">
+                <Size y="6.5"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="BOTTOMLEFT" x="2" y="6"/>
+                    <Anchor point="RIGHT" relativePoint="BOTTOMRIGHT" x="-2" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface/TARGETINGFRAME/UI-StatusBar"/>
+            </StatusBar>
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+</Ui>

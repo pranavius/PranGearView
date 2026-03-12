@@ -1,5 +1,5 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
@@ -25,7 +25,7 @@ local ColorText = AddOn.ColorText
 ---@vararg string|number
 ---@see print
 function AddOn.DebugPrint(...)
-    if AddOn.db.profile.debug then
+    if AddOn.db.profile.general.debug then
 		print(ColorText("[PGV Debug]", "Heirloom"), ...)
 	end
 end
@@ -34,7 +34,7 @@ local DebugPrint = AddOn.DebugPrint
 ---Prints the contents of a Lua table as key-value pairs if the AddOn is in debugging mode.
 ---@param tbl table The table to print key-value pairs for
 function AddOn.DebugTable(tbl)
-    if AddOn.db.profile.debug then
+    if AddOn.db.profile.general.debug then
         print(ColorText("[PGV Debug Table: START]", "Heirloom"))
         for k, v in pairs(tbl) do
             print(k, "=", ColorText(v, "Info"))
@@ -144,30 +144,14 @@ function AddOn.CreateOptionsSpacer(order, width)
     }
 end
 
----@class PGVDurabilityBar: StatusBar
----@field percent number
-
----@class Slot: Frame
----@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
----@field PGVItemLevel? FontString
----@field PGVUpgradeTrack? FontString
----@field PGVGems? FontString
----@field PGVEnchant? FontString
----@field PGVDurability? FontString
----@field PGVDurabilityBarBg? StatusBar
----@field PGVDurabilityBar? PGVDurabilityBar
----@field PGVEmbellishmentTexture? Texture
----@field PGVEmbellishmentShadow? Texture
-
 ---Indicates whether an item is equipped in a particular gear slot or not
----@param slot Slot The gear slot to check for an equipped item
+---@param slot ItemSlot The gear slot to check for an equipped item
 ---@param isInspect? boolean Whether a player is being inspected or not
 ---@return boolean hasItem `true` if the slot has an item equipped in it, `false` otherwise
 ---@return ItemMixin item The equipped item. When `hasItem` is `false`, this is always an empty table
 function AddOn:IsItemEquippedInSlot(slot, isInspect)
     local slotID = slot:GetID()
     if isInspect then
-        DebugPrint("Inspected unit GUID:", self.inspectedUnitGUID)
         local token = InspectFrame.unit
         if UnitGUID(InspectFrame.unit) ~= self.inspectedUnitGUID then token = UnitTokenFromGUID(self.inspectedUnitGUID) end
         ---@cast token string
@@ -181,52 +165,44 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it
----@param slot Slot The gear slot to check for socketable equipment
+---@param slot ItemSlot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket, `false` otherwise
 function AddOn:IsSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.SocketableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.SocketableSlots) do
             if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable")
+                DebugPrint("IsSocketableSlot: Slot", ColorText(slot:GetName(), "Heirloom"), "is socketable in", self.CurrentExpac.NameAbbr)
                 return true
             end
         end
     elseif self:IsAuxSocketableSlot(slot) then
         return true
-    else
-        DebugPrint(ColorText("SocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it via auxillary methods (example: S.A.D. in The War Within)
----@param slot Slot The gear slot to check for socketable equipment
+---@param slot ItemSlot The gear slot to check for socketable equipment
 ---@return boolean result `true` if the item can have a socket via auxillary methods, `false` otherwise
 function AddOn:IsAuxSocketableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.AuxSocketableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.AuxSocketableSlots) do
             if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is socketable (aux)")
+                DebugPrint("IsAuxSocketableSlot: Slot", ColorText(slot:GetName(), "Heirloom"), "can have sockets added in", self.CurrentExpac.NameAbbr)
                 return true
             end
         end
-    else
-        DebugPrint(ColorText("AuxSocketableSlots not found in expansion info table", "Error"))
     end
     return false
 end
 
 ---Indicates whether an item equipped in a particular gear slot can be enchanted or not
----@param slot Slot The gear slot to check for enchantable equipment
+---@param slot ItemSlot The gear slot to check for enchantable equipment
 ---@return boolean result `true` if the item can be enchanted, `false` otherwise
 function AddOn:IsEnchantableSlot(slot)
     if self.CurrentExpac and self.CurrentExpac.EnchantableSlots then
         for _, gearSlot in ipairs(self.CurrentExpac.EnchantableSlots) do
-            -- Check for available head enchants when inspecting another player (Horrific Visions, Amirdrassil, etc.)
-            if gearSlot == "InspectHeadSlot" and slot == _G[gearSlot] then
-                return self.CurrentExpac.HeadEnchantAvailable
-            -- Check for available shield or off-hand enchants when inspecting another player
-            elseif gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
+            if gearSlot == "InspectSecondaryHandSlot" and slot == _G[gearSlot] then
                 local _, item = self:IsItemEquippedInSlot(slot, true)
                 if self.GetTableSize(item) > 0 then
                     local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(item:GetItemLink()))
@@ -243,16 +219,7 @@ function AddOn:IsEnchantableSlot(slot)
                     end
                 end
             end
-            -- Check for any other available enchants when inspecting another player
-            if type(gearSlot) == "string" and slot == _G[gearSlot] then
-                DebugPrint("Inspect Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
-                return true
-            end
-            -- Check for available head enchants for current character (Horrific Visions, Amirdrassil, etc.)
-            if slot == gearSlot and slot == CharacterHeadSlot and GetInventoryItemID("player", slot:GetID()) then
-                return self.CurrentExpac.HeadEnchantAvailable
-            -- Check for available shield or off-hand enchants for current character
-            elseif slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
+            if slot == gearSlot and slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
                 local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
                 local isShield = itemClassID == 4 and itemSubclassID == 6
                 local isOffhand = itemClassID == 4 and itemSubclassID == 0
@@ -266,34 +233,14 @@ function AddOn:IsEnchantableSlot(slot)
                     return false
                 end
             end
-            -- Check for any other available enchants for current character
-            if slot == gearSlot then
-                DebugPrint("Slot", ColorText(slot:GetID(), "Heirloom"), "is enchantable")
+            -- Check for other available enchants
+            if slot == gearSlot or (type(gearSlot) == "string" and slot == _G[gearSlot]) then
+                DebugPrint("IsEnchantableSlot: Slot", ColorText(slot:GetName(), "Heirloom"), "is enchantable")
                 return true
             end
         end
-    else
-        DebugPrint(ColorText("EnchantableSlots not found in expansion info table", "Error"))
     end
     return false
-end
-
----Indicates whether a gear slot is positioned to the left of the character model in the default Character Info/Inspect windows or not
----@param slot Slot The gear slot to check
----@param isInspect? boolean Whether a player is being inspected or not
----@return boolean|nil result Returns `nil` if the slot is for a weapon or off-hand item, `true` if the slot is to the left of the character model, and `false` otherwise
-function AddOn:GetSlotIsLeftSide(slot, isInspect)
-    if isInspect then
-        for _, bottomSlotName in ipairs(self.InspectInfo.bottomSlots) do
-            if slot == _G[bottomSlotName] then return nil end
-        end
-        for _, leftSlotName in ipairs(self.InspectInfo.leftSideSlots) do
-            if slot == _G[leftSlotName] then return true end
-        end
-        return false
-    else
-        return slot.IsLeftSide
-    end
 end
 
 ---Abbreviates `text` using the provided `replacementTable`
@@ -308,4 +255,53 @@ function AddOn:AbbreviateText(text, replacementTable)
         abbreviation = abbreviation:gsub(repl.original, repl.replacement)
     end
     return abbreviation
+end
+
+---Provides a texture ID to display for a Death Knight weapon enchant, or returns the texture ID for a checkmark if the enchants does not have an associated icon
+---@param enchantTextAbbr string
+---@return number textureID
+function AddOn:GetLegacyEnchantTextureID(enchantTextAbbr)
+    if enchantTextAbbr == AddOn.DKEnchantAbbr.Razorice then
+        return 135842 -- Interface/Icons/Spell_Frost_FrostArmor
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.Sanguination then
+        return 1778226 -- Interface/Icons/Ability_Argus_DeathFod
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.Spellwarding then
+        return 425952 -- Interface/Icons/Spell_Fire_TwilightFireward
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.Apocalypse then
+        return 237535 -- Interface/Icons/Spell_DeathKnight_Thrash_Ghoul
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.FallenCrusader then
+        return 135957 -- Interface/Icons/Spell_Holy_RetributionAura
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.StoneskinGargoyle then
+        return 237480 -- Interface/Icons/Inv_Sword_130
+    elseif enchantTextAbbr == AddOn.DKEnchantAbbr.UnendingThirst then
+        return 3163621 -- Interface/Icons/Spell_NZInsanity_Bloodthirst
+    else
+        return 628564 -- Interface/Scenarios/ScenarioIcon-Check
+    end
+end
+
+PlayerGetTimerunningSeasonID = PlayerGetTimerunningSeasonID or function() return nil end
+
+---Dynamically determine whether upgrade track info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreUpgradeTracksShownForCharacter()
+    return self.db.profile.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
+end
+
+---Dynamically determine whether gem info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreGemsShownForCharacter()
+    return self.db.profile.gems.show and PlayerGetTimerunningSeasonID() == nil
+end
+
+---Dynamically determine whether enchant info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreEnchantsShownForCharacter()
+    return self.db.profile.enchants.show and PlayerGetTimerunningSeasonID() == nil
+end
+
+---Dynamically determine whether embellishment info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
+---@return boolean result
+function AddOn:AreEmbellishmentsShownForCharacter()
+    return self.db.profile.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
 end

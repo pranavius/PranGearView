@@ -14,10 +14,6 @@ AddOn.DKEnchantAbbr = {
     UnendingThirst = L["Unend Thirst"]
 }
 
----@class TextReplacement
----@field original string The localization key for the original text to search for when abbreviating text
----@field replacement string The localization key for the abbreviation for the original text
-
 ---A list of tables containing text replacement patterns for enchants
 ---@type TextReplacement[]
 AddOn.EnchantTextReplacements = {
@@ -196,7 +192,7 @@ AddOn.HexColorPresets = {
 }
 
 ---A list of character gear slots visible in the Character Info window
----@type Slot[]
+---@type ItemSlot[]
 AddOn.GearSlots = {
     CharacterHeadSlot,
     CharacterNeckSlot,
@@ -218,10 +214,7 @@ AddOn.GearSlots = {
     CharacterSecondaryHandSlot
 }
 
----@class InspectInfo
----@field slots string[] A list of all slot names when inspecting a character
----@field leftSideSlots string[] A list of all slots that appear on the left side of the character model when inspecting a character
----@field bottomSlots string[] A list of all slots that appear on the bottom of the character model when inspecting a character
+---@type InspectInfo
 AddOn.InspectInfo = {
     slots = {
         "InspectHeadSlot",
@@ -259,22 +252,13 @@ AddOn.InspectInfo = {
     }
 }
 
----@class ExpansionDetails
----@field LevelCap number The maximum reachable level for the expansion
----@field SocketableSlots any[] A list of gear slots that can have a gem socket added to it in the expansion. Slots can be defined as either a `Frame` or `string` containing the name of a frame.
----@field AuxSocketableSlots any[] A list of gear slots that can have a gem socket added to it via auxillary methods in the expansion (example: S.A.D. in _The War Within_). Slots can be defined as either a `Frame` or `string` containing the name of a frame.
----@field MaxSocketsPerItem number The maximum number of sockets an item can have
----@field MaxAuxSocketsPerItem number The maximum number of sockets items that can be socketed via auxillary methods can have
----@field EnchantableSlots any[] A list of gear slots that can be enchanted in the expansion. Slots can be defined as either a Frame or string containing the name of a frame.
----@field HeadEnchantAvailable boolean Indicates whether or not a head enchant from the expansion is currently available in-game
----@field ShieldEnchantAvailable boolean Indicates whether or not a shield enchant from the expansion is currently available in-game
----@field OffhandEnchantAvailable boolean Indicates whether or not an off-hand enchant from the expansion is currently available in-game
-
 ---@type table<string, ExpansionDetails>
 ---@see Frame for generic definition along without common functions and variables available for all Frames
 ---@see InspectInfo for a list of Frame names available when the Inspect window is open
 AddOn.ExpansionInfo = {
+    ---@type ExpansionDetails
     Midnight = {
+        NameAbbr = "MIDNIGHT",
         LevelCap = 90,
         SocketableSlots = {
             CharacterNeckSlot,
@@ -317,11 +301,12 @@ AddOn.ExpansionInfo = {
             "InspectMainHandSlot",
             "InspectSecondaryHandSlot"
         },
-        HeadEnchantAvailable = true,
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false
     },
+    ---@type ExpansionDetails
     TheWarWithin = {
+        NameAbbr = "TWW",
         LevelCap = 80,
         SocketableSlots = {
             CharacterNeckSlot,
@@ -365,7 +350,6 @@ AddOn.ExpansionInfo = {
             "InspectMainHandSlot",
             "InspectSecondaryHandSlot"
         },
-        HeadEnchantAvailable = false,
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false
     }
@@ -440,10 +424,6 @@ AddOn.TooltipDataType = {
     Enchant = 15,
 
 }
-
----@class (exact) RaceGender
----@field Male string The atlas alias for the icon corresponding to a male of the associated race
----@field Female string The atlas alias for the icon corresponding to a female of the associated race
 
 ---@type table<string, RaceGender>
 AddOn.RaceIcons = {
@@ -565,10 +545,6 @@ AddOn.ClassIcons = {
     Warlock = "ClassIcon-Warlock",
     Warrior = "ClassIcon-Warrior"
 }
-
----@class OutlineOption
----@field key string The localization key for the dropdown option
----@field value string The value for text outline to pass to `SetFont()`
 
 ---@type OutlineOption[]
 AddOn.OutlineOptions = {
