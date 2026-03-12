@@ -16,6 +16,9 @@ function PGVInspectSlotMixin:OnLoad()
     self:UpdateSlotInfo()
 end
 
+---Indicates whether a gear slot in the default Blizzard inspection window appears on the left side of the frame or not
+---@param slot ItemSlot Gear slot frame
+---@return boolean|nil `true` if the slot appears on the left side of the frame, `false` if it appears on the right side, or `nil` if it appears at the bottom
 local function IsInspectSlotLeftSide(slot)
     for _, bottomSlotName in ipairs(AddOn.InspectInfo.bottomSlots) do
         if slot == _G[bottomSlotName] then return nil end
@@ -26,6 +29,7 @@ local function IsInspectSlotLeftSide(slot)
     return false
 end
 
+---Executes logic to determine and position necessary information about the item equipped in the parent gear slot
 function PGVInspectSlotMixin:UpdateSlotInfo()
     ---@type ItemSlot
     local slot = self:GetParent()
@@ -266,7 +270,7 @@ function PGVInspectSlotMixin:PositionGems(isMainHand)
     if upgradeTrackShown and self.IsBottomSlot then
         self.Gems:SetPoint(isMainHand and "RIGHT" or "LEFT", self.UpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
     elseif upgradeTrackShown then
-        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.UpgradeTrack, self.IsLeftSideSlot and "RIGHT" or "LEFT", (self.IsLeftSideSlot and 1 or -1) * 2, 0)
+        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.UpgradeTrack, self.IsLeftSideSlot and "RIGHT" or "LEFT", self.IsLeftSideSlot and 1 or -1, -1)
     elseif itemLevelShownOnItem and self.IsBottomSlot then
         self.Gems:SetPoint("CENTER", self, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
     elseif itemLevelShownOnItem then
@@ -274,7 +278,7 @@ function PGVInspectSlotMixin:PositionGems(isMainHand)
     elseif itemLevelShown and self.IsBottomSlot then
         self.Gems:SetPoint("LEFT", self.ItemLevel, "RIGHT", 1, 0)
     elseif itemLevelShown then
-        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.ItemLevel, self.IsLeftSideSlot and "RIGHT" or "LEFT", (self.IsLeftSideSlot and 1 or -1) * 2, 0)
+        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.ItemLevel, self.IsLeftSideSlot and "RIGHT" or "LEFT", self.IsLeftSideSlot and 1 or -1, -1)
     elseif self.IsBottomSlot then
         self.Gems:SetPoint("CENTER", self, "TOP", 0, 10)
     else
@@ -396,14 +400,18 @@ function PGVInspectSlotMixin:GetEmbellishments(slot, item)
     end
 end
 
+---Shows embellishment shadow texture when embellishment is shown
 function PGVInspectSlotMixin:OnShowEmbellishment()
     self.EmbellishmentShadow:Show()
 end
 
+---Hides embellishment shadow texture when embellishment is hidden
 function PGVInspectSlotMixin:OnHideEmbellishment()
     self.EmbellishmentShadow:Hide()
 end
 
+---Updates FontString frames with custom font options (e.g. font scale, outline) specified for the current AddOn profile
+---Applies to item level, upgrade track, gems, enchants, and durability text
 function PGVInspectSlotMixin:SetFontOptions()
     if AddOn.db.profile.inspect.showILvl then
         local iFont, iSize = self.ItemLevel:GetFont()
@@ -431,6 +439,7 @@ function PGVInspectSlotMixin:SetFontOptions()
     end
 end
 
+---Hides all child frames of PGVCharSlot (intended for use when an item is not equipped in a slot)
 function PGVInspectSlotMixin:HideAllFrames()
     self.ItemLevel:Hide()
     self.UpgradeTrack:Hide()

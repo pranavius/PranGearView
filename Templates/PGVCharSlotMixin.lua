@@ -17,6 +17,7 @@ function PGVCharSlotMixin:OnLoad()
     self:UpdateSlotInfo()
 end
 
+---Executes logic to determine and position necessary information about the item equipped in the parent gear slot
 function PGVCharSlotMixin:UpdateSlotInfo()
     ---@type ItemSlot
     local slot = self:GetParent()
@@ -263,7 +264,7 @@ function PGVCharSlotMixin:PositionGems(isMainHand)
     if upgradeTrackShown and self.IsBottomSlot then
         self.Gems:SetPoint(isMainHand and "RIGHT" or "LEFT", self.UpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
     elseif upgradeTrackShown then
-        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.UpgradeTrack, self.IsLeftSideSlot and "RIGHT" or "LEFT", (self.IsLeftSideSlot and 1 or -1) * 2, 0)
+        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.UpgradeTrack, self.IsLeftSideSlot and "RIGHT" or "LEFT", self.IsLeftSideSlot and 1 or -1, -1)
     elseif itemLevelShownOnItem and self.IsBottomSlot then
         self.Gems:SetPoint("CENTER", self, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
     elseif itemLevelShownOnItem then
@@ -271,7 +272,7 @@ function PGVCharSlotMixin:PositionGems(isMainHand)
     elseif itemLevelShown and self.IsBottomSlot then
         self.Gems:SetPoint("LEFT", self.ItemLevel, "RIGHT", 1, 0)
     elseif itemLevelShown then
-        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.ItemLevel, self.IsLeftSideSlot and "RIGHT" or "LEFT", (self.IsLeftSideSlot and 1 or -1) * 2, 0)
+        self.Gems:SetPoint(self.IsLeftSideSlot and "LEFT" or "RIGHT", self.ItemLevel, self.IsLeftSideSlot and "RIGHT" or "LEFT", self.IsLeftSideSlot and 1 or -1, -1)
     elseif self.IsBottomSlot then
         self.Gems:SetPoint("CENTER", self, "TOP", 0, 10)
     else
@@ -479,27 +480,34 @@ function PGVCharSlotMixin:GetEmbellishment(slot, item)
     if isEmbellished then self.Embellishment:Show() else self.Embellishment:Hide() end
 end
 
+---Shows durability bar background and hides durability text when durability bar is shown
 function PGVCharSlotMixin:OnShowDurabilityBar()
     self.DurabilityBarBg:Show()
     self.Durability:Hide()
 end
 
+---Hides durability bar background when durability bar is hidden
 function PGVCharSlotMixin:OnHideDurabilityBar()
     self.DurabilityBarBg:Hide()
 end
 
+---Hides durability bar when durability text is shown
 function PGVCharSlotMixin:OnShowDurabilityText()
     self.DurabilityBar:Hide()
 end
 
+---Shows embellishment shadow texture when embellishment is shown
 function PGVCharSlotMixin:OnShowEmbellishment()
     self.EmbellishmentShadow:Show()
 end
 
+---Hides embellishment shadow texture when embellishment is hidden
 function PGVCharSlotMixin:OnHideEmbellishment()
     self.EmbellishmentShadow:Hide()
 end
 
+---Updates FontString frames with custom font options (e.g. font scale, outline) specified for the current AddOn profile
+---Applies to item level, upgrade track, gems, enchants, and durability text
 function PGVCharSlotMixin:SetFontOptions()
     if AddOn.db.profile.itemLevel.show then
         local iFont, iSize = self.ItemLevel:GetFont()
@@ -534,6 +542,7 @@ function PGVCharSlotMixin:SetFontOptions()
     end
 end
 
+---Hides all child frames of PGVCharSlot (intended for use when an item is not equipped in a slot)
 function PGVCharSlotMixin:HideAllFrames()
     self.ItemLevel:Hide()
     self.UpgradeTrack:Hide()

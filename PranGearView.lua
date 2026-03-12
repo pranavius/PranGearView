@@ -550,6 +550,7 @@ local OptionsTable = {
                     type = "toggle",
                     name = L["Missing Enchant Indicator"],
                     desc = L["Show when an item is missing an enchant with a warning symbol"],
+                    width="full",
                     order = orderCounter(),
                     get = function() return AddOn.db.profile.enchants.showMissing end,
                     set = function(_, val)
