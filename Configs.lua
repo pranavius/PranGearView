@@ -149,7 +149,7 @@ local databaseMigrationMap = {
     minimap                             = { "general", "minimap" },
 }
 
----Migrates the saved profile from the old flat key structure to the new grouped structure.
+---Migrates all profiles in the AddOn database from the old flat key structure to the new grouped structure.
 ---This only runs once per profile; the `_pgvMigrated` flag prevents re-migration.
 ---@param db AceDBObject-3.0 The AceDB database object
 function AddOn:MigrateProfileSettings(db)
