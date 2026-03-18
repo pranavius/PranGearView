@@ -105,6 +105,7 @@ AddOn.EnchantTextReplacements = {
     { original = L["Worldsoul Aegis"], replacement = L["World Aeg"] },
     { original = L["Worldsoul Cradle"], replacement = L["World Crad"] },
     { original = L["Worldsoul Tenacity"], replacement = L["World Ten"] },
+    { original = L["Thalassian Haste"], replacement = L["Thal Hst"] },
     -- General Enchant Text
     { original = L["Rune of the Fallen Crusader"], replacement = AddOn.DKEnchantAbbr.FallenCrusader },
     { original = L["Rune of Razorice"], replacement = AddOn.DKEnchantAbbr.Razorice },
