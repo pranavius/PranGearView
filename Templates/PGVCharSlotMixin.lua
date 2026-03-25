@@ -437,9 +437,11 @@ function PGVCharSlotMixin:GetAndPositionDurability(slot)
                 durText = ColorText(percentText.."%%", AddOn.db.profile.durability.colorLow)
             end
             DebugPrint("GetAndPositionDurability: Durability for slot", ColorText(slot:GetName(), "Heirloom"), "is", durText)
+            self.Durability:SetFormattedText(durText)
             if durText ~= "" then
-                self.Durability:SetFormattedText(durText)
                 self.Durability:Show()
+            else
+                self.Durability:Hide()
             end
         end
     elseif AddOn.db.profile.durability.show and AddOn.db.profile.durability.showAsBar then
