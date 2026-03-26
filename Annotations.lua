@@ -33,36 +33,35 @@
 ---@field value string The value for text outline to pass to `SetFont()`
 
 ---@class PGVDurabilityBar: StatusBar
----@field percent number
+---@field percent number Item durability expressed as a percentage value
 
 ---@class ItemSlot: Frame
----@field SocketDisplay Frame
 ---@field IsLeftSide boolean|nil Indicates whether the equipment slot is on the left, right, or bottom of the Character model in the default UI Character Info and Inspect windows
----@field PGVCharSlot? PGVCharSlotMixin
----@field PGVInspectSlot? PGVInspectSlotMixin
+---@field PGVCharSlot? PGVCharSlotMixin Frame to display PranGearView data in the default UI Character Info window
+---@field PGVInspectSlot? PGVInspectSlotMixin Frame to display PranGearView data in the default UI Inspect window
 
 ---@class (exact) PGVCharSlotMixin: Frame
----@field IsLeftSideSlot boolean
----@field IsBottomSlot boolean
----@field ItemLevel FontString
----@field UpgradeTrack FontString
----@field Gems FontString
----@field Enchant FontString
----@field Durability FontString
----@field DurabilityBarBg StatusBar
----@field DurabilityBar StatusBar
----@field EmbellishmentShadow Texture
----@field Embellishment Texture
+---@field IsLeftSideSlot boolean Indicates whether the equipment slot is on the left or right of the Character model. Derivatite of the parent frame's IsLeftSide property without the possibility of being nil
+---@field IsBottomSlot boolean Indicates whether the equipment slot is on the bottom of the Character model. Derivative of the parent frame's IsLeftSide property, used to avoid checking equality against nil repeatedly
+---@field ItemLevel FontString Item level of the equipped item
+---@field UpgradeTrack FontString Upgrade track of the equipped item
+---@field Gems FontString Gems socketed (or empty/potential sockets) in the equipped item, if socketable
+---@field Enchant FontString Enchant for the equipped item, if enchantable
+---@field Durability FontString Durability percentage value for the equipped item
+---@field DurabilityBarBg StatusBar Background bar for showing durability as a texture rather than text. Visibility is directly tied to DurabilityBar via scripts on initialization
+---@field DurabilityBar StatusBar Bar for showing durability as a texture rather than text
+---@field EmbellishmentShadow Texture Shadow texture for enabling embellishment icons to appear more clearly over an equipped item. Visibility is directly tied to Embellishment via scripts on initialization
+---@field Embellishment Texture Texture indicating when an equipped item is embellished
 
 ---@class (exact) PGVInspectSlotMixin: Frame
----@field IsLeftSideSlot boolean
----@field IsBottomSlot boolean
----@field ItemLevel FontString
----@field UpgradeTrack FontString
----@field Gems FontString
----@field Enchant FontString
----@field EmbellishmentShadow Texture
----@field Embellishment Texture
+---@field IsLeftSideSlot boolean Indicates whether the equipment slot is on the left or right of the Character model. Derivatite of the parent frame's IsLeftSide property without the possibility of being nil
+---@field IsBottomSlot boolean Indicates whether the equipment slot is on the bottom of the Character model. Derivative of the parent frame's IsLeftSide property, used to avoid checking equality against nil repeatedly
+---@field ItemLevel FontString Item level of the equipped item
+---@field UpgradeTrack FontString Upgrade track of the equipped item
+---@field Gems FontString Gems socketed (or empty/potential sockets) in the equipped item, if socketable
+---@field Enchant FontString Enchant for the equipped item, if enchantable
+---@field EmbellishmentShadow Texture Shadow texture for enabling embellishment icons to appear more clearly over an equipped item. Visibility is directly tied to Embellishment via scripts on initialization
+---@field Embellishment Texture Texture indicating when an equipped item is embellished
 
 ---@class CharacterStatFrame : Frame
 ---@field Background Frame A highlight color that serves as a background for even-ordered displayed stats (helps with visual separation)
