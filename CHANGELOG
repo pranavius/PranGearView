@@ -1,3 +1,8 @@
+**2.0.2**
+- Update number of available sockets for Midnight
+- Remove wrist slot from Midnight enchantable slots
+- Documentation updates
+
 **2.0.1**
 - Fix a bug that caused durability to not update unless zone was changed or UI was reloaded
 - Added missing enchant text abbreviation for Thalassian Haste
