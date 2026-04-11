@@ -94,9 +94,12 @@ function PGVInspectSlotMixin:GetItemLevel(slot, item)
             local qualityHex = select(4, C_Item.GetItemQualityColor(item:GetItemQuality()))
             iLvlText = "|c"..qualityHex..iLvlText.."|r"
         elseif AddOn.db.profile.itemLevel.useClassColor then
-            local classFile = select(2, UnitClass(UnitTokenFromGUID(AddOn.inspectedUnitGUID)))
-            local classHexWithAlpha = select(4, GetClassColor(classFile))
-            iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
+            local token = UnitTokenFromGUID(AddOn.inspectedUnitGUID)
+            if token then
+                local classFile = select(2, UnitClass(token))
+                local classHexWithAlpha = select(4, GetClassColor(classFile))
+                iLvlText = "|c"..classHexWithAlpha..iLvlText.."|r"
+            end
         elseif AddOn.db.profile.itemLevel.useCustomColor then
             iLvlText = ColorText(iLvlText, AddOn.db.profile.itemLevel.customColor)
         end
@@ -241,7 +244,8 @@ function PGVInspectSlotMixin:GetGems(slot, item)
 
     -- Indicate slots that can have sockets added to them
     if AddOn.db.profile.inspect.showGems and AddOn.db.profile.gems.showMissing and AddOn:IsSocketableSlot(slot) and existingSocketCount < AddOn.CurrentExpac.MaxSocketsPerItem then
-        local isCharacterMaxLevel = UnitLevel(UnitTokenFromGUID(AddOn.inspectedUnitGUID)) == AddOn.CurrentExpac.LevelCap
+        local token = UnitTokenFromGUID(AddOn.inspectedUnitGUID)
+        local isCharacterMaxLevel = token ~= nil and UnitLevel(token) == AddOn.CurrentExpac.LevelCap
         if (AddOn.db.profile.gems.missingMaxLevelOnly and isCharacterMaxLevel) or not AddOn.db.profile.gems.missingMaxLevelOnly then
             for i = 1, AddOn.CurrentExpac.MaxSocketsPerItem - existingSocketCount, 1 do
                 DebugPrint("GetGems: Slot", ColorText(slot:GetName(), "Heirloom"), "can have", i, i == 1 and "socket" or "sockets")
@@ -331,7 +335,8 @@ function PGVInspectSlotMixin:GetEnchant(slot, item)
     end
 
     if not isEnchanted and AddOn:IsEnchantableSlot(slot) and AddOn.db.profile.enchants.showMissing then
-        local isCharacterMaxLevel = UnitLevel(UnitTokenFromGUID(AddOn.inspectedUnitGUID)) == AddOn.CurrentExpac.LevelCap
+        local token = UnitTokenFromGUID(AddOn.inspectedUnitGUID)
+        local isCharacterMaxLevel = token ~= nil and UnitLevel(token) == AddOn.CurrentExpac.LevelCap
         if (AddOn.db.profile.enchants.missingMaxLevelOnly and isCharacterMaxLevel) or not AddOn.db.profile.enchants.missingMaxLevelOnly then
             if self.IsLeftSideSlot or (self.IsBottomSlot and slot:GetID() == 16) then
                 self.Enchant:SetFormattedText(ColorText(L["Enchant"], "Druid")..AddOn.GetTextureString(523826))

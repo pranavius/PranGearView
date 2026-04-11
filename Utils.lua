@@ -154,7 +154,7 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     if isInspect then
         local token = InspectFrame.unit
         if UnitGUID(InspectFrame.unit) ~= self.inspectedUnitGUID then token = UnitTokenFromGUID(self.inspectedUnitGUID) end
-        ---@cast token string
+        if not token then return false, {} end
         local itemLink = GetInventoryItemLink(token, slotID)
         if itemLink then return true, Item:CreateFromItemLink(itemLink) end
     else
