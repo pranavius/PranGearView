@@ -1655,11 +1655,23 @@ function AddOn:OnInitialize()
 
     self:RegisterEvent("INSPECT_READY", function(_, unitGUID)
         if InspectFrame and InspectFrame.unit then
-            InspectFrame:HookScript("OnHide", function()
-                self.inspectedUnitGUID = nil
-                ClearInspectPlayer()
-                DebugPrint("InspectFrame OnHide: Cleared InspectPlayer and inspectedUnitGUID variable")
-            end)
+            if not self.inspectHookSetup then
+                self.inspectHookSetup = true
+                InspectFrame:HookScript("OnHide", function()
+                    self.inspectedUnitGUID = nil
+                    ClearInspectPlayer()
+                    for _, slotName in ipairs(self.InspectInfo.slots) do
+                        local slot = _G[slotName]
+                        if slot and slot.PGVInspectSlot then
+                            slot.PGVInspectSlot:HideAllFrames()
+                        end
+                    end
+                    if InspectPaperDollItemsFrame and InspectPaperDollItemsFrame.PGVAverageItemLevel then
+                        InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
+                    end
+                    DebugPrint("InspectFrame OnHide: Cleared InspectPlayer and inspectedUnitGUID variable")
+                end)
+            end
 
             self:UpdateInspectedGearInfo(unitGUID)
         end

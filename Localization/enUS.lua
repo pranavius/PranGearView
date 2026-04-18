@@ -401,3 +401,6 @@ L["If you would like to contribute to development, you can find the repository o
 L["Please follow the development guidelines outlined in the README document."] = "Please follow the development guidelines outlined in the README document."
 L["Special Thanks"] = "Special Thanks"
 L["Connect"] = "Connect"
+
+------------ Messages ------------
+L["Inspect details may be limited during combat or an active Mythic+ run."] = "Inspect details may be limited during combat or an active Mythic+ run."

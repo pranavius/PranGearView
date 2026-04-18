@@ -1,3 +1,6 @@
+**2.0.3**
+- Address an issue where inspecting a player during an AddOn lockdown event caused errors
+
 **2.0.2**
 - Update number of available sockets for Midnight
 - Remove wrist slot from Midnight enchantable slots
