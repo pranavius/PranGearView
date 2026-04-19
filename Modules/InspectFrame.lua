@@ -29,8 +29,13 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     if self.inspectedUnitGUID ~= unitGUID then
         self.inspectedUnitGUID = unitGUID
     end
-    if not UnitTokenFromGUID(self.inspectedUnitGUID) then
+    local unitToken = UnitTokenFromGUID(self.inspectedUnitGUID)
+    -- self.noUnitTokenMessagePrinted prevents the message from spamming the chat on every INSPECT_READY event or inspected unit gear update
+    if not unitToken and not self.noUnitTokenMessagePrinted then
         print(ColorText("Pran Gear View:", "Heirloom"), L["Inspect details may be limited during combat or an active Mythic+ run."])
+        self.noUnitTokenMessagePrinted = true
+    elseif unitToken and self.noUnitTokenMessagePrinted then
+        self.noUnitTokenMessagePrinted = false
     end
     DebugPrint("UpdateInspectedGearInfo: Inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
     for _, slotName in ipairs(self.InspectInfo.slots) do
@@ -52,14 +57,13 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         end
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
-        local token = UnitTokenFromGUID(self.inspectedUnitGUID)
-        if not token then
+        if not unitToken then
             DebugPrint("UpdateInspectedGearInfo: Cannot resolve unit token from GUID, skipping average item level")
             return
         end
-        DebugPrint("UpdateInspectedGearInfo: Inspected unit token -", ColorText(token, "Heirloom"))
-        local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(token))
-        local classFile = select(2, UnitClass(token))
+        DebugPrint("UpdateInspectedGearInfo: Inspected unit token -", ColorText(unitToken, "Heirloom"))
+        local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(unitToken))
+        local classFile = select(2, UnitClass(unitToken))
         local classHexWithAlpha = select(4, GetClassColor(classFile))
         if self.db.profile.inspect.includeAvgLabel then
             DebugPrint("UpdateInspectedGearInfo: Include \"Avg: \" label")
