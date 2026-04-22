@@ -1788,22 +1788,33 @@ end
 
 ---Updates information displayed in the Character Info window
 function AddOn:UpdateEquippedGearInfo()
-    if not self.GearSlots then
-        DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
-        return
-    end
-    
-    DebugPrint("UpdateEquippedGearInfo: Enchants collapsed -", self.db.profile.enchants.collapse)
-    for _, slot in ipairs(self.GearSlots) do
-        local slotID = slot:GetID()
-        if not slot.PGVCharSlot then
-            ---@type PGVCharSlotMixin
-            slot.PGVCharSlot = CreateFrame("Frame", "PGVSlot"..slotID, slot, "PGVCharSlotTemplate")
+    ---Wrapper function to execute when not in AddOn lockdown. Checked every 1 second
+    ---@param timer FunctionContainer
+    local function update(timer)
+        if not InCombatLockdown() then
+            if not self.GearSlots then
+                DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
+                return
+            end
+            
+            DebugPrint("UpdateEquippedGearInfo: Enchants collapsed -", self.db.profile.enchants.collapse)
+            for _, slot in ipairs(self.GearSlots) do
+                local slotID = slot:GetID()
+                if not slot.PGVCharSlot then
+                    ---@type PGVCharSlotMixin
+                    slot.PGVCharSlot = CreateFrame("Frame", "PGVSlot"..slotID, slot, "PGVCharSlotTemplate")
+                else
+                    slot.PGVCharSlot:UpdateSlotInfo()
+                end
+                slot.PGVCharSlot:SetFontOptions()
+            end
+            -- Manually force a stats update to update item level decimal places and stat ordering if needed
+            PaperDollFrame_UpdateStats()
+            if timer and not timer:IsCancelled() then timer:Cancel() end
         else
-            slot.PGVCharSlot:UpdateSlotInfo()
+            DebugPrint("UpdateEquippedGearInfo: Combat lockdown active, retrying in 1 second")
         end
-        slot.PGVCharSlot:SetFontOptions()
     end
-    -- Manually force a stats update to update item level decimal places and stat ordering if needed
-    PaperDollFrame_UpdateStats()
+
+    C_Timer.NewTicker(1, update)
 end
