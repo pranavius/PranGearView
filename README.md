@@ -1,6 +1,9 @@
 # PranGearView
 *A lightweight, customizable way to view your equipped gear*
 
+[![Discord](https://img.shields.io/badge/join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/rqXW2cenWg)
+[![Patreon](https://img.shields.io/badge/support-F96854?style=for-the-badge&logo=patreon)](https://patreon.com/cw/Pranavius)
+
 ## Highlights
 - Allows for a wide range of text customization (size, color, outline, and more to come!)
 - Lets you know when items are missing sockets, gems, and enchants
@@ -18,12 +21,12 @@
 As mentioned earlier, this AddOn was developed to work on Blizzard's default Character Info UI, so this may cause unexpected interactions when run with other AddOns or UI packs. If you would like to report any issues, please reach out with a description of the problem along with a list of all AddOns that were enabled when this was observed. Screenshots can also be helpful in troubleshooting and fixing these types of issues.
 
 ### Current Locales/Languages Supported:
-- English (US)
-- French (FR)
-- Portuguese (BR)
-- German (DE)
-- Russian (RU) [*partial*]
-- Chinese (TW) [*partial*]
+- English (`enUS`)
+- French (`frFR`)
+- Portuguese (`ptBR`)
+- German (`deDE`)
+- Russian (`ruRU`) [*partial*]
+- Traditional Chinese (`zhTW`) [*partial*]
 
 ## Usage
 You can use the options window to modify all available options. To open the options window from the Chat window, type the slash command `/pgv`.
@@ -78,16 +81,9 @@ The goal of this AddOn is to provide maximum customization capabilities on the d
 - Displaying additional useful stats (such as GCD) in Character Stats pane
 - Reordering all stats in the Character Stats pane
 
-## Development
-To report any bugs or request additional features, please open a new issue in the [GitHub repository](https://github.com/pranavius/PranGearView/issues). Before doing so, please review the list of currently open issues to see if there is already one that matches yours.
+## Connect
+Feedback on this AddOn or any others that I develop/maintain is always welcome. Bug reports or request additional features If you enjoy using any of my AddOns and would like to support future development, it is greatly appreciated.
 
-If you would like to contribute to development, please clone the repository locally and open a pull request with your proposed changes.
-
-## Contact
-**Twitter/X**: [PranaviusWoW](https://x.com/pranaviuswow)
-
-**GitHub**: [Pranavius](https://github.com/pranavius)
-
-**Email**: [pranavius1@gmail.com](mailto:pranavius1@gmail.com)
-
-**Discord**: [Pranlabs](https://discord.gg/Vj3D5GeQZh)
+[![GitHub](https://img.shields.io/badge/github-000000?style=for-the-badge&logo=github)](https://github.com/pranavius)
+[![X](https://img.shields.io/badge/@PranaviusWoW-000000?style=for-the-badge&logo=x)](https://x.com/PranaviusWoW)
+[![Email](https://img.shields.io/badge/email-ffffff?style=for-the-badge&logo=gmail)](mailto:pranavius1@gmail.com)
