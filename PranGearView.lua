@@ -1791,7 +1791,7 @@ function AddOn:UpdateEquippedGearInfo()
     ---Wrapper function to execute when not in AddOn lockdown. Checked every 1 second
     ---@param timer FunctionContainer
     local function update(timer)
-        if not InCombatLockdown() then
+        if not self.IsAddOnCurrentlyRestricted() then
             if not self.GearSlots then
                 DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
                 return
