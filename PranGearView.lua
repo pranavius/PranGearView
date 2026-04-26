@@ -1673,6 +1673,7 @@ function AddOn:OnInitialize()
                 self.inspectHookSetup = true
                 InspectFrame:HookScript("OnHide", function()
                     self.inspectedUnitGUID = nil
+                    self.noUnitTokenMessagePrinted = false
                     ClearInspectPlayer()
                     for _, slotName in ipairs(self.InspectInfo.slots) do
                         local slot = _G[slotName]
