@@ -1,3 +1,9 @@
+**2.0.7**
+- Additional modifications to stop Lua errors from appearing during Mythic+, instanced encounters, etc.
+- Modified message shown when certain inspected character options cannot be enforced as well as when it is displayed.
+- Fixed minor display issues with durability
+- Clean up codebase
+
 **2.0.6**
 - Increase scope of AddOn restriction checks for viewing gear info (active M+ dungeon, encounter, restricted maps)
 

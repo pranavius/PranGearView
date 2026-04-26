@@ -14,6 +14,7 @@ function PGVCharSlotMixin:OnLoad()
     self.Embellishment:SetScript("OnHide", function() self:OnHideEmbellishment() end)
     self.DurabilityBar:SetScript("OnShow", function() self:OnShowDurabilityBar() end)
     self.DurabilityBar:SetScript("OnHide", function() self:OnHideDurabilityBar() end)
+    self.Durability:SetScript("OnShow", function() self:OnShowDurabilityText() end)
     self:UpdateSlotInfo()
 end
 
@@ -460,7 +461,7 @@ function PGVCharSlotMixin:GetEmbellishment(slot, item)
     local isEmbellished = false
     if tooltip and tooltip.lines then
         for _, ttdata in pairs(tooltip.lines) do
-            if ttdata and ttdata.leftText:find("Embellished") then
+            if ttdata and ttdata.leftText and ttdata.leftText:find("Embellished") then
                 self.Embellishment:ClearAllPoints()
                 if AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem then
                     if AddOn.db.profile.durability.showAsBar then
