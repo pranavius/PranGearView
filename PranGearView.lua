@@ -415,7 +415,7 @@ local OptionsTable = {
                             AddOn:HandleEquipmentOrSettingsChange()
                         end
                     end,
-                    disabled = function() return not AddOn.db.profile.upgradeTrack.show or not AddOn.db.profile.itemLevel.useCustomColor end,
+                    disabled = function() return not AddOn.db.profile.upgradeTrack.show or not AddOn.db.profile.upgradeTrack.useCustomColor end,
                     hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 },
                 resetUpgradeTrackCustomColor = {

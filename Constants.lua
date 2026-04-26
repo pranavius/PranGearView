@@ -291,7 +291,7 @@ AddOn.ExpansionInfo = {
             CharacterMainHandSlot,
             CharacterSecondaryHandSlot,
             "InspectHeadSlot",
-            "InspectShoulderlot",
+            "InspectShoulderSlot",
             "InspectChestSlot",
             "InspectLegsSlot",
             "InspectFeetSlot",

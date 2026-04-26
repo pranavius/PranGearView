@@ -68,7 +68,7 @@ function PGVInspectSlotMixin:UpdateSlotInfo()
         end
         
         if AddOn.db.profile.inspect.showEmbellishments then
-            self:GetEmbellishments(slot, item)
+            self:GetEmbellishment(slot, item)
         elseif self.Embellishment:IsShown() then
             self.Embellishment:Hide()
         end
@@ -376,12 +376,12 @@ end
 ---Show an icon/indicator for a gear slot containing an embellished item
 ---@param slot ItemSlot Gear slot frame
 ---@param item ItemMixin Equipped item
-function PGVInspectSlotMixin:GetEmbellishments(slot, item)
+function PGVInspectSlotMixin:GetEmbellishment(slot, item)
     local tooltip = C_TooltipInfo.GetHyperlink(item:GetItemLink())
+    local isEmbellished = false
     if tooltip and tooltip.lines then
         for _, ttdata in pairs(tooltip.lines) do
-            if ttdata and ttdata.leftText:find("Embellished") then
-                self.EmbellishmentShadow:Show()
+            if ttdata and ttdata.leftText and ttdata.leftText:find("Embellished") then
                 -- Main embellishment star
                 self.Embellishment:ClearAllPoints()
                 if AddOn.db.profile.itemLevel.show and AddOn.db.profile.itemLevel.onItem then
@@ -394,15 +394,14 @@ function PGVInspectSlotMixin:GetEmbellishments(slot, item)
                     self.Embellishment:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
                 end
                 DebugPrint("GetEmbellishment: Embellishment found on slot", ColorText(slot:GetName(), "Heirloom"))
-                self.Embellishment:Show()
-            else
-                self.EmbellishmentShadow:Hide()
-                self.Embellishment:Hide()
+                isEmbellished = true
             end
         end
     else
         DebugPrint("GetEmbellishment: Tooltip information not obtained for slot", ColorText(slot:GetName(), "Heirloom"))
     end
+
+    if isEmbellished then self.Embellishment:Show() else self.Embellishment:Hide() end
 end
 
 ---Shows embellishment shadow texture when embellishment is shown
