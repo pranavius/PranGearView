@@ -87,6 +87,17 @@ function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     return specID, role
 end
 
+function AddOn:CachePlayerStatValues()
+    if not C_Secrets.ShouldUnitStatsBeSecret("player") then
+        for _, statFrame in pairs({ CharacterStatsPane:GetChildren() }) do
+            ---@cast statFrame CharacterStatFrame
+            if statFrame.Label and statFrame.Label:GetText() ~= nil then
+                self.StatsCache[statFrame.Label:GetText():gsub(":", "")] = statFrame.numericValue
+            end
+        end
+    end
+end
+
 ---Reorders stats in the Character Info window based on the custom order defined in the Character Stats options
 function AddOn:ReorderStatFramesBySpec()
     local specID, role = self:GetCharacterCurrentSpecIDAndRole()
@@ -96,7 +107,7 @@ function AddOn:ReorderStatFramesBySpec()
     for _, statFrame in pairs({ CharacterStatsPane:GetChildren() }) do
         ---@cast statFrame CharacterStatFrame
         if statFrame.Label then
-            statFrames[#statFrames + 1] = statFrame
+            tinsert(statFrames, statFrame)
         end
     end
 
@@ -142,11 +153,12 @@ end
 function AddOn:ShowDecimalStatValues()
     for _, frame in pairs({ CharacterStatsPane:GetChildren() }) do
         ---@cast frame CharacterStatFrame
-        if frame.Label and frame.numericValue then
+        if frame.Label then
+            local cleanStatName = frame.Label:GetText() and frame.Label:GetText():gsub(":", "") or nil
             -- decimal in the numeric value indicates a secondary/tertiary stat (main stats don't have decimal parts from what I've seen)
             -- search for decimal with punctuation character (%p)
-            if tostring(frame.numericValue):match("%p") then
-                frame.Value:SetFormattedText("%."..self.db.profile.characterStats.decimalPlaces.."f%%", frame.numericValue)
+            if cleanStatName and self.StatsCache[cleanStatName] and tostring(self.StatsCache[cleanStatName]):match("%p") then
+                frame.Value:SetFormattedText("%."..self.db.profile.characterStats.decimalPlaces.."f%%", self.StatsCache[cleanStatName])
             end
         end
     end

@@ -1593,6 +1593,20 @@ local SlashOptions = {
 
 local SlashCmds = { "prangearview", "pgv" }
 
+---@type table<string, number> A table to store stat values as non-secret numbers so that they can be used to display stats as desired even when AddOn restrictions are enabled
+AddOn.StatsCache = {
+    [STAT_CRITICAL_STRIKE] = nil,
+    [STAT_HASTE] = nil,
+    [STAT_MASTERY] = nil,
+    [STAT_VERSATILITY] = nil,
+    [STAT_AVOIDANCE] = nil,
+    [STAT_LIFESTEAL] = nil,
+    [STAT_SPEED] = nil,
+    [STAT_ARMOR] = nil,
+    [STAT_BLOCK] = nil,
+    [STAT_PARRY] = nil,
+}
+
 function AddOn:OnInitialize()
     -- Load database
 	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", self.DatabaseDefaults, true)
@@ -1604,8 +1618,8 @@ function AddOn:OnInitialize()
     text = addonName,
     icon = "Interface/AddOns/PranGearView/Media/PranGearViewIcon",
     OnClick = function()
-      -- Open options window
-      Settings.OpenToCategory(self.categoryID)
+      -- Open options window when not restricted
+      if not self:IsAddOnCurrentlyRestricted() then Settings.OpenToCategory(self.categoryID) end
     end,
     OnTooltipShow = function(tt)
       tt:AddLine(addonName)
@@ -1659,7 +1673,6 @@ function AddOn:OnInitialize()
                 self.inspectHookSetup = true
                 InspectFrame:HookScript("OnHide", function()
                     self.inspectedUnitGUID = nil
-                    self.noUnitTokenMessagePrinted = false
                     ClearInspectPlayer()
                     for _, slotName in ipairs(self.InspectInfo.slots) do
                         local slot = _G[slotName]
@@ -1708,6 +1721,12 @@ function AddOn:OnInitialize()
         end
     end)
 
+    -- When the Character Stats Pane is shown, attempt to fetch character stat values
+    -- Should succeed as long as player stats are not currently secret
+    CharacterStatsPane:HookScript("OnShow", function()
+        self:CachePlayerStatValues()
+    end)
+
     -- Whenever the options window is opened, clear the lastSelectedSpecID entry from the database so that
     -- it shows the character's current specialization options by default
     SettingsPanel:HookScript("OnShow", function()
@@ -1730,7 +1749,7 @@ end
 function AddOn.HandlePGVSlashCmd(cmd, input)
     input = strtrim(input)
     if input == "" then
-        Settings.OpenToCategory(AddOn.categoryID)
+        if not AddOn:IsAddOnCurrentlyRestricted() then Settings.OpenToCategory(AddOn.categoryID) end
     elseif input == "help" then
         LibStub("AceConfigCmd-3.0"):HandleCommand(cmd, addonName, "")
         -- Mimic the Ace3 command description format to indicate that no argument opens the addon options
@@ -1788,33 +1807,22 @@ end
 
 ---Updates information displayed in the Character Info window
 function AddOn:UpdateEquippedGearInfo()
-    ---Wrapper function to execute when not in AddOn lockdown. Checked every 1 second
-    ---@param timer FunctionContainer
-    local function update(timer)
-        if not self.IsAddOnCurrentlyRestricted() then
-            if not self.GearSlots then
-                DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
-                return
-            end
-            
-            DebugPrint("UpdateEquippedGearInfo: Enchants collapsed -", self.db.profile.enchants.collapse)
-            for _, slot in ipairs(self.GearSlots) do
-                local slotID = slot:GetID()
-                if not slot.PGVCharSlot then
-                    ---@type PGVCharSlotMixin
-                    slot.PGVCharSlot = CreateFrame("Frame", "PGVSlot"..slotID, slot, "PGVCharSlotTemplate")
-                else
-                    slot.PGVCharSlot:UpdateSlotInfo()
-                end
-                slot.PGVCharSlot:SetFontOptions()
-            end
-            -- Manually force a stats update to update item level decimal places and stat ordering if needed
-            PaperDollFrame_UpdateStats()
-            if timer and not timer:IsCancelled() then timer:Cancel() end
-        else
-            DebugPrint("UpdateEquippedGearInfo: Combat lockdown active, retrying in 1 second")
-        end
+    if not self.GearSlots then
+        DebugPrint("UpdateEquippedGearInfo: Gear slots table not readable")
+        return
     end
-
-    C_Timer.NewTicker(1, update)
+    
+    DebugPrint("UpdateEquippedGearInfo: Enchants collapsed -", self.db.profile.enchants.collapse)
+    for _, slot in ipairs(self.GearSlots) do
+        local slotID = slot:GetID()
+        if not slot.PGVCharSlot then
+            ---@type PGVCharSlotMixin
+            slot.PGVCharSlot = CreateFrame("Frame", "PGVSlot"..slotID, slot, "PGVCharSlotTemplate")
+        else
+            slot.PGVCharSlot:UpdateSlotInfo()
+        end
+        slot.PGVCharSlot:SetFontOptions()
+    end
+    -- Manually force a stats update to update item level decimal places and stat ordering if needed
+    if not C_Secrets.ShouldUnitStatsBeSecret("player") then PaperDollFrame_UpdateStats() end
 end

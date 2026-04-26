@@ -311,8 +311,7 @@ end
 ---@return boolean `true` if any of these restricted states are active, `false` otherwise
 function AddOn.IsAddOnCurrentlyRestricted()
     local RType = Enum.AddOnRestrictionType
-	return C_RestrictedActions.IsAddOnRestrictionActive(RType.Map)
-	or C_RestrictedActions.IsAddOnRestrictionActive(RType.Encounter)
+	return C_RestrictedActions.IsAddOnRestrictionActive(RType.Encounter)
 	or C_RestrictedActions.IsAddOnRestrictionActive(RType.ChallengeMode)
 	or C_RestrictedActions.IsAddOnRestrictionActive(RType.PvPMatch)
 	or InCombatLockdown()

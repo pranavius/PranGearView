@@ -30,13 +30,6 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
         self.inspectedUnitGUID = unitGUID
     end
     local unitToken = UnitTokenFromGUID(self.inspectedUnitGUID)
-    -- self.noUnitTokenMessagePrinted prevents the message from spamming the chat on every INSPECT_READY event or inspected unit gear update
-    if not unitToken and not self.noUnitTokenMessagePrinted then
-        print(ColorText("Pran Gear View:", "Heirloom"), L["Inspect details may be limited during combat or an active Mythic+ run."])
-        self.noUnitTokenMessagePrinted = true
-    elseif unitToken and self.noUnitTokenMessagePrinted then
-        self.noUnitTokenMessagePrinted = false
-    end
     DebugPrint("UpdateInspectedGearInfo: Inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
     if not self.IsAddOnCurrentlyRestricted() then
         for _, slotName in ipairs(self.InspectInfo.slots) do
@@ -59,7 +52,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
             InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
             if not unitToken then
-                DebugPrint("UpdateInspectedGearInfo: Cannot resolve unit token from GUID, skipping average item level")
+                print(ColorText("Pran Gear View:", "Heirloom"), WARNING_FONT_COLOR:WrapTextInColorCode("Certain options for inspected characters cannot be enforced at the moment due to in-game AddOn restrictions."))
                 return
             end
             DebugPrint("UpdateInspectedGearInfo: Inspected unit token -", ColorText(unitToken, "Heirloom"))
