@@ -282,6 +282,13 @@ end
 
 PlayerGetTimerunningSeasonID = PlayerGetTimerunningSeasonID or function() return nil end
 
+---Returns `true` when the current character is a Timerunning/Remix character.
+---Used for hiding Options Menu items for gear information not applicable to Remix events.
+---@return boolean
+function AddOn:IsTimerunningCharacter()
+    return PlayerGetTimerunningSeasonID() ~= nil
+end
+
 ---Dynamically determine whether upgrade track info and relevant AddOn options should be shown on the current character due to other constraints (e.g. WoW Remix)
 ---@return boolean result
 function AddOn:AreUpgradeTracksShownForCharacter()

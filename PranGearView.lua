@@ -41,7 +41,7 @@ local OptionsTable = {
                 AddOn.db.profile.upgradeTrack.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
+            hidden = function() return AddOn:IsTimerunningCharacter() end
         },
         showGems = {
             type = "toggle",
@@ -53,7 +53,7 @@ local OptionsTable = {
                 AddOn.db.profile.gems.show = val
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return not AddOn:AreGemsShownForCharacter() end
+            hidden = function() return AddOn:IsTimerunningCharacter() end
         },
         showEnchants = {
             type = "toggle",
@@ -70,7 +70,7 @@ local OptionsTable = {
                 end
                 AddOn:HandleEquipmentOrSettingsChange()
             end,
-            hidden = function() return not AddOn:AreEnchantsShownForCharacter() or false end
+            hidden = function() return AddOn:IsTimerunningCharacter() end
         },
         showDurability = {
             type = "toggle",
@@ -436,7 +436,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.upgradeTrack.useCustomColor end
                 }
             },
-            hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
+            hidden = function() return AddOn:IsTimerunningCharacter() end
         },
         gemOptions = {
             type = "group",
@@ -497,7 +497,7 @@ local OptionsTable = {
                     order = orderCounter()
                 }
             },
-            hidden = function() return not AddOn:AreGemsShownForCharacter() end
+            hidden = function() return AddOn:IsTimerunningCharacter() end
         },
         enchantOptions = {
             type = "group",
@@ -673,7 +673,7 @@ local OptionsTable = {
                     hidden = function() return not AddOn.db.profile.enchants.useCustomColor end
                 }
             },
-            hidden = function() return not AddOn:AreEnchantsShownForCharacter() end
+            hidden = function() return AddOn:IsTimerunningCharacter() end
         },
         durabilityOptions = {
             type = "group",
@@ -956,7 +956,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                         end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return not AddOn:AreUpgradeTracksShownForCharacter() end
+                    hidden = function() return AddOn:IsTimerunningCharacter() end
                 },
                 showInspectGems = {
                     type = "toggle",
@@ -969,7 +969,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return not AddOn:AreGemsShownForCharacter() end
+                    hidden = function() return AddOn:IsTimerunningCharacter() end
                 },
                 showInspectEnchants = {
                     type = "toggle",
@@ -982,7 +982,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return not AddOn:AreEnchantsShownForCharacter() end
+                    hidden = function() return AddOn:IsTimerunningCharacter() end
                 },
                 showInspectEmbellishments = {
                     type = "toggle",
@@ -996,7 +996,7 @@ local OptionsTable = {
                         AddOn:HandleEquipmentOrSettingsChange()
                     end,
                     disabled = function() return not AddOn.db.profile.inspect.show end,
-                    hidden = function() return not AddOn:AreEmbellishmentsShownForCharacter() end
+                    hidden = function() return AddOn:IsTimerunningCharacter() end
                 },
             }
         },
@@ -1091,7 +1091,7 @@ local OptionsTable = {
                         AddOn:InitializeCustomSpecStatOrderDB(specID, true)
                     end,
                     disabled = function()
-                        local specID, role = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
+                        local specID = AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
                         if AddOn.db.profile.characterStats.customSpecStatOrders[specID] == nil then AddOn:InitializeCustomSpecStatOrderDB(specID, true) end
                         local dbStatOrder = AddOn.db.profile.characterStats.customSpecStatOrders[specID]
                         for stat, order in pairs(dbStatOrder) do
