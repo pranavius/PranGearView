@@ -3,7 +3,7 @@ local addonName, AddOn = ...
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
----@enum DKEnchantAbbr
+---@type DKEnchantAbbr
 AddOn.DKEnchantAbbr = {
     Razorice = L["Razorice"],
     Sanguination = L["Sang"],
@@ -17,8 +17,7 @@ AddOn.DKEnchantAbbr = {
 ---A list of tables containing text replacement patterns for enchants
 ---@type TextReplacement[]
 AddOn.EnchantTextReplacements = {
-    { original = "%%", replacement = "%%%%" }, -- Required for proper string formatting (% is a special character in formatting)
-    { original = "+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
+    { original = "%+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
     { original = L["Enchanted: "], replacement = "" },
     { original = L["Enchant"].." %a+ %- ", replacement = "" },
     -- TWW Enchants

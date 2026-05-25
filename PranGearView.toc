@@ -33,9 +33,13 @@ Modules\CharacterStats.lua
 Modules\InspectFrame.lua
 Modules\Credits.lua
 
+Templates\PGVSlotMixinBase.lua
 Templates\PGVCharSlotMixin.lua
 Templates\PGVCharSlotTemplate.xml
 Templates\PGVInspectSlotMixin.lua
 Templates\PGVInspectSlotTemplate.xml
+
+Options\OptionsTable.lua
+Options\SlashOptions.lua
 
 PranGearView.lua

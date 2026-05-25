@@ -5,7 +5,7 @@ if not L then return end
 
 ------------ Options ------------
 L["Item Level"] = "Gegenstandsstufe"
-L["Upgrade Track"] = "Sture aufwerten"
+L["Upgrade Track"] = "Stufe aufwerten"
 L["Gems"] = "Sockel & Edelsteine"
 L["Enchants"] = "Verzauberungen"
 L["Durability"] = "Haltbarkeit"
@@ -222,7 +222,7 @@ L["Rsrc"] = "Einf."
 L["Absorption"] = "Absorption"
 L["Absorb"] = "Absorb"
 --- Upgrade Tracks ---
-L["Upgrade Level: "] = "Up c "
+L["Upgrade Level: "] = "Stufe aufwerten: "
 L["Explorer "] = "Forscher "
 L["Adventurer "] = "Abenteurer "
 L["Veteran "] = "Veteran "

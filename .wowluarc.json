@@ -1,0 +1,9 @@
+{
+    "ignore": [".release/", "Localization/"],
+    "library": ["Libs/"],
+    "flavors": ["retail"],
+    "globals": {
+        "read": ["PranGearView*", "PGV*", "*Mixin"],
+        "write": ["PranGearView*", "PGV*", "*Mixin"]
+    }
+}
