@@ -1,6 +1,6 @@
 local addonName, AddOn = ...
----@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+---@cast AddOn PranGearView
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 AddOn.CurrentExpac = AddOn.ExpansionInfo.Midnight
@@ -154,14 +154,14 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     if isInspect then
         local token = InspectFrame.unit
         if UnitGUID(InspectFrame.unit) ~= self.inspectedUnitGUID then token = UnitTokenFromGUID(self.inspectedUnitGUID) end
-        if not token then return false, {} end
+        if not token then return false, { itemGUID = nil, itemID = nil, itemLink = nil, itemLocation = nil } end
         local itemLink = GetInventoryItemLink(token, slotID)
         if itemLink then return true, Item:CreateFromItemLink(itemLink) end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
-        return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
+        return not item:IsItemEmpty(), item:IsItemEmpty() and { itemGUID = nil, itemID = nil, itemLink = nil, itemLocation = nil } or item
     end
-    return false, {}
+    return false, { itemGUID = nil, itemID = nil, itemLink = nil, itemLocation = nil }
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it

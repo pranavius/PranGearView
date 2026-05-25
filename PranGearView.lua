@@ -1,6 +1,6 @@
 local addonName, AddOn = ...
----@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+---@cast AddOn PranGearView
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local LDB = LibStub("LibDataBroker-1.1")
 local LDBIcon  = LibStub("LibDBIcon-1.0")
@@ -21,10 +21,12 @@ AddOn.StatsCache = {
     [STAT_PARRY] = nil,
 }
 
+---Ace3 entry point. Initializes the database, registers the LDB launcher and minimap icon,
+---wires up slash commands and options, and hooks the Blizzard frames needed to render gear info.
 function AddOn:OnInitialize()
     -- Load database
-	self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", self.DatabaseDefaults, true)
-    self:MigrateProfileSettings(self.db)
+	 ---@diagnostic disable-next-line: field-type-mismatch
+    self.db = LibStub("AceDB-3.0"):New("PranGearViewDB", self.DatabaseDefaults, true)
 
     -- Data broker registration for minimap icon
     local broker = LDB:NewDataObject(addonName, {
@@ -40,6 +42,7 @@ function AddOn:OnInitialize()
       tt:AddLine(L["Open the AddOn options window"], 1,1,1)
     end,
   })
+---@diagnostic disable-next-line: type-mismatch
   LDBIcon:Register(addonName, broker, self.db.profile.general.minimap)
 
     -- Setup config options
@@ -238,5 +241,5 @@ function AddOn:UpdateEquippedGearInfo()
         slot.PGVCharSlot:SetFontOptions()
     end
     -- Manually force a stats update to update item level decimal places and stat ordering if needed
-    if not C_Secrets.ShouldUnitStatsBeSecret("player") then PaperDollFrame_UpdateStats() end
+    if not C_Secrets.ShouldUnitStatsBeSecret() then PaperDollFrame_UpdateStats() end
 end

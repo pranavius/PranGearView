@@ -1,9 +1,10 @@
 local addonName, AddOn = ...
----@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
+---@cast AddOn PranGearView
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 local button = CreateFrame("Button", "PGVToggleEnchantButton", CharacterFrame.TitleContainer, "UIPanelCloseButton")
+---@cast button PGVToggleEnchantButton
 local buttonDim = CharacterFrame.TitleContainer:GetHeight() - 1
 button:SetSize(buttonDim, buttonDim)
 button:SetFrameStrata("TOOLTIP")

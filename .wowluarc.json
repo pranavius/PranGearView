@@ -2,6 +2,13 @@
     "ignore": [".release/", "Localization/"],
     "library": ["Libs/"],
     "flavors": ["retail"],
+    "diagnostics": {
+        "disable": ["generic-constraint-mismatch"],
+        "severity": {
+            "missing-fields": "error",
+            "undefined-field": "info"
+        }
+    },
     "globals": {
         "read": ["PranGearView*", "PGV*", "*Mixin"],
         "write": ["PranGearView*", "PGV*", "*Mixin"]

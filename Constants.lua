@@ -1,6 +1,6 @@
 local addonName, AddOn = ...
----@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
 AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
+---@cast AddOn PranGearView
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 ---@type DKEnchantAbbr
@@ -14,7 +14,6 @@ AddOn.DKEnchantAbbr = {
     UnendingThirst = L["Unend Thirst"]
 }
 
----A list of tables containing text replacement patterns for enchants
 ---@type TextReplacement[]
 AddOn.EnchantTextReplacements = {
     { original = "%+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
@@ -152,7 +151,6 @@ AddOn.frfrEnchantTextReplacements = {
     { original = "au score de ", replacement = "" },
 }
 
----A list of tables containing text replacement patterns for upgrade tracks
 ---@type TextReplacement[]
 AddOn.UpgradeTextReplacements = {
     { original = L["Upgrade Level: "], replacement = "" },
@@ -164,7 +162,6 @@ AddOn.UpgradeTextReplacements = {
     { original = L["Myth "], replacement = "M" }
 }
 
----@enum HexColorPresets
 AddOn.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
@@ -191,8 +188,7 @@ AddOn.HexColorPresets = {
     Warrior = "C69B6D"
 }
 
----A list of character gear slots visible in the Character Info window
----@type ItemSlot[]
+---@type CharacterSlot[]
 AddOn.GearSlots = {
     CharacterHeadSlot,
     CharacterNeckSlot,
@@ -253,10 +249,7 @@ AddOn.InspectInfo = {
 }
 
 ---@type table<string, ExpansionDetails>
----@see Frame for generic definition along without common functions and variables available for all Frames
----@see InspectInfo for a list of Frame names available when the Inspect window is open
 AddOn.ExpansionInfo = {
-    ---@type ExpansionDetails
     Midnight = {
         NameAbbr = "MIDNIGHT",
         LevelCap = 90,
@@ -302,7 +295,6 @@ AddOn.ExpansionInfo = {
         ShieldEnchantAvailable = false,
         OffhandEnchantAvailable = false
     },
-    ---@type ExpansionDetails
     TheWarWithin = {
         NameAbbr = "TWW",
         LevelCap = 80,
@@ -353,7 +345,7 @@ AddOn.ExpansionInfo = {
     }
 }
 
----@enum SpecOptionKeys
+---@type table<number, string>
 AddOn.SpecOptionKeys = {
     [250] = L["Blood"],
     [251] = L["Frost"],
@@ -415,15 +407,13 @@ AddOn.DefaultTankStatOrder = {
     ["Block"] = 10
 }
 
----@enum TooltipDataType
 AddOn.TooltipDataType = {
     UpgradeTrack = 32,
     Gem = 3,
     Enchant = 15,
-
 }
 
----@type table<string, RaceGender>
+---@type RaceIcons
 AddOn.RaceIcons = {
     Human = {
         Male = "RaceIcon128-Human-Male",
@@ -524,10 +514,13 @@ AddOn.RaceIcons = {
     Earthen = {
         Male = "RaceIcon128-Earthen-Male",
         Female = "RaceIcon128-Earthen-Female"
-    }
+    },
+    -- Haranir = {
+    --     Male = "RaceIcon128-Haranir-Male",
+    --     Female = "RaceIcon128-Haranir-Female"
+    -- }
 }
 
----@enum ClassIcons
 AddOn.ClassIcons = {
     DeathKnight = "ClassIcon-DeathKnight",
     DemonHunter = "ClassIcon-DemonHunter",
