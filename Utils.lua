@@ -1,6 +1,6 @@
 local addonName, AddOn = ...
+---@class PranGearView
 AddOn = LibStub("AceAddon-3.0"):GetAddon(addonName)
----@cast AddOn PranGearView
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 
 AddOn.CurrentExpac = AddOn.ExpansionInfo.Midnight
@@ -108,7 +108,7 @@ function AddOn.RoundNumber(val)
 end
 
 ---Formats `texture` to be displayed in-game using square dimensions
----@param texture number the ID for the texture to render
+---@param texture number|string the ID (number) or filename (string) for the texture to render
 ---@param dim? number The value to be used for the height & width of the texture. Default value is `15`
 ---@return string text A formatted string wrapped in syntax to display `texture`
 function AddOn.GetTextureString(texture, dim)
