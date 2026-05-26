@@ -1,3 +1,4 @@
+----- Constants -----
 ---@class DKEnchantAbbr
 ---@field Razorice string
 ---@field Sanguination string
@@ -11,37 +12,38 @@
 ---@field original string
 ---@field replacement string
 
+---@class HexColorPresets
+---@field Poor string
+---@field Uncommon string
+---@field Rare string
+---@field Epic string
+---@field Legendary string
+---@field Artifact string
+---@field Heirloom string
+---@field Info string
+---@field PrevSeasonGear string
+---@field Error string
+---@field DeathKnight string
+---@field DemonHunter string
+---@field Druid string
+---@field Evoker string
+---@field Hunter string
+---@field Mage string
+---@field Monk string
+---@field Paladin string
+---@field Priest string
+---@field Rogue string
+---@field Shaman string
+---@field Warlock string
+---@field Warrior string
+
 ---@alias CharacterSlot CharacterHeadSlot|CharacterNeckSlot|CharacterShoulderSlot|CharacterBackSlot|CharacterChestSlot|CharacterShirtSlot|CharacterTabardSlot|CharacterWristSlot|CharacterHandsSlot|CharacterWaistSlot|CharacterLegsSlot|CharacterFeetSlot|CharacterFinger0Slot|CharacterFinger1Slot|CharacterTrinket0Slot|CharacterTrinket1Slot|CharacterMainHandSlot|CharacterSecondaryHandSlot
 
 ---@alias InspectSlotName "InspectHeadSlot"|"InspectNeckSlot"|"InspectShoulderSlot"|"InspectBackSlot"|"InspectChestSlot"|"InspectShirtSlot"|"InspectTabardSlot"|"InspectWristSlot"|"InspectHandsSlot"|"InspectWaistSlot"|"InspectLegsSlot"|"InspectFeetSlot"|"InspectFinger0Slot"|"InspectFinger1Slot"|"InspectTrinket0Slot"|"InspectTrinket1Slot"|"InspectMainHandSlot"|"InspectSecondaryHandSlot"
-
----@class ItemSlot: Button
----@field IsLeftSide boolean?
----@field PGVCharSlot PGVCharSlotMixin
----@field PGVInspectSlot PGVInspectSlotMixin
-
----@class CharacterStatFrame: Frame
----@field Label FontString
----@field Value FontString
----@field Background Texture
----@field numericValue number
-
 ---@class InspectInfo
 ---@field slots InspectSlotName[]
 ---@field leftSideSlots InspectSlotName[]
 ---@field bottomSlots InspectSlotName[]
-
----@class ExpansionDetails
----@field NameAbbr string
----@field LevelCap number
----@field SocketableSlots (CharacterSlot|InspectSlotName)[]
----@field AuxSocketableSlots (CharacterSlot|InspectSlotName)[]
----@field MaxSocketsPerItem number
----@field MaxAuxSocketsPerItem number
----@field MaxEmbellishments number
----@field EnchantableSlots (CharacterSlot|InspectSlotName)[]
----@field ShieldEnchantAvailable boolean
----@field OffhandEnchantAvailable boolean
 
 ---@alias RaceIcon { Male: string, Female: string }
 ---@class RaceIcons
@@ -87,40 +89,40 @@
 ---@field Warlock string
 ---@field Warrior string
 
----@class HexColorPresets
----@field Poor string
----@field Uncommon string
----@field Rare string
----@field Epic string
----@field Legendary string
----@field Artifact string
----@field Heirloom string
----@field Info string
----@field PrevSeasonGear string
----@field Error string
----@field DeathKnight string
----@field DemonHunter string
----@field Druid string
----@field Evoker string
----@field Hunter string
----@field Mage string
----@field Monk string
----@field Paladin string
----@field Priest string
----@field Rogue string
----@field Shaman string
----@field Warlock string
----@field Warrior string
+---@class OutlineOption
+---@field key string
+---@field value string
+
+----- Utils -----
+
+---@class ItemSlot: Button
+---@field IsLeftSide boolean?
+---@field PGVCharSlot PGVCharSlotMixin
+---@field PGVInspectSlot PGVInspectSlotMixin
+
+---@class CharacterStatFrame: Frame
+---@field Label FontString
+---@field Value FontString
+---@field Background Texture
+---@field numericValue number
+
+---@class ExpansionDetails
+---@field NameAbbr string
+---@field LevelCap number
+---@field SocketableSlots (CharacterSlot|InspectSlotName)[]
+---@field AuxSocketableSlots (CharacterSlot|InspectSlotName)[]
+---@field MaxSocketsPerItem number
+---@field MaxAuxSocketsPerItem number
+---@field MaxEmbellishments number
+---@field EnchantableSlots (CharacterSlot|InspectSlotName)[]
+---@field ShieldEnchantAvailable boolean
+---@field OffhandEnchantAvailable boolean
 
 ---@class Credit
 ---@field name string
 ---@field race? string
 ---@field class? string
 ---@field color string
-
----@class OutlineOption
----@field key string
----@field value string
 
 ---@class PGVSlotMixinBase: Frame
 ---@field ItemLevel FontString
@@ -141,8 +143,24 @@
 
 ---@class PGVToggleEnchantButton: Button
 ---@field tooltipText string
----@field UpdateTooltip fun(self: PGVToggleEnchantButton)
----@field UpdateTooltipText fun(self: PGVToggleEnchantButton, text: string)
+
+---@class InspectFrame
+---@field unit string?
+
+---@class BackdropOptions
+---@field bgFile? string
+---@field edgeFile? string
+---@field tile? boolean
+---@field tileSize? number
+---@field tileEdge? boolean
+---@field edgeSize? number
+---@field insets? { left: number, right: number, top: number, bottom: number }
+
+
+---@class StatusBar
+---@field SetBackdrop fun(self: StatusBar, options?: BackdropOptions)
+---@field SetBackdropBorderColor fun(self: StatusBar, r: number, g: number, b: number, a?: number)
+---@field GetValue fun(self: StatusBar): number
 
 ---@class InspectPaperDollItemsFrame
 ---@field PGVAverageItemLevel FontString?
@@ -218,7 +236,7 @@
 ---@field decimalPlacesForCharacteriLvl number
 ---@field hideShirtTabardInfo boolean
 ---@field increaseCharacterInfoSize boolean
----@field minimap { hide: boolean }
+---@field minimap LibDBIcon.button.DB
 
 ---@class PGVDatabaseProfile
 ---@field itemLevel PGVDatabaseProfileItemLevel
@@ -241,71 +259,34 @@
 ---@field Gem number
 ---@field Enchant number
 
+---@alias Stat "Critical Strike"|"Haste"|"Mastery"|"Versatility"|"Avoidance"|"Leech"|"Speed"|"Armor"|"Block"|"Parry"
+
 ---@class PranGearView: AceAddon, AceConsole-3.0, AceEvent-3.0
----@field db PGVDatabase
 ---@field categoryID number
+---@field db PGVDatabase
+---@field frfrEnchantTextReplacements TextReplacement[]
 ---@field inspectHookSetup boolean
 ---@field inspectedUnitGUID string?
 ---@field noUnitTokenMessagePrinted boolean
----@field StatsCache table<string, number?>
----@field DatabaseDefaults PGVDatabaseDefaults
----@field DKEnchantAbbr DKEnchantAbbr
----@field EnchantTextReplacements TextReplacement[]
 ---@field ptbrEnchantTextReplacements TextReplacement[]
----@field frfrEnchantTextReplacements TextReplacement[]
----@field UpgradeTextReplacements TextReplacement[]
----@field HexColorPresets HexColorPresets
----@field GearSlots CharacterSlot[]
----@field InspectInfo InspectInfo
----@field ExpansionInfo table<string, ExpansionDetails>
+---@field ClassIcons ClassIcons
 ---@field CurrentExpac ExpansionDetails
----@field SpecOptionKeys table<number, string>
+---@field DatabaseDefaults PGVDatabaseDefaults
 ---@field DefaultStatOrder DefaultStatOrder
 ---@field DefaultTankStatOrder DefaultTankStatOrder
----@field TooltipDataType PGVTooltipDataType
----@field RaceIcons RaceIcons
----@field ClassIcons ClassIcons
----@field OutlineOptions OutlineOption[]
----@field SlashOptions table
----@field SlashCmds string[]
+---@field DKEnchantAbbr DKEnchantAbbr
+---@field EnchantTextReplacements TextReplacement[]
+---@field ExpansionInfo table<string, ExpansionDetails>
+---@field GearSlots CharacterSlot[]
+---@field HexColorPresets HexColorPresets
+---@field InspectInfo InspectInfo
 ---@field OptionsTable table
+---@field OutlineOptions OutlineOption[]
 ---@field PGVToggleEnchantButton PGVToggleEnchantButton
----@field ColorText fun(text: string|number, color: string): string
----@field DebugPrint fun(...)
----@field DebugTable fun(tbl: table)
----@field CompressTable fun(tbl: table)
----@field GetTableSize fun(tbl: table): number
----@field ConvertRGBToHex fun(r: number, g: number, b: number): string
----@field ConvertHexToRGB fun(hex: string): number?, number?, number?
----@field RoundNumber fun(val: number): number
----@field GetTextureString fun(texture: number|string, dim?: number): string
----@field GetTextureAtlasString fun(atlas: string, dim?: number): string
----@field CreateOptionsSpacer fun(order: number, width?: number): table
----@field IsAddOnCurrentlyRestricted fun(): boolean
----@field HandlePGVSlashCmd fun(cmd: string, input: string)
----@field OnInitialize fun(self: PranGearView)
----@field AdjustCharacterInfoWindowSize fun(self: PranGearView)
----@field HandleEquipmentOrSettingsChange fun(self: PranGearView)
----@field UpdateEquippedGearInfo fun(self: PranGearView)
----@field UpdateInspectedGearInfo fun(self: PranGearView, unitGUID: string, forceUpdate?: boolean)
----@field IsItemEquippedInSlot fun(self: PranGearView, slot: ItemSlot, isInspect?: boolean): boolean, ItemMixin|table
----@field IsSocketableSlot fun(self: PranGearView, slot: ItemSlot): boolean
----@field IsAuxSocketableSlot fun(self: PranGearView, slot: ItemSlot): boolean
----@field IsEnchantableSlot fun(self: PranGearView, slot: ItemSlot): boolean
----@field AbbreviateText fun(self: PranGearView, text: string, replacementTable: TextReplacement[]): string
----@field GetLegacyEnchantTextureID fun(self: PranGearView, enchantTextAbbr: string): number
----@field IsTimerunningCharacter fun(self: PranGearView): boolean
----@field AreUpgradeTracksShownForCharacter fun(self: PranGearView): boolean
----@field AreGemsShownForCharacter fun(self: PranGearView): boolean
----@field AreEnchantsShownForCharacter fun(self: PranGearView): boolean
----@field AreEmbellishmentsShownForCharacter fun(self: PranGearView): boolean
----@field GetStatOrderValuesHandler fun(self: PranGearView): number[]
----@field GetStatOrderHandler fun(self: PranGearView, item: string|table): number
----@field SetStatOrderHandler fun(self: PranGearView, item: string|table, val: any)
----@field GetCharacterCurrentSpecIDAndRole fun(self: PranGearView): number?, string?
----@field InitializeCustomSpecStatOrderDB fun(self: PranGearView, selectedSpecID?: number, reset?: boolean)
----@field GetSpecAndRoleForSelectedCharacterStatsOption fun(self: PranGearView): number?, string?
----@field CachePlayerStatValues fun(self: PranGearView)
----@field ReorderStatFramesBySpec fun(self: PranGearView)
----@field ShowDecimalStatValues fun(self: PranGearView)
----@field BuildCreditsGroup fun(self: PranGearView): table
+---@field RaceIcons RaceIcons
+---@field SlashCmds string[]
+---@field SlashOptions table
+---@field SpecOptionKeys table<number, string>
+---@field StatsCache table<Stat, number>
+---@field TooltipDataType PGVTooltipDataType
+---@field UpgradeTextReplacements TextReplacement[]

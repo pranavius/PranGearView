@@ -162,6 +162,7 @@ AddOn.UpgradeTextReplacements = {
     { original = L["Myth "], replacement = "M" }
 }
 
+---@type HexColorPresets
 AddOn.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
@@ -407,6 +408,7 @@ AddOn.DefaultTankStatOrder = {
     ["Block"] = 10
 }
 
+---@enum PGVTooltipDataType
 AddOn.TooltipDataType = {
     UpgradeTrack = 32,
     Gem = 3,
@@ -515,10 +517,10 @@ AddOn.RaceIcons = {
         Male = "RaceIcon128-Earthen-Male",
         Female = "RaceIcon128-Earthen-Female"
     },
-    -- Haranir = {
-    --     Male = "RaceIcon128-Haranir-Male",
-    --     Female = "RaceIcon128-Haranir-Female"
-    -- }
+    Haranir = {
+        Male = "RaceIcon128-Haranir-Male",
+        Female = "RaceIcon128-Haranir-Female"
+    }
 }
 
 AddOn.ClassIcons = {

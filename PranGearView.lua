@@ -42,7 +42,6 @@ function AddOn:OnInitialize()
       tt:AddLine(L["Open the AddOn options window"], 1,1,1)
     end,
   })
----@diagnostic disable-next-line: type-mismatch
   LDBIcon:Register(addonName, broker, self.db.profile.general.minimap)
 
     -- Setup config options

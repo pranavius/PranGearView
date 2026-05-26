@@ -112,6 +112,7 @@ function PGVCharSlotMixin:DefineDurabilityBar(slot, isBgBar, durPercent)
         bar:SetFrameLevel(slot:GetFrameLevel() + 2)
         bar:SetValue(durPercent * 100)
         bar:SetScript("OnEnter", function(durBar)
+            ---@cast durBar StatusBar
             GameTooltip:SetOwner(durBar, "ANCHOR_TOP")
             GameTooltip:AddLine(L["Durability: "]..AddOn.RoundNumber(durBar:GetValue()).."%", 1, 1, 1)
             GameTooltip:Show()
