@@ -1,4 +1,4 @@
-## Interface: 120005
+## Interface: 120007, 120005
 ## Title: PranGearView
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
@@ -33,9 +33,13 @@ Modules\CharacterStats.lua
 Modules\InspectFrame.lua
 Modules\Credits.lua
 
+Templates\PGVSlotMixinBase.lua
 Templates\PGVCharSlotMixin.lua
 Templates\PGVCharSlotTemplate.xml
 Templates\PGVInspectSlotMixin.lua
 Templates\PGVInspectSlotTemplate.xml
+
+Options\OptionsTable.lua
+Options\SlashOptions.lua
 
 PranGearView.lua

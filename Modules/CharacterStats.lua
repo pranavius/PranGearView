@@ -41,8 +41,8 @@ function AddOn:SetStatOrderHandler(item, val)
 end
 
 ---Returns specialization ID and role for the logged-in character
----@return number specID The specialization ID for the currently logged in character
----@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
+---@return number? specID The specialization ID for the currently logged in character
+---@return string? role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 ---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetCharacterCurrentSpecIDAndRole()
     local specIndex = C_SpecializationInfo.GetSpecialization()
@@ -73,8 +73,8 @@ function AddOn:InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
 end
 
 ---Returns specialization ID and role for the chosen spec whenever it is changed in the options menu
----@return number specID The specialization ID for the currently logged in character
----@return string role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
+---@return number? specID The specialization ID for the currently logged in character
+---@return string? role The role that the current specialization serves ("TANK", "DAMAGER", "HEALER")
 ---@see SpecOptionKeys for a list of specializations and their IDs
 function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     local specID, role
@@ -87,8 +87,10 @@ function AddOn:GetSpecAndRoleForSelectedCharacterStatsOption()
     return specID, role
 end
 
+---Caches the player's enhancement stat values keyed by stat label so that subsequent
+---updates to decimal display do not require re-reading values from restricted frames.
 function AddOn:CachePlayerStatValues()
-    if not C_Secrets.ShouldUnitStatsBeSecret("player") then
+    if not C_Secrets.ShouldUnitStatsBeSecret() then
         for _, statFrame in pairs({ CharacterStatsPane:GetChildren() }) do
             ---@cast statFrame CharacterStatFrame
             if statFrame.Label and statFrame.Label:GetText() ~= nil then
@@ -100,7 +102,7 @@ end
 
 ---Reorders stats in the Character Info window based on the custom order defined in the Character Stats options
 function AddOn:ReorderStatFramesBySpec()
-    local specID, role = self:GetCharacterCurrentSpecIDAndRole()
+    local specID = self:GetCharacterCurrentSpecIDAndRole()
     local statFrames = {}
     ---@type CharacterStatFrame[]
     local enhancementStatFrames = {}
@@ -149,7 +151,7 @@ function AddOn:ReorderStatFramesBySpec()
     end
 end
 
----Updates enhancement stat frame values to include decimal percentages when the relevant option is enabled 
+---Updates enhancement stat frame values to include decimal percentages when the relevant option is enabled
 function AddOn:ShowDecimalStatValues()
     for _, frame in pairs({ CharacterStatsPane:GetChildren() }) do
         ---@cast frame CharacterStatFrame

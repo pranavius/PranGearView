@@ -35,6 +35,7 @@ local specialThanks = {
 }
 
 ---Generates the Credits section of the AddOn options dynamically based on tables of contributors and special mentions (special thanks)
+---@return table credits The AceConfig group table describing the Credits options page
 function AddOn:BuildCreditsGroup()
     local credits = {
         type = "group",

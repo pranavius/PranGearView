@@ -67,7 +67,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             DebugPrint("UpdateInspectedGearInfo: Include \"Avg: \" label")
             itemLevelText = L["Avg"]..": "..itemLevelText
         end
-        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetFormattedText("|c"..classHexWithAlpha..itemLevelText.."|r")
+        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetText("|c"..classHexWithAlpha..itemLevelText.."|r")
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Show()
     elseif InspectPaperDollItemsFrame.PGVAverageItemLevel then
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()

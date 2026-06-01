@@ -108,7 +108,7 @@ function AddOn.RoundNumber(val)
 end
 
 ---Formats `texture` to be displayed in-game using square dimensions
----@param texture number the ID for the texture to render
+---@param texture number|string the ID (number) or filename (string) for the texture to render
 ---@param dim? number The value to be used for the height & width of the texture. Default value is `15`
 ---@return string text A formatted string wrapped in syntax to display `texture`
 function AddOn.GetTextureString(texture, dim)
@@ -154,14 +154,14 @@ function AddOn:IsItemEquippedInSlot(slot, isInspect)
     if isInspect then
         local token = InspectFrame.unit
         if UnitGUID(InspectFrame.unit) ~= self.inspectedUnitGUID then token = UnitTokenFromGUID(self.inspectedUnitGUID) end
-        if not token then return false, {} end
+        if not token then return false, { itemGUID = nil, itemID = nil, itemLink = nil, itemLocation = nil } end
         local itemLink = GetInventoryItemLink(token, slotID)
         if itemLink then return true, Item:CreateFromItemLink(itemLink) end
     else
         local item = Item:CreateFromEquipmentSlot(slot:GetID())
-        return not item:IsItemEmpty(), item:IsItemEmpty() and {} or item
+        return not item:IsItemEmpty(), item:IsItemEmpty() and { itemGUID = nil, itemID = nil, itemLink = nil, itemLocation = nil } or item
     end
-    return false, {}
+    return false, { itemGUID = nil, itemID = nil, itemLink = nil, itemLocation = nil }
 end
 
 ---Indicates whether an item equipped in a particular gear slot can have a gem socket added to it

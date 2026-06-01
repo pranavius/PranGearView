@@ -119,5 +119,16 @@ L["Please follow the development guidelines outlined in the README document."] =
 L["Special Thanks"] = "Особая благодарность"
 L["Connect"] = "Связаться"
 
+------------ Upgrade Tracks ------------
+-- TODO: fill in the exact ruRU Blizzard in-tooltip strings for upgrade level prefix and track names
+-- Without these, Russian clients will see the unabbreviated tooltip text on each gear slot
+-- L["Upgrade Level: "] = ""
+-- L["Explorer "]   = ""
+-- L["Adventurer "] = ""
+-- L["Veteran "]    = ""
+-- L["Champion "]   = ""
+-- L["Hero "]       = ""
+-- L["Myth "]       = ""
+
 ------------ Messages ------------
 L["Inspect details may be limited during combat or an active Mythic+ run."] = "Детали осмотра могут быть ограничены в бою или во время активного забега Mythic+."
