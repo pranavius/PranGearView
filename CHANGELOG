@@ -1,3 +1,6 @@
+**2.0.10**
+- Updated method for determining inspected characters' average item level to (hopefully) be more reliabile and not display warning messages.
+
 **2.0.9**
 - Updated compatibility to support Patch 12.0.7
 - Internal code cleanup and reorganization (does not affect AddOn functionality)

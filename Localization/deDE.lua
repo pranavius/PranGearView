@@ -277,4 +277,3 @@ L["Special Thanks"] = "Besonderer Dank"
 L["Connect"] = "Verbindung"
 
 ------------ Messages ------------
-L["Inspect details may be limited during combat or an active Mythic+ run."] = "Inspektionsdetails können während des Kampfes oder eines aktiven Mythic+ Runs eingeschränkt sein."

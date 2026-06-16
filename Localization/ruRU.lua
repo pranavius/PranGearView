@@ -131,4 +131,3 @@ L["Connect"] = "Связаться"
 -- L["Myth "]       = ""
 
 ------------ Messages ------------
-L["Inspect details may be limited during combat or an active Mythic+ run."] = "Детали осмотра могут быть ограничены в бою или во время активного забега Mythic+."

@@ -403,4 +403,3 @@ L["Special Thanks"] = "Special Thanks"
 L["Connect"] = "Connect"
 
 ------------ Messages ------------
-L["Inspect details may be limited during combat or an active Mythic+ run."] = "Inspect details may be limited during combat or an active Mythic+ run."

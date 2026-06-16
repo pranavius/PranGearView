@@ -29,7 +29,12 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     if self.inspectedUnitGUID ~= unitGUID then
         self.inspectedUnitGUID = unitGUID
     end
-    local unitToken = UnitTokenFromGUID(self.inspectedUnitGUID)
+    -- Fall back to UnitTokenFromGUID if InspectFrame.unit no longer matches the unit being inspected (e.g. inspecting a different raid member).
+    -- UnitTokenFromGUID might return a secret, so hopefully it's never needed #prayge
+    local unitToken = InspectFrame.unit
+    if not unitToken or UnitGUID(unitToken) ~= self.inspectedUnitGUID then
+        unitToken = UnitTokenFromGUID(self.inspectedUnitGUID)
+    end
     DebugPrint("UpdateInspectedGearInfo: Inspecting: ", ColorText(select(6, GetPlayerInfoByGUID(self.inspectedUnitGUID)), "Uncommon"), ColorText(self.inspectedUnitGUID, "Heirloom"))
     for _, slotName in ipairs(self.InspectInfo.slots) do
         ---@type ItemSlot
@@ -47,18 +52,18 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
     if self.db.profile.inspect.showAvgILvl then
         if InspectPaperDollItemsFrame and not InspectPaperDollItemsFrame.PGVAverageItemLevel then
             InspectPaperDollItemsFrame.PGVAverageItemLevel = InspectPaperDollItemsFrame:CreateFontString("PGVAverageItemLevel", "OVERLAY", "GameTooltipHeader")
+            InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
         end
-        InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
-        InspectPaperDollItemsFrame.PGVAverageItemLevel:SetPoint("BOTTOMLEFT", InspectPaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
         if not unitToken then
-            if not self.noUnitTokenMessagePrinted then
-                print(ColorText("Pran Gear View:", "Heirloom"), WARNING_FONT_COLOR:WrapTextInColorCode("Certain options for inspected characters cannot be enforced at the moment due to in-game AddOn restrictions."))
-                self.noUnitTokenMessagePrinted = true
+            -- If we've switched to a different unit we never got data for but unitToken is not available, hide the avg. item level FontString
+            -- instead of retaining the previous unit's item level and class coloring (misleading).
+            if InspectPaperDollItemsFrame.PGVAverageItemLevel.inspectedGUID ~= self.inspectedUnitGUID then
+                InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()
             end
+            DebugPrint("UpdateInspectedGearInfo: No usable unit token available, leaving average item level as-is")
             return
         end
 
-        if self.noUnitTokenMessagePrinted then self.noUnitTokenMessagePrinted = false end
         DebugPrint("UpdateInspectedGearInfo: Inspected unit token -", ColorText(unitToken, "Heirloom"))
         local itemLevelText = tostring(C_PaperDollInfo.GetInspectItemLevel(unitToken))
         local classFile = select(2, UnitClass(unitToken))
@@ -68,6 +73,7 @@ function AddOn:UpdateInspectedGearInfo(unitGUID, forceUpdate)
             itemLevelText = L["Avg"]..": "..itemLevelText
         end
         InspectPaperDollItemsFrame.PGVAverageItemLevel:SetText("|c"..classHexWithAlpha..itemLevelText.."|r")
+        InspectPaperDollItemsFrame.PGVAverageItemLevel.inspectedGUID = self.inspectedUnitGUID
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Show()
     elseif InspectPaperDollItemsFrame.PGVAverageItemLevel then
         InspectPaperDollItemsFrame.PGVAverageItemLevel:Hide()

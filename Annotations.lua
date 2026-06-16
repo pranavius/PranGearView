@@ -267,7 +267,6 @@
 ---@field frfrEnchantTextReplacements TextReplacement[]
 ---@field inspectHookSetup boolean
 ---@field inspectedUnitGUID string?
----@field noUnitTokenMessagePrinted boolean
 ---@field ptbrEnchantTextReplacements TextReplacement[]
 ---@field ClassIcons ClassIcons
 ---@field CurrentExpac ExpansionDetails

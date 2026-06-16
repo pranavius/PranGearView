@@ -335,4 +335,3 @@ L["Special Thanks"] = "Obrigados especias"
 L["Connect"] = "Conectar"
 
 ------------ Messages ------------
-L["Inspect details may be limited during combat or an active Mythic+ run."] = "Os detalhes de inspeção podem ser limitados durante o combate ou uma corrida Mythic+ ativa."

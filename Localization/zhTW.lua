@@ -333,4 +333,3 @@ L["Special Thanks"] = "特別感謝"
 L["Connect"] = "連結"
 
 ------------ Messages ------------
-L["Inspect details may be limited during combat or an active Mythic+ run."] = "在戰鬥或活躍的秘境+期間，檢視詳細資料可能受到限制。"

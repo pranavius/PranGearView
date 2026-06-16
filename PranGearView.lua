@@ -86,10 +86,8 @@ function AddOn:OnInitialize()
     self:RegisterEvent("INSPECT_READY", function(_, unitGUID)
         if InspectFrame and InspectFrame.unit then
             if not self.inspectHookSetup then
-                self.inspectHookSetup = true
                 InspectFrame:HookScript("OnHide", function()
                     self.inspectedUnitGUID = nil
-                    self.noUnitTokenMessagePrinted = false
                     ClearInspectPlayer()
                     for _, slotName in ipairs(self.InspectInfo.slots) do
                         local slot = _G[slotName]
@@ -102,6 +100,7 @@ function AddOn:OnInitialize()
                     end
                     DebugPrint("InspectFrame OnHide: Cleared InspectPlayer and inspectedUnitGUID variable")
                 end)
+                self.inspectHookSetup = true
             end
 
             self:UpdateInspectedGearInfo(unitGUID)
