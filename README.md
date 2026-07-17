@@ -1,8 +1,15 @@
 # PranGearView
-*A lightweight, customizable way to view your equipped gear*
+
+*A customizable way to view your equipped gear within the default character UI*
+
+Feedback on this AddOn or any others that I develop/maintain is always welcome. If you enjoy using any of my AddOns and would like to support future development, it is greatly appreciated.
 
 [![Discord](https://img.shields.io/badge/join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/rqXW2cenWg)
+[![Linktree](https://img.shields.io/badge/connect-000000?style=for-the-badge&logo=linktree&logoColor=43E55E)](https://discord.gg/rqXW2cenWg)
 [![Patreon](https://img.shields.io/badge/support-F96854?style=for-the-badge&logo=patreon)](https://patreon.com/cw/Pranavius)
+[![Buy Me a Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000)](http://buymeacoffee.com/pranavius)
+
+---
 
 ## Highlights
 - Allows for a wide range of text customization (size, color, outline, and more to come!)
@@ -80,10 +87,3 @@ The goal of this AddOn is to provide maximum customization capabilities on the d
 - Per-spec gear "wishlist" to track items you want to obtain
 - Displaying additional useful stats (such as GCD) in Character Stats pane
 - Reordering all stats in the Character Stats pane
-
-## Connect
-Feedback on this AddOn or any others that I develop/maintain is always welcome. If you enjoy using any of my AddOns and would like to support future development, it is greatly appreciated.
-
-[![GitHub](https://img.shields.io/badge/github-000000?style=for-the-badge&logo=github)](https://github.com/pranavius)
-[![X](https://img.shields.io/badge/@PranaviusWoW-000000?style=for-the-badge&logo=x)](https://x.com/PranaviusWoW)
-[![Email](https://img.shields.io/badge/email-ffffff?style=for-the-badge&logo=gmail)](mailto:pranavius1@gmail.com)
