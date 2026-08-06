@@ -333,5 +333,3 @@ L["If you would like to contribute to development, you can find the repository o
 L["Please follow the development guidelines outlined in the README document."] = "Merci de suivre les lignes de conduite dévelopé dans le document README."
 L["Special Thanks"] = "Remérciement Spécial "
 L["Connect"] = "Connecte"
-
------------- Messages ------------

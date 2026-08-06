@@ -1,3 +1,8 @@
+**2.1.0**
+- Updated compatibility for Patch 12.1.0
+- Added new German translations for previously untranslated options and Midnight enchant text (credit: *Rubyurek*)
+  - Also refined some existing translations for improved clarity and consistency
+
 **2.0.10**
 - Updated method for determining inspected characters' average item level to (hopefully) be more reliabile and not display warning messages.
 
@@ -82,19 +87,19 @@
 **1.8.0**
 - Update for Patch 11.2
 - Remove head enchant check
-- Add localization for `deDE`
+- Add localization for `deDE` (credit: *StummerKater*)
 
 **1.7.2**
 - Correct minor issues with `frFR` localization
 
 **1.7.1**
-- Added localization support for `frFR`
+- Added localization support for `frFR` (credit: *Azaron*)
 
 **1.7.0**
 - Updated the embellishment indicator to be more prominent (increased size and added a shadow behind it when visible)
 - Added an option to show or hide the button that toggles enchant text in the Character Info window
 - Updated localizations for supported languages
-- Added partial localization support for `zhTW`
+- Added partial localization support for `zhTW` (credit: *BlueNightSky*)
 - Updated code documentation
 
 **1.6.1**
@@ -181,7 +186,7 @@
 - Enable live updates to Character Info window when Character Info and Settings windows are both open
 - Remove less important characters and spaces in text to improve readability
 - Adjust upgrade track position for main hand and off-hand equipment
-- Add language support for Portuguese (BR) and Russian (RU)
+- Add language support for Portuguese (credit: *Lirfdam*) and Russian (credit: *ZamestoTV*)
 - Add color customization options for upgrade track when shown (shows in item quality color by default)
 
 **v1.1.1**

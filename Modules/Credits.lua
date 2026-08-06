@@ -17,7 +17,8 @@ local contributors = {
     { name = "Lirfdam", color = AddOn.HexColorPresets.Priest },
     { name = "BlueNightSky", color = AddOn.HexColorPresets.Priest },
     { name = "Azaran", color = AddOn.HexColorPresets.Priest },
-    { name = "StummerKater", color = AddOn.HexColorPresets.Priest }
+    { name = "StummerKater", color = AddOn.HexColorPresets.Priest },
+    { name = "Rubyurek", color = AddOn.HexColorPresets.Priest }
 }
 
 ---A list of individuals who have not contributed code, but have been very helpful in providing feedback and support for the AddOn

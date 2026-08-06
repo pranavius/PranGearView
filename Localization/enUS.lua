@@ -127,16 +127,25 @@ L["Hide Enchant Text"] = "Hide Enchant Text"
 L["Invalid hexadecimal color code provided."] = "Invalid hexadecimal color code provided."
 
 ------------ Text Abbreviations ------------
---- DK Runes ---
-L["Razorice"] = "Razorice"
-L["Sang"] = "Sang"
-L["Spellward"] = "Spellward"
-L["Apoc"] = "Apoc"
-L["Fall Crus"] = "Fall Crus"
-L["Stnskn Garg"] = "Stnskn Garg"
-L["Unend Thirst"] = "Unend Thirst"
---- Enchant Text ---
 L["Enchanted: "] = "Enchanted: "
+
+--- Enchant Text (DK Runes) ---
+L["Rune of Razorice"] = "Rune of Razorice"
+L["Razorice"] = "Razorice"
+L["Rune of Sanguination"] = "Rune of Sanguination"
+L["Sang"] = "Sang"
+L["Rune of Spellwarding"] = "Rune of Spellwarding"
+L["Spellward"] = "Spellward"
+L["Rune of the Apocalypse"] = "Rune of the Apocalypse"
+L["Apoc"] = "Apoc"
+L["Rune of the Fallen Crusader"] = "Rune of the Fallen Crusader"
+L["Fall Crus"] = "Fall Crus"
+L["Rune of the Stoneskin Gargoyle"] = "Rune of the Stoneskin Gargoyle"
+L["Stnskn Garg"] = "Stnskn Garg"
+L["Rune of Unending Thirst"] = "Rune of Unending Thirst"
+L["Unend Thirst"] = "Unend Thirst"
+
+--- Enchant Text (TWW) ---
 L["Radiant Critical Strike"] = "Radiant Critical Strike"
 L["Rad Crit"] = "Rad Crit"
 L["Radiant Haste"] = "Radiant Haste"
@@ -166,11 +175,8 @@ L["Silk Leech"] = "Silk Leech"
 L["Whisper of Silken Speed"] = "Whisper of Silken Speed"
 L["Silk Spd"] = "Silk Spd"
 L["Chant of Armored Avoidance"] = "Chant of Armored Avoidance"
-L["Arm Avoid"] = "Arm Avoid"
 L["Chant of Armored Leech"] = "Chant of Armored Leech"
-L["Arm Leech"] = "Arm Leech"
 L["Chant of Armored Speed"] = "Chant of Armored Speed"
-L["Arm Spd"] = "Arm Spd"
 L["Scout's March"] = "Scout's March"
 L["Sco March"] = "Sco March"
 L["Defender's March"] = "Defender's March"
@@ -233,13 +239,8 @@ L["Lesser Infinite Stars"] = "Lesser Infinite Stars"
 L["Lssr Inf Star"] = "Lssr Inf Star"
 L["Greater Infinite Stars"] = "Greater Infinite Stars"
 L["Grtr Inf Star"] = "Grtr Inf Star"
-L["Rune of the Fallen Crusader"] = "Rune of the Fallen Crusader"
-L["Rune of Razorice"] = "Rune of Razorice"
-L["Rune of Sanguination"] = "Rune of Sanguination"
-L["Rune of Spellwarding"] = "Rune of Spellwarding"
-L["Rune of the Apocalypse"] = "Rune of the Apocalypse"
-L["Rune of the Stoneskin Gargoyle"] = "Rune of the Stoneskin Gargoyle"
-L["Rune of Unending Thirst"] = "Rune of Unending Thirst"
+
+--- Enchant Text (Midnight) ---
 L["Empowered"] = "Empowered"
 L["Emp"] = "Emp"
 L["Blessing of Speed"] = "Blessing of Speed"
@@ -306,6 +307,7 @@ L["Worldsoul Cradle"] = "Worldsoul Cradle"
 L["World Crad"] = "World Crad"
 L["Worldsoul Tenacity"] = "Worldsoul Tenacity"
 L["World Ten"] = "World Ten"
+
 --- Stats ---
 L["Stamina"] = ITEM_MOD_STAMINA_SHORT
 L["Stam"] = "Stam"
@@ -401,5 +403,3 @@ L["If you would like to contribute to development, you can find the repository o
 L["Please follow the development guidelines outlined in the README document."] = "Please follow the development guidelines outlined in the README document."
 L["Special Thanks"] = "Special Thanks"
 L["Connect"] = "Connect"
-
------------- Messages ------------

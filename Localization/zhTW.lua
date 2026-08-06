@@ -331,5 +331,3 @@ L["If you would like to contribute to development, you can find the repository o
 L["Please follow the development guidelines outlined in the README document."] = "請遵循 README 文檔中概述的開發準則。"
 L["Special Thanks"] = "特別感謝"
 L["Connect"] = "連結"
-
------------- Messages ------------
