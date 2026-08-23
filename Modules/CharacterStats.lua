@@ -157,10 +157,15 @@ function AddOn:ShowDecimalStatValues()
         ---@cast frame CharacterStatFrame
         if frame.Label then
             local cleanStatName = frame.Label:GetText() and frame.Label:GetText():gsub(":", "") or nil
-            -- decimal in the numeric value indicates a secondary/tertiary stat (main stats don't have decimal parts from what I've seen)
-            -- search for decimal with punctuation character (%p)
-            if cleanStatName and self.StatsCache[cleanStatName] and tostring(self.StatsCache[cleanStatName]):match("%p") then
-                frame.Value:SetFormattedText("%."..self.db.profile.characterStats.decimalPlaces.."f%%", self.StatsCache[cleanStatName])
+            -- Check for accidentally grabbed secret values and unset them to avoid taint error spam
+            if cleanStatName and self.StatsCache[cleanStatName] then
+                if issecretvalue(self.StatsCache[cleanStatName]) then
+                    self.StatsCache[cleanStatName] = nil
+                elseif tostring(self.StatsCache[cleanStatName]):match("%p") then
+                    -- decimal in the numeric value indicates a secondary/tertiary stat (main stats don't have decimal parts from what I've seen)
+                    -- search for decimal with punctuation character (%p)
+                    frame.Value:SetFormattedText("%."..self.db.profile.characterStats.decimalPlaces.."f%%", self.StatsCache[cleanStatName])
+                end
             end
         end
     end

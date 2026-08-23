@@ -1,3 +1,6 @@
+**2.1.1**
+- *Bug Fix:* Resolved an issue when viewing decimal stat values due to unintended storage of secret values in the AddOn's database
+
 **2.1.0**
 - Updated compatibility for Patch 12.1.0
 - Added new German translations for previously untranslated options and Midnight enchant text (credit: *Rubyurek*)
