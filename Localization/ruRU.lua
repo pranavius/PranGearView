@@ -122,10 +122,11 @@ L["Connect"] = "Связаться"
 ------------ Upgrade Tracks ------------
 -- TODO: fill in the exact ruRU Blizzard in-tooltip strings for upgrade level prefix and track names
 -- Without these, Russian clients will see the unabbreviated tooltip text on each gear slot
--- L["Upgrade Level: "] = ""
--- L["Explorer "]   = ""
--- L["Adventurer "] = ""
--- L["Veteran "]    = ""
--- L["Champion "]   = ""
--- L["Hero "]       = ""
--- L["Myth "]       = ""
+L["Upgrade Level: "] = "Уровень улучшения: "
+L["Explorer "]   = "Исследователь"
+L["Adventurer "] = "Искатель приключений "
+L["Veteran "]    = "Ветеран "
+L["Champion "]   = "Защитник "
+L["Hero "]       = "Герой "
+L["Myth "]       = "Легенда "
+
