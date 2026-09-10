@@ -1,5 +1,6 @@
 -- Localization provided by ZamestoTV
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "ruRU")
+local _, PGV = ...
+local L = PGV.NewLocale("ruRU")
 
 if not L then return end
 -- Первод ZamestoTV

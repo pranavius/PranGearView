@@ -1,5 +1,6 @@
 -- Localization provided by Azaron
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "frFR")
+local _, PGV = ...
+local L = PGV.NewLocale("frFR")
 
 if not L then return end
 

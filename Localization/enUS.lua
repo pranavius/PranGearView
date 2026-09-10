@@ -1,4 +1,5 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "enUS", true, true)
+local _, PGV = ...
+local L = PGV.NewLocale("enUS")
 
 if not L then return end
 

@@ -1,5 +1,6 @@
 -- Localization provided by StummerKater and Rubyurek
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "deDE")
+local _, PGV = ...
+local L = PGV.NewLocale("deDE")
 
 if not L then return end
 

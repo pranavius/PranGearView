@@ -1,5 +1,6 @@
 -- Localization provided by BlueNightSky
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "zhTW")
+local _, PGV = ...
+local L = PGV.NewLocale("zhTW")
 
 if not L then return end
 
