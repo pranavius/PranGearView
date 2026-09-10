@@ -1,5 +1,5 @@
-## Interface: 120100
-## Title: PranGearView
+## Interface: 120105, 120100
+## Title: PranGearView (rework)
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
 ## Author: @project-author@
