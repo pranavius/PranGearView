@@ -2,34 +2,19 @@ local _, PGV = ...
 
 PGVSlotOverlayMixin = {}
 
-local function PositionBottomUpgradeTrack(self, context)
-    local corner = context.isMainHand and "BOTTOMLEFT" or "BOTTOMRIGHT"
-    self.UpgradeTrack:ClearAllPoints()
-    self.UpgradeTrack:SetPoint(corner, self, corner, 0, 0)
-end
-
 local LAYOUTS = {
-    left = {
-        side = "LEFT",
-        myPoint = "TOPLEFT",
-        iconAnchor = "TOPRIGHT", iconOffsetX = 10, iconOffsetY = 0,
-        chainAnchor = "BOTTOMLEFT", chainOffsetX = 0, chainOffsetY = -1,
-        inlineOffsetX = 2.5,
-    },
-    right = {
-        side = "RIGHT",
-        myPoint = "TOPRIGHT",
-        iconAnchor = "TOPLEFT", iconOffsetX = -10, iconOffsetY = 0,
-        chainAnchor = "BOTTOMRIGHT", chainOffsetX = 0, chainOffsetY = -1,
-        inlineOffsetX = -2.5,
-    },
-    bottom = {
-        elements = { "Enchant", "Gems" },
-        myPoint = "BOTTOM",
-        iconAnchor = "TOP", iconOffsetX = 0, iconOffsetY = 2,
-        chainAnchor = "TOP", chainOffsetX = 0, chainOffsetY = 2,
-        positionUpgradeTrack = PositionBottomUpgradeTrack,
-    },
+    left = { side = "LEFT", opposite = "RIGHT", xOffset = 10, inlineXOffset = 2.5, yOffset = 7.5 },
+    right = { side = "RIGHT", opposite = "LEFT", xOffset = -10, inlineXOffset = -2.5, yOffset = 7.5 },
+}
+
+local DK_ENCH_ABBR_TEXTURES = {
+    [PGV.DKEnchantAbbr.Razorice] = 135842,
+    [PGV.DKEnchantAbbr.Sanguination] = 1778226,
+    [PGV.DKEnchantAbbr.Spellwarding] = 425952,
+    [PGV.DKEnchantAbbr.Apocalypse] = 237535,
+    [PGV.DKEnchantAbbr.FallenCrusader] = 135957,
+    [PGV.DKEnchantAbbr.StoneskinGargoyle] = 237480,
+    [PGV.DKEnchantAbbr.UnendingThirst] = 3163621,
 }
 
 function PGVSlotOverlayMixin:OnLoad()
@@ -46,101 +31,70 @@ function PGVSlotOverlayMixin:HideAllElements()
     self.DurabilityBar:Hide()
 end
 
-local function GetIconSideAnchor(layout)
-    local oppositePoint = layout.side == "LEFT" and "RIGHT" or "LEFT"
-    return layout.side, oppositePoint, layout.iconOffsetX
-end
-
 function PGVSlotOverlayMixin:PositionItemLevel()
     self.ItemLevel:ClearAllPoints()
-
-    local layout = LAYOUTS[self.context.category]
 
     if PGV.db.itemLevel.onItem then
         self.ItemLevel:SetPoint("CENTER", self, "TOP", 0, -10)
     elseif self.context.category == "bottom" then
         self.ItemLevel:SetPoint("CENTER", self, "TOP", 0, 10)
     else
-        local myPoint, targetPoint, xOffset = GetIconSideAnchor(layout)
-        self.ItemLevel:SetPoint(myPoint, self, targetPoint, xOffset, self.ItemLevel:GetHeight() / 1.5)
+        local layout = LAYOUTS[self.context.category]
+        self.ItemLevel:SetPoint(layout.side, self, layout.opposite, layout.xOffset, layout.yOffset)
     end
 end
 
-function PGVSlotOverlayMixin:PositionUpgradeTrackSide()
-    local layout = LAYOUTS[self.context.category]
+function PGVSlotOverlayMixin:PositionUpgradeTrack()
     self.UpgradeTrack:ClearAllPoints()
 
+    if self.context.category == "bottom" then
+        local sign = self.context.isMainHand and -1 or 1
+        self.UpgradeTrack:SetPoint("CENTER", self, "BOTTOM", sign * 40, 5)
+        return
+    end
+
+    local layout = LAYOUTS[self.context.category]
     if self.ItemLevel:IsShown() and not PGV.db.itemLevel.onItem then
-        local targetPoint = layout.side == "LEFT" and "RIGHT" or "LEFT"
-        self.UpgradeTrack:SetPoint(layout.side, self.ItemLevel, targetPoint, layout.inlineOffsetX, 0)
+        self.UpgradeTrack:SetPoint(layout.side, self.ItemLevel, layout.opposite, layout.inlineXOffset, 0)
     else
-        local myPoint, targetPoint, xOffset = GetIconSideAnchor(layout)
-        self.UpgradeTrack:SetPoint(myPoint, self, targetPoint, xOffset, self.UpgradeTrack:GetHeight() / 1.5)
+        self.UpgradeTrack:SetPoint(layout.side, self, layout.opposite, layout.xOffset, layout.yOffset)
     end
 end
 
 function PGVSlotOverlayMixin:PositionEnchant()
-    local layout = LAYOUTS[self.context.category]
-    if not layout.side then return end
-
     self.Enchant:ClearAllPoints()
-    local myPoint, targetPoint, xOffset = GetIconSideAnchor(layout)
-    self.Enchant:SetPoint(myPoint, self, targetPoint, xOffset, (self.ItemLevel:GetHeight() / 1.5) * -1)
+
+    if self.context.category == "bottom" then
+        local isMainHand = self.context.isMainHand
+        self.Enchant:SetPoint(isMainHand and "RIGHT" or "LEFT", self, isMainHand and "TOPRIGHT" or "TOPLEFT", 0, 20)
+        return
+    end
+
+    
+    local layout = LAYOUTS[self.context.category]
+    self.Enchant:SetPoint(layout.side, self, layout.opposite, layout.xOffset, -layout.yOffset)
 end
 
 function PGVSlotOverlayMixin:PositionGems()
-    local layout = LAYOUTS[self.context.category]
-    if not layout.side then return end
-
     self.Gems:ClearAllPoints()
-    if self.Enchant:IsShown() then
-        self.Gems:SetPoint(layout.myPoint, self.Enchant, layout.chainAnchor, layout.chainOffsetX, layout.chainOffsetY)
-    else
-        local myPoint, targetPoint, xOffset = GetIconSideAnchor(layout)
-        self.Gems:SetPoint(myPoint, self, targetPoint, xOffset, (self.ItemLevel:GetHeight() / 1.5) * -1)
+
+    if self.context.category == "bottom" then
+        local isMainHand = self.context.isMainHand
+        self.Gems:SetPoint(isMainHand and "RIGHT" or "LEFT", self.UpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+        return
     end
+    
+    local layout = LAYOUTS[self.context.category]
+    self.Gems:SetPoint(layout.side, self.UpgradeTrack, layout.opposite, layout.inlineXOffset, 0)
 end
 
 function PGVSlotOverlayMixin:PositionElements()
-    local layout = LAYOUTS[self.context.category]
-
-    if self.ItemLevel:IsShown() then
-        self:PositionItemLevel()
-    end
-
-    if self.Durability:IsShown() then
-        self.Durability:ClearAllPoints()
-        self.Durability:SetPoint("BOTTOM", self, "BOTTOM", 0, 2)
-    end
-
-    if self.UpgradeTrack:IsShown() then
-        if layout.positionUpgradeTrack then
-            layout.positionUpgradeTrack(self, self.context)
-        else
-            self:PositionUpgradeTrackSide()
-        end
-    end
-
-    if self.Enchant:IsShown() then
-        self:PositionEnchant()
-    end
-
-    if self.Gems:IsShown() then
-        self:PositionGems()
-    end
-
-    if layout.elements then
-        local previous, targetPoint, xOffset, yOffset = self, layout.iconAnchor, layout.iconOffsetX, layout.iconOffsetY
-        for _, key in ipairs(layout.elements) do
-            local element = self[key]
-            if element:IsShown() then
-                element:ClearAllPoints()
-                element:SetPoint(layout.myPoint, previous, targetPoint, xOffset, yOffset)
-                previous = element
-                targetPoint, xOffset, yOffset = layout.chainAnchor, layout.chainOffsetX, layout.chainOffsetY
-            end
-        end
-    end
+    self:PositionItemLevel()
+    self.Durability:ClearAllPoints()
+    self.Durability:SetPoint("BOTTOM", self, "BOTTOM", 0, 2)
+    self:PositionUpgradeTrack()
+    self:PositionEnchant()
+    self:PositionGems()
 end
 
 local function ResolveItemLevelColor(context, data)
@@ -164,6 +118,24 @@ local function ResolveItemLevelColor(context, data)
     return "FFFFFF"
 end
 
+local function ResolveEnchantText(rawText)
+    local text = PGV.AbbreviateText(rawText, PGV.EnchantTextReplacements)
+    if GetLocale() == "ptBR" then
+        text = PGV.AbbreviateText(text, PGV.ptbrEnchantTextReplacements)
+    elseif GetLocale() == "frFR" then
+        text = PGV.AbbreviateText(text, PGV.frfrEnchantTextReplacements)
+    end
+    text = strtrim(text)
+
+    local atlas = text:match("|A:(.-):")
+    if atlas then
+        text = text:gsub(" |A:.-|a", CreateAtlasMarkup(atlas, 15, 15))
+    else
+        text = text..CreateSimpleTextureMarkup(DK_ENCH_ABBR_TEXTURES[text] or 628564, 15, 15)
+    end
+    return text
+end
+
 function PGVSlotOverlayMixin:UpdateSlotInfo()
     local context = self.context
     local slotID = self:GetParent():GetID()
@@ -182,27 +154,31 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
         end
 
         if context.IsShowingUpgradeTrack() and data.upgradeTrack then
-            self.UpgradeTrack:SetText(PGV.ColorText(data.upgradeTrack.text, data.upgradeTrack.color))
+            local upgradeText = PGV.AbbreviateText(data.upgradeTrack.text, PGV.UpgradeTextReplacements)
+            self.UpgradeTrack:SetText(PGV.ColorText(upgradeText, data.upgradeTrack.color))
             self.UpgradeTrack:Show()
         end
 
         if context.IsShowingGems() and data.gems then
+            local isLeftSide = context.category == "left"
             local gemText = ""
             for _, gem in ipairs(data.gems) do
+                local icon
                 if gem.icon then
-                    gemText = gemText..CreateSimpleTextureMarkup(gem.icon, 15, 15)
+                    icon = CreateSimpleTextureMarkup(gem.icon, 15, 15)
                 elseif gem.socketType then
-                    gemText = gemText..CreateSimpleTextureMarkup("Interface/ItemSocketingFrame/UI-EmptySocket-"..gem.socketType, 15, 15)
+                    icon = CreateSimpleTextureMarkup("Interface/ItemSocketingFrame/UI-EmptySocket-"..gem.socketType, 15, 15)
+                else
+                    icon = CreateSimpleTextureMarkup(458977, 15, 15)
                 end
+                gemText = isLeftSide and (gemText..icon) or (icon..gemText)
             end
-            if gemText ~= "" then
-                self.Gems:SetText(gemText)
-                self.Gems:Show()
-            end
+            self.Gems:SetText(gemText)
+            self.Gems:Show()
         end
 
         if context.IsShowingEnchants() and data.enchant then
-            self.Enchant:SetText(data.enchant.text)
+            self.Enchant:SetText(ResolveEnchantText(data.enchant.text))
             self.Enchant:Show()
         end
 

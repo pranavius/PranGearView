@@ -12,9 +12,9 @@ PGV.DKEnchantAbbr = {
 }
 
 PGV.EnchantTextReplacements = {
-    { original = "%+", replacement = "" },
+    { original = "%+", replacement = "", isPattern = true },
     { original = L["Enchanted: "], replacement = "" },
-    { original = L["Enchant"].." %a+ %- ", replacement = "" },
+    { original = L["Enchant"].." %a+ %- ", replacement = "", isPattern = true },
     -- TWW Enchants
     { original = L["Radiant Critical Strike"], replacement = L["Rad Crit"] },
     { original = L["Radiant Haste"], replacement = L["Rad Hst"] },

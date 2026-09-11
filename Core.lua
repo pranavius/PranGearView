@@ -84,3 +84,15 @@ end
 function PGV.AreEmbellishmentsShownForCharacter()
     return PGV.db.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
 end
+
+function PGV.AbbreviateText(text, replacements)
+    for _, entry in ipairs(replacements) do
+        local pattern = entry.original
+        if not entry.isPattern then
+            pattern = (pattern:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1"))
+        end
+        local replacement = (entry.replacement:gsub("%%", "%%%%"))
+        text = text:gsub(pattern, replacement)
+    end
+    return text
+end
