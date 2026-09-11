@@ -30,3 +30,6 @@ Localization\deDE.lua
 Constants.lua
 Database.lua
 ItemData.lua
+
+Slots\SlotOverlay.lua
+Slots\SlotOverlay.xml

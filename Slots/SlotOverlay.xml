@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+    <Frame name="PGVSlotOverlayTemplate" mixin="PGVSlotOverlayMixin" setAllPoints="true" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="ItemLevel" inherits="GameFontNormalSmall" hidden="true"/>
+                <FontString parentKey="UpgradeTrack" inherits="GameFontNormalSmall" hidden="true"/>
+                <FontString parentKey="Gems" inherits="GameFontNormalSmall" hidden="true"/>
+                <FontString parentKey="Enchant" inherits="GameFontNormalSmall" hidden="true"/>
+                <FontString parentKey="Durability" inherits="GameFontNormalSmall" hidden="true"/>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="DurabilityBar" inherits="BackdropTemplate" hidden="true">
+                <Size y="4"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" x="2" y="2"/>
+                    <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+                </Anchors>
+                <BarTexture file="Interface/Buttons/WHITE8x8"/>
+            </StatusBar>
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+</Ui>
