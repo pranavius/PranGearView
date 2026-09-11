@@ -103,7 +103,7 @@ local function migrateFromAceDB(source, target)
     PGV.DebugPrint("Migrating AceDB profile", profileKey, "for", charKey)
 
     for key, value in pairs(profileData) do
-        target[key] = value
+        target[key] = type(value) == "table" and CopyTable(value) or value
     end
 
     target.migratedFromAceDB = true

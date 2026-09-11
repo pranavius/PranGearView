@@ -88,6 +88,36 @@ function PGVSlotOverlayMixin:PositionGems()
     self.Gems:SetPoint(layout.side, self.UpgradeTrack, layout.opposite, layout.inlineXOffset, 0)
 end
 
+function PGVSlotOverlayMixin:SetFontOptions()
+    if self.ItemLevel:IsShown() then
+        local font, size = self.ItemLevel:GetFont()
+        self.ItemLevel:SetFont(font, size, PGV.db.itemLevel.outline)
+        self.ItemLevel:SetTextScale(PGV.db.itemLevel.scale)
+    end
+
+    if self.UpgradeTrack:IsShown() then
+        local font, size = self.UpgradeTrack:GetFont()
+        self.UpgradeTrack:SetFont(font, size, PGV.db.upgradeTrack.outline)
+        self.UpgradeTrack:SetTextScale(0.9 * PGV.db.upgradeTrack.scale)
+    end
+
+    if self.Gems:IsShown() then
+        self.Gems:SetTextScale(PGV.db.gems.scale)
+    end
+
+    if self.Enchant:IsShown() then
+        local font, size = self.Enchant:GetFont()
+        self.Enchant:SetFont(font, size, PGV.db.enchants.outline)
+        self.Enchant:SetTextScale(0.9 * PGV.db.enchants.scale)
+    end
+
+    if self.Durability:IsShown() then
+        local font, size = self.Durability:GetFont()
+        self.Durability:SetFont(font, size, "OUTLINE")
+        self.Durability:SetTextScale(0.9 * PGV.db.durability.scale)
+    end
+end
+
 function PGVSlotOverlayMixin:PositionElements()
     self:PositionItemLevel()
     self.Durability:ClearAllPoints()
@@ -116,6 +146,51 @@ local function ResolveItemLevelColor(context, data)
         return CreateColor(r, g, b):GenerateHexColorNoAlpha()
     end
     return "FFFFFF"
+end
+
+local function ResolveUpgradeTrackColor(data, rawColor)
+    if rawColor and rawColor:lower() == PGV.HexColorPresets.PrevSeasonGear:lower() then
+        return rawColor
+    end
+
+    local opts = PGV.db.upgradeTrack
+    if opts.useQualityScaleColors then
+        local text = data.upgradeTrack.text
+        if text:match("E") or text:match("A") then
+            return PGV.HexColorPresets.Priest
+        elseif text:match("V") then
+            return PGV.HexColorPresets.Uncommon
+        elseif text:match("C") then
+            return PGV.HexColorPresets.Rare
+        elseif text:match("H") then
+            return PGV.HexColorPresets.Epic
+        elseif text:match("M") then
+            return PGV.HexColorPresets.Legendary
+        end
+    elseif opts.useCustomColor then
+        return opts.customColor
+    end
+
+    local r, g, b = C_Item.GetItemQualityColor(data.quality)
+    return CreateColor(r, g, b):GenerateHexColorNoAlpha()
+end
+
+local function ResolveEnchantColor()
+    local opts = PGV.db.enchants
+    if opts.useCustomColor then
+        return opts.customColor
+    end
+    return "Uncommon"
+end
+
+local function ResolveDurabilityColor(percent)
+    local opts = PGV.db.durability
+    if percent > 0.5 then
+        return opts.colorHigh
+    elseif percent > 0.25 then
+        return opts.colorMedium
+    end
+    return opts.colorLow
 end
 
 local function ResolveEnchantText(rawText)
@@ -155,7 +230,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
 
         if context.IsShowingUpgradeTrack() and data.upgradeTrack then
             local upgradeText = PGV.AbbreviateText(data.upgradeTrack.text, PGV.UpgradeTextReplacements)
-            self.UpgradeTrack:SetText(PGV.ColorText(upgradeText, data.upgradeTrack.color))
+            self.UpgradeTrack:SetText(PGV.ColorText(upgradeText, ResolveUpgradeTrackColor(data, data.upgradeTrack.color)))
             self.UpgradeTrack:Show()
         end
 
@@ -178,7 +253,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
         end
 
         if context.IsShowingEnchants() and data.enchant then
-            self.Enchant:SetText(ResolveEnchantText(data.enchant.text))
+            self.Enchant:SetText(PGV.ColorText(ResolveEnchantText(data.enchant.text), ResolveEnchantColor()))
             self.Enchant:Show()
         end
 
@@ -191,12 +266,14 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                     self.DurabilityBar:SetValue(percent)
                     self.DurabilityBar:Show()
                 else
-                    self.Durability:SetText(math.floor(percent * 100).."%")
+                    local percentText = math.floor(percent * 100).."%"
+                    self.Durability:SetText(PGV.ColorText(percentText, ResolveDurabilityColor(percent)))
                     self.Durability:Show()
                 end
             end
         end
 
+        self:SetFontOptions()
         self:PositionElements()
     end)
 end

@@ -3,11 +3,11 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Bliz
     <Frame name="PGVSlotOverlayTemplate" mixin="PGVSlotOverlayMixin" setAllPoints="true" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="ItemLevel" inherits="GameFontNormalSmall" hidden="true"/>
-                <FontString parentKey="UpgradeTrack" inherits="GameFontNormalSmall" hidden="true"/>
-                <FontString parentKey="Gems" inherits="GameFontNormalSmall" hidden="true"/>
-                <FontString parentKey="Enchant" inherits="GameFontNormalSmall" hidden="true"/>
-                <FontString parentKey="Durability" inherits="GameFontNormalSmall" hidden="true"/>
+                <FontString parentKey="ItemLevel" inherits="GameTooltipText" hidden="true"/>
+                <FontString parentKey="UpgradeTrack" inherits="GameTooltipText" hidden="true"/>
+                <FontString parentKey="Gems" inherits="GameTooltipText" hidden="true"/>
+                <FontString parentKey="Enchant" inherits="GameTooltipText" hidden="true"/>
+                <FontString parentKey="Durability" inherits="GameTooltipText" hidden="true"/>
             </Layer>
         </Layers>
         <Frames>
