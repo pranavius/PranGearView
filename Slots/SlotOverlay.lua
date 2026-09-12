@@ -44,10 +44,22 @@ function PGVSlotOverlayMixin:PositionEmbellishment()
     if self.context.IsShowingItemLevel() and PGV.db.itemLevel.onItem then
         if self.context.category == "bottom" then
             local isMainHand = self.context.isMainHand
-            self.Embellishment:SetPoint(isMainHand and "RIGHT" or "LEFT", self.Gems, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+            if self.Gems:IsShown() then
+                self.Embellishment:SetPoint(isMainHand and "RIGHT" or "LEFT", self.Gems, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+            elseif self.UpgradeTrack:IsShown() then
+                self.Embellishment:SetPoint(isMainHand and "RIGHT" or "LEFT", self.UpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+            else
+                self.Embellishment:SetPoint("CENTER", self, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
+            end
         else
             local layout = LAYOUTS[self.context.category]
-            self.Embellishment:SetPoint(layout.side, self.Gems, layout.opposite, layout.inlineXOffset, 0)
+            if self.Gems:IsShown() then
+                self.Embellishment:SetPoint(layout.side, self.Gems, layout.opposite, layout.inlineXOffset, 0)
+            elseif self.UpgradeTrack:IsShown() then
+                self.Embellishment:SetPoint(layout.side, self.UpgradeTrack, layout.opposite, layout.inlineXOffset, 0)
+            else
+                self.Embellishment:SetPoint(layout.side, self, layout.opposite, layout.xOffset, layout.yOffset)
+            end
         end
         self.EmbellishmentShadow:Hide()
     else
@@ -104,12 +116,20 @@ function PGVSlotOverlayMixin:PositionGems()
 
     if self.context.category == "bottom" then
         local isMainHand = self.context.isMainHand
-        self.Gems:SetPoint(isMainHand and "RIGHT" or "LEFT", self.UpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+        if self.UpgradeTrack:IsShown() then
+            self.Gems:SetPoint(isMainHand and "RIGHT" or "LEFT", self.UpgradeTrack, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+        else
+            self.Gems:SetPoint("CENTER", self, "BOTTOM", (isMainHand and -1 or 1) * 40, 5)
+        end
         return
     end
-    
+
     local layout = LAYOUTS[self.context.category]
-    self.Gems:SetPoint(layout.side, self.UpgradeTrack, layout.opposite, layout.inlineXOffset, 0)
+    if self.UpgradeTrack:IsShown() then
+        self.Gems:SetPoint(layout.side, self.UpgradeTrack, layout.opposite, layout.inlineXOffset, 0)
+    else
+        self.Gems:SetPoint(layout.side, self, layout.opposite, layout.xOffset, layout.yOffset)
+    end
 end
 
 function PGVSlotOverlayMixin:SetFontOptions()
@@ -231,7 +251,7 @@ local function ResolveEnchantText(rawText)
     if atlas then
         text = text:gsub(" |A:.-|a", CreateAtlasMarkup(atlas, 15, 15))
     else
-        text = text..CreateSimpleTextureMarkup(DK_ENCH_ABBR_TEXTURES[text] or 628564, 15, 15)
+        text = text.." "..CreateSimpleTextureMarkup(DK_ENCH_ABBR_TEXTURES[text] or 628564, 15, 15)
     end
     return text
 end
