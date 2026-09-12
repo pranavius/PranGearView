@@ -2,12 +2,21 @@
 https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
     <Frame name="PGVSlotOverlayTemplate" mixin="PGVSlotOverlayMixin" setAllPoints="true" virtual="true">
         <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="EmbellishmentShadow" file="Interface/Buttons/WHITE8x8" setAllPoints="true" hidden="true">
+                    <Color color="BLACK_FONT_COLOR" a="0.3"/>
+                </Texture>
+            </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="ItemLevel" inherits="GameTooltipText" hidden="true"/>
                 <FontString parentKey="UpgradeTrack" inherits="GameTooltipText" hidden="true"/>
                 <FontString parentKey="Gems" inherits="GameTooltipText" hidden="true"/>
                 <FontString parentKey="Enchant" inherits="GameTooltipText" hidden="true"/>
                 <FontString parentKey="Durability" inherits="GameTooltipText" hidden="true"/>
+                <Texture parentKey="Embellishment" file="Interface/LootFrame/Toast-Star" hidden="true">
+                    <Size x="21" y="21"/>
+                    <Color r="0" g="1" b="0.6" a="1"/>
+                </Texture>
             </Layer>
         </Layers>
         <Frames>

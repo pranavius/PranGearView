@@ -26,6 +26,8 @@ function PGV.GetItemDisplayData(itemLink, callback)
                     data.enchant = {
                         text = line.leftText,
                     }
+                elseif line.leftText and line.leftText:find(PGV.L["Embellished"], 1, true) then
+                    data.isEmbellished = true
                 end
             end
         end

@@ -29,6 +29,30 @@ function PGVSlotOverlayMixin:HideAllElements()
     self.Enchant:Hide()
     self.Durability:Hide()
     self.DurabilityBar:Hide()
+    self:SetEmbellishmentVisible(false)
+end
+
+-- Embellishment is a Texture and has no OnShow/OnHide script, so its shadow is toggled here too.
+function PGVSlotOverlayMixin:SetEmbellishmentVisible(shown)
+    self.Embellishment:SetShown(shown)
+    self.EmbellishmentShadow:SetShown(shown)
+end
+
+function PGVSlotOverlayMixin:PositionEmbellishment()
+    self.Embellishment:ClearAllPoints()
+
+    if self.context.IsShowingItemLevel() and PGV.db.itemLevel.onItem then
+        if self.context.category == "bottom" then
+            local isMainHand = self.context.isMainHand
+            self.Embellishment:SetPoint(isMainHand and "RIGHT" or "LEFT", self.Gems, isMainHand and "LEFT" or "RIGHT", isMainHand and -1 or 1, 0)
+        else
+            local layout = LAYOUTS[self.context.category]
+            self.Embellishment:SetPoint(layout.side, self.Gems, layout.opposite, layout.inlineXOffset, 0)
+        end
+        self.EmbellishmentShadow:Hide()
+    else
+        self.Embellishment:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+    end
 end
 
 function PGVSlotOverlayMixin:PositionItemLevel()
@@ -125,6 +149,7 @@ function PGVSlotOverlayMixin:PositionElements()
     self:PositionUpgradeTrack()
     self:PositionEnchant()
     self:PositionGems()
+    self:PositionEmbellishment()
 end
 
 local function ResolveItemLevelColor(context, data)
@@ -257,6 +282,10 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
             self.Enchant:Show()
         end
 
+        if context.IsShowingEmbellishments() and data.isEmbellished then
+            self:SetEmbellishmentVisible(true)
+        end
+
         if context.showDurability and PGV.db.durability.show then
             local current, max = GetInventoryItemDurability(slotID)
             if current and max and max > 0 and current < max then
@@ -285,6 +314,7 @@ local characterContext = {
     IsShowingUpgradeTrack = function() return PGV.AreUpgradeTracksShownForCharacter() end,
     IsShowingGems = function() return PGV.AreGemsShownForCharacter() end,
     IsShowingEnchants = function() return PGV.AreEnchantsShownForCharacter() end,
+    IsShowingEmbellishments = function() return PGV.AreEmbellishmentsShownForCharacter() end,
 }
 
 local function GetSlotCategory(slot)
