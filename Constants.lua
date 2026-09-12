@@ -333,6 +333,8 @@ PGV.ExpansionInfo = {
     }
 }
 
+PGV.CurrentExpac = PGV.ExpansionInfo.Midnight
+
 PGV.SpecOptionKeys = {
     [250] = L["Blood"],
     [251] = L["Frost"],

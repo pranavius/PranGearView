@@ -20,6 +20,12 @@ local DK_ENCH_ABBR_TEXTURES = {
 function PGVSlotOverlayMixin:OnLoad()
     self.DurabilityBar:SetBackdrop({ bgFile = "Interface/Buttons/WHITE8x8" })
     self.DurabilityBar:SetBackdropColor(0, 0, 0, 0.6)
+    self.DurabilityBar:SetScript("OnEnter", function(bar)
+        GameTooltip:SetOwner(bar, "ANCHOR_TOP")
+        GameTooltip:AddLine(PGV.L["Durability: "]..Round(bar:GetValue() * 100).."%", 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    self.DurabilityBar:SetScript("OnLeave", GameTooltip_Hide)
 end
 
 function PGVSlotOverlayMixin:HideAllElements()
@@ -102,7 +108,7 @@ function PGVSlotOverlayMixin:PositionEnchant()
 
     if self.context.category == "bottom" then
         local isMainHand = self.context.isMainHand
-        self.Enchant:SetPoint(isMainHand and "RIGHT" or "LEFT", self, isMainHand and "TOPRIGHT" or "TOPLEFT", 0, 20)
+        self.Enchant:SetPoint(isMainHand and "RIGHT" or "LEFT", self, isMainHand and "TOPRIGHT" or "TOPLEFT", 0, 25)
         return
     end
 
@@ -258,12 +264,14 @@ end
 
 function PGVSlotOverlayMixin:UpdateSlotInfo()
     local context = self.context
-    local slotID = self:GetParent():GetID()
+    local slot = self:GetParent()
+    local slotID = slot:GetID()
     local itemLink = GetInventoryItemLink(context.unit, slotID)
 
     self:HideAllElements()
 
-    if not itemLink then
+    local shouldHideSlotDetails = PGV.db.general.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot)
+    if not itemLink or shouldHideSlotDetails then
         return
     end
 
@@ -279,10 +287,10 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
             self.UpgradeTrack:Show()
         end
 
-        if context.IsShowingGems() and data.gems then
+        if context.IsShowingGems() then
             local isLeftSide = context.category == "left"
             local gemText = ""
-            for _, gem in ipairs(data.gems) do
+            for _, gem in ipairs(data.gems or {}) do
                 local icon
                 if gem.icon then
                     icon = CreateSimpleTextureMarkup(gem.icon, 15, 15)
@@ -293,13 +301,37 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                 end
                 gemText = isLeftSide and (gemText..icon) or (icon..gemText)
             end
-            self.Gems:SetText(gemText)
-            self.Gems:Show()
+
+            local existingSockets = data.gems and #data.gems or 0
+            local isMaxLevel = UnitLevel(context.unit) == PGV.CurrentExpac.LevelCap
+            if PGV.db.gems.showMissing and PGV.IsSocketableSlot(slot) and existingSockets < PGV.CurrentExpac.MaxSocketsPerItem
+                and (isMaxLevel or not PGV.db.gems.missingMaxLevelOnly) then
+                local icon = CreateAtlasMarkup("Socket-Prismatic-Closed", 15, 15)
+                for _ = 1, PGV.CurrentExpac.MaxSocketsPerItem - existingSockets do
+                    gemText = isLeftSide and (gemText..icon) or (icon..gemText)
+                end
+            end
+
+            if gemText ~= "" then
+                self.Gems:SetText(gemText)
+                self.Gems:Show()
+            end
         end
 
-        if context.IsShowingEnchants() and data.enchant then
-            self.Enchant:SetText(PGV.ColorText(ResolveEnchantText(data.enchant.text), ResolveEnchantColor()))
-            self.Enchant:Show()
+        if context.IsShowingEnchants() then
+            if data.enchant then
+                self.Enchant:SetText(PGV.ColorText(ResolveEnchantText(data.enchant.text), ResolveEnchantColor()))
+                self.Enchant:Show()
+            else
+                local isMaxLevel = UnitLevel(context.unit) == PGV.CurrentExpac.LevelCap
+                if PGV.db.enchants.showMissing and PGV.IsEnchantableSlot(slot) and (isMaxLevel or not PGV.db.enchants.missingMaxLevelOnly) then
+                    local icon = CreateSimpleTextureMarkup(523826, 15, 15)
+                    local label = PGV.ColorText(PGV.L["Enchant"], "Druid")
+                    local isLabelFirst = context.category == "left" or (context.category == "bottom" and context.isMainHand)
+                    self.Enchant:SetText(isLabelFirst and (label..icon) or (icon..label))
+                    self.Enchant:Show()
+                end
+            end
         end
 
         if context.IsShowingEmbellishments() and data.isEmbellished then
@@ -313,6 +345,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                 if PGV.db.durability.showAsBar then
                     self.DurabilityBar:SetMinMaxValues(0, 1)
                     self.DurabilityBar:SetValue(percent)
+                    self.DurabilityBar:SetStatusBarColor(CreateColorFromHexString("FF"..ResolveDurabilityColor(percent)):GetRGB())
                     self.DurabilityBar:Show()
                 else
                     local percentText = math.floor(percent * 100).."%"
