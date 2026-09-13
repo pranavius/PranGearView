@@ -10,6 +10,9 @@ local function RefreshSlots()
     if PGV.UpdateAllSlots then
         PGV.UpdateAllSlots()
     end
+    if PGV.UpdateInspectedGearInfo and InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
+        PGV.UpdateInspectedGearInfo(PGV.inspectedUnitGUID, true)
+    end
 end
 
 local function MakeToggle(category, variable, name, tooltip, getValue, setValue)
@@ -30,24 +33,16 @@ local function MakeSharedToggle(rootCategory, subCategory, variable, name, toolt
     return rootInit, subInit
 end
 
+local function ScalePercentFormatter(value)
+    return FormatPercentage(value, true)
+end
+
 local function MakeSlider(category, variable, name, tooltip, minValue, maxValue, step, getValue, setValue)
     local setting = Settings.RegisterProxySetting(category, variable, Settings.VarType.Number, name, minValue, getValue, function(value)
         setValue(value)
         RefreshSlots()
     end)
     local options = Settings.CreateSliderOptions(minValue, maxValue, step)
-    options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right)
-    return Settings.CreateSlider(category, setting, options, tooltip)
-end
-
-local function MakeScaleSlider(category, variable, name, tooltip, dbTable)
-    local setting = Settings.RegisterProxySetting(category, variable, Settings.VarType.Number, name, 1,
-        function() return dbTable.scale end,
-        function(value)
-            dbTable.scale = value
-            RefreshSlots()
-        end)
-    local options = Settings.CreateSliderOptions(0.1, 2, 0.05)
     options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right)
     return Settings.CreateSlider(category, setting, options, tooltip)
 end
@@ -59,8 +54,8 @@ local function MakeSharedScaleSlider(rootCategory, subCategory, variable, name, 
             dbTable.scale = value
             RefreshSlots()
         end)
-    local options = Settings.CreateSliderOptions(0.1, 2, 0.05)
-    options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right)
+    local options = Settings.CreateSliderOptions(0.01, 2, 0.01)
+    options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, ScalePercentFormatter)
     local rootInit = Settings.CreateSlider(rootCategory, setting, options, tooltip)
     local subInit = Settings.CreateSlider(subCategory, setting, options, tooltip)
     return rootInit, subInit
@@ -324,7 +319,7 @@ local function BuildOptions()
     end
     enchantsMaxLevelOnlyInit:SetParentInitializer(enchantsShowMissingInit, function() return PGV.db.enchants.showMissing end)
     enchantsMaxLevelOnlyInit:AddShownPredicate(notTimerunning)
-    enchantsColorInit:SetParentInitializer(enchantsSubUseCustomColor, function() return PGV.db.enchants.useCustomColor end)
+    enchantsColorInit:SetParentInitializer(enchantsSubShow, enchantsIsShown)
     enchantsColorInit:AddShownPredicate(notTimerunning)
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
@@ -346,6 +341,46 @@ local function BuildOptions()
     LinkToShowToggle(durabilityRootShow, durabilitySubShow, durabilityRootShowAsBar, durabilitySubShowAsBar, durabilityIsShown)
     for _, initializer in ipairs({ durabilityHighInit, durabilityMediumInit, durabilityLowInit }) do
         initializer:SetParentInitializer(durabilitySubShow, durabilityIsShown)
+    end
+
+    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+
+    local inspectCategory, inspectLayout = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Inspect Window"])
+    local inspectIsShown = function() return PGV.db.inspect.show end
+    local _, inspectSubShow = MakeSharedToggle(rootCategory, inspectCategory, "inspectShow", L["Inspect Window"], L["Displays information about equipped gear when inspecting another player"],
+        inspectIsShown, function(value) PGV.db.inspect.show = value end)
+
+    inspectLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Choose which information should be displayed when inspecting another player."] }))
+    inspectLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Colors, size, and other display settings when inspecting a character will follow the same settings as the Character Info window."] }))
+
+    local inspectShowILvlInit = MakeToggle(inspectCategory, "inspectShowILvl", L["Item Level"], L["Display item levels for equipped items"],
+        function() return PGV.db.inspect.showILvl end,
+        function(value) PGV.db.inspect.showILvl = value end)
+    local inspectShowUpgradeTrackInit = MakeToggle(inspectCategory, "inspectShowUpgradeTrack", L["Upgrade Track"], L["Display upgrade track and progress for equipped items"],
+        function() return PGV.db.inspect.showUpgradeTrack end,
+        function(value) PGV.db.inspect.showUpgradeTrack = value end)
+    local inspectShowGemsInit = MakeToggle(inspectCategory, "inspectShowGems", L["Gems"], L["Display gem and socket information for equipped items"],
+        function() return PGV.db.inspect.showGems end,
+        function(value) PGV.db.inspect.showGems = value end)
+    local inspectShowEnchantsInit = MakeToggle(inspectCategory, "inspectShowEnchants", L["Enchants"], L["Display enchant information for equipped items"],
+        function() return PGV.db.inspect.showEnchants end,
+        function(value) PGV.db.inspect.showEnchants = value end)
+    local inspectShowEmbellishmentsInit = MakeToggle(inspectCategory, "inspectShowEmbellishments", L["Show Embellishments"], L["Show a green star in the top-left corner of embellished equipment"],
+        function() return PGV.db.inspect.showEmbellishments end,
+        function(value) PGV.db.inspect.showEmbellishments = value end)
+
+    inspectLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+
+    local inspectShowAvgILvlInit = MakeToggle(inspectCategory, "inspectShowAvgILvl", L["Average Item Level"], L["Display average item level in the character's class color"],
+        function() return PGV.db.inspect.showAvgILvl end,
+        function(value) PGV.db.inspect.showAvgILvl = value end)
+    local inspectIncludeAvgLabelInit = MakeToggle(inspectCategory, "inspectIncludeAvgLabel", L["Include \"Avg\" Label"], L["Adds the text \"Avg: \" before the average item level."].."\n\n"..L["This can help easily identify the average item level when there is a lot of information shown in the Inspect window."],
+        function() return PGV.db.inspect.includeAvgLabel end,
+        function(value) PGV.db.inspect.includeAvgLabel = value end)
+    inspectIncludeAvgLabelInit:SetParentInitializer(inspectShowAvgILvlInit, function() return PGV.db.inspect.show and PGV.db.inspect.showAvgILvl end)
+
+    for _, initializer in ipairs({ inspectShowILvlInit, inspectShowUpgradeTrackInit, inspectShowGemsInit, inspectShowEnchantsInit, inspectShowEmbellishmentsInit, inspectShowAvgILvlInit }) do
+        initializer:SetParentInitializer(inspectSubShow, inspectIsShown)
     end
 end
 

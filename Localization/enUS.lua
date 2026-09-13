@@ -46,7 +46,7 @@ L["Hide Shirt & Tabard Info"] = "Hide Shirt & Tabard Info"
 L["Debug Mode"] = "Debug Mode"
 
 L["Choose information to show in the Character Info window"] = "Choose information to show in the Character Info window"
-L["Open a category below for additional scale, color, and outline options"] = "Open a category below for additional scale, color, and outline options"
+L["Open a specific category for additional customization options"] = "Open a specific category for additional customization options"
 L["Display item levels for equipped items"] = "Display item levels for equipped items"
 L["Display upgrade track and progress for equipped items"] = "Display upgrade track and progress for equipped items"
 L["Display gem and socket information for equipped items"] = "Display gem and socket information for equipped items"
@@ -114,6 +114,7 @@ L["You should never need to enable this"] = "You should never need to enable thi
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Open the AddOn options window"
+L["List all available slash commands for the AddOn"] = "List all available slash commands for the AddOn"
 L["Toggle showing item level"] = "Toggle showing item level"
 L["Toggle showing upgrade track"] = "Toggle showing upgrade track"
 L["Toggle showing gem info"] = "Toggle showing gem info"

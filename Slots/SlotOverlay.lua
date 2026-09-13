@@ -133,6 +133,8 @@ function PGVSlotOverlayMixin:PositionGems()
     local layout = LAYOUTS[self.context.category]
     if self.UpgradeTrack:IsShown() then
         self.Gems:SetPoint(layout.side, self.UpgradeTrack, layout.opposite, layout.inlineXOffset, 0)
+    elseif self.ItemLevel:IsShown() and not PGV.db.itemLevel.onItem then
+        self.Gems:SetPoint(layout.side, self.ItemLevel, layout.opposite, layout.inlineXOffset, 0)
     else
         self.Gems:SetPoint(layout.side, self, layout.opposite, layout.xOffset, layout.yOffset)
     end
@@ -270,7 +272,8 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
 
     self:HideAllElements()
 
-    local shouldHideSlotDetails = PGV.db.general.hideShirtTabardInfo and (slot == CharacterShirtSlot or slot == CharacterTabardSlot)
+    local shouldHideSlotDetails = PGV.db.general.hideShirtTabardInfo
+        and (slot == CharacterShirtSlot or slot == CharacterTabardSlot or slot == InspectShirtSlot or slot == InspectTabardSlot)
     if not itemLink or shouldHideSlotDetails then
         return
     end

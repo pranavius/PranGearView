@@ -34,7 +34,9 @@ ItemData.lua
 Slots\SlotOverlay.lua
 Slots\SlotOverlay.xml
 
-Options\Options.xml
-Options\Options.lua
+Features\InspectFrame.lua
+Features\UIEnhance.lua
 
-UIFeatures.lua
+Options\Options.lua
+Options\Options.xml
+Options\Slash.lua

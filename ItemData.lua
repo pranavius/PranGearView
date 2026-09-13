@@ -11,7 +11,15 @@ function PGV.GetItemDisplayData(itemLink, callback)
         local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
         if tooltipData and tooltipData.lines then
             for _, line in ipairs(tooltipData.lines) do
-                if line.type == Enum.TooltipDataLineType.ItemUpgradeLevel then
+                if line.type == Enum.TooltipDataLineType.ItemLevel then
+                    -- GetCurrentItemLevel() can return an item's unscaled template level instead of its
+                    -- actual level for auto-granted scaling gear (starter/catch-up/Remix exit rewards);
+                    -- the tooltip's own rendered line is always correct, so prefer it when present.
+                    local ilvl = line.leftText and tonumber(line.leftText:match("%d+"))
+                    if ilvl then
+                        data.itemLevel = ilvl
+                    end
+                elseif line.type == Enum.TooltipDataLineType.ItemUpgradeLevel then
                     data.upgradeTrack = {
                         text = line.leftText,
                         color = line.leftColor and line.leftColor:GenerateHexColorNoAlpha(),
