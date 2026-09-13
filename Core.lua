@@ -69,6 +69,10 @@ end
 
 local PlayerGetTimerunningSeasonID = PlayerGetTimerunningSeasonID or function() return nil end
 
+function PGV.IsTimerunningCharacter()
+    return PlayerGetTimerunningSeasonID() ~= nil
+end
+
 function PGV.AreUpgradeTracksShownForCharacter()
     return PGV.db.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
 end

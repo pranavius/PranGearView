@@ -33,3 +33,8 @@ ItemData.lua
 
 Slots\SlotOverlay.lua
 Slots\SlotOverlay.xml
+
+Options\Options.xml
+Options\Options.lua
+
+UIFeatures.lua

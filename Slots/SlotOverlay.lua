@@ -183,7 +183,7 @@ local function ResolveItemLevelColor(context, data)
     if opts.useCustomColor then
         return opts.customColor
     elseif opts.useClassColor then
-        return GetClassColor(select(2, UnitClass(context.unit))):GenerateHexColorNoAlpha()
+        return GetClassColorObj(select(2, UnitClass(context.unit))):GenerateHexColorNoAlpha()
     elseif opts.useGradientColors then
         local equippedAverage = select(2, GetAverageItemLevel())
         if data.itemLevel < equippedAverage - 10 then
@@ -401,6 +401,8 @@ local function UpdateAllSlots()
         UpdateSlotOverlay(slot)
     end
 end
+
+PGV.UpdateAllSlots = UpdateAllSlots
 
 PGV.RegisterEvent("PLAYER_EQUIPMENT_CHANGED", UpdateAllSlots)
 PGV.RegisterEvent("UPDATE_INVENTORY_DURABILITY", UpdateAllSlots)

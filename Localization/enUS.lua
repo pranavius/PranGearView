@@ -46,6 +46,7 @@ L["Hide Shirt & Tabard Info"] = "Hide Shirt & Tabard Info"
 L["Debug Mode"] = "Debug Mode"
 
 L["Choose information to show in the Character Info window"] = "Choose information to show in the Character Info window"
+L["Open a category below for additional scale, color, and outline options"] = "Open a category below for additional scale, color, and outline options"
 L["Display item levels for equipped items"] = "Display item levels for equipped items"
 L["Display upgrade track and progress for equipped items"] = "Display upgrade track and progress for equipped items"
 L["Display gem and socket information for equipped items"] = "Display gem and socket information for equipped items"

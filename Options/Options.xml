@@ -1,0 +1,20 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+    <Frame name="PGVOptionsSpacerTemplate" virtual="true">
+        <Size y="12"/>
+    </Frame>
+    <Frame name="PGVOptionsDescriptionTemplate" mixin="PGVOptionsDescriptionMixin" virtual="true">
+        <Size y="25"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" inherits="GameFontHighlightSmall" justifyH="LEFT" justifyV="TOP">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="7" y="-8"/>
+                        <Anchor point="TOPRIGHT" x="-7" y="-8"/>
+                    </Anchors>
+                    <Color color="DARKYELLOW_FONT_COLOR"/>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>
