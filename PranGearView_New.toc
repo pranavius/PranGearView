@@ -35,8 +35,11 @@ Slots\SlotOverlay.lua
 Slots\SlotOverlay.xml
 
 Features\InspectFrame.lua
+Features\CharacterStats.lua
 Features\UIEnhance.lua
 
+Options\StatOrder.lua
+Options\StatOrder.xml
 Options\Options.lua
 Options\Options.xml
 Options\Slash.lua

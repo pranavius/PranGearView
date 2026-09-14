@@ -38,9 +38,9 @@ function PGVSlotOverlayMixin:HideAllElements()
     self:SetEmbellishmentVisible(false)
 end
 
--- Embellishment is a Texture and has no OnShow/OnHide script, so its shadow is toggled here too.
 function PGVSlotOverlayMixin:SetEmbellishmentVisible(shown)
     self.Embellishment:SetShown(shown)
+    -- Always toggle shadow along with embellishment texture (except one special case that's accounted for elsewhere)
     self.EmbellishmentShadow:SetShown(shown)
 end
 
@@ -67,6 +67,7 @@ function PGVSlotOverlayMixin:PositionEmbellishment()
                 self.Embellishment:SetPoint(layout.side, self, layout.opposite, layout.xOffset, layout.yOffset)
             end
         end
+        -- We're always hiding this since the Embellishment texture isnt even shown on the slot anymore (no shadow needed to make the texture more visible)
         self.EmbellishmentShadow:Hide()
     else
         self.Embellishment:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
@@ -278,7 +279,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
         return
     end
 
-    PGV.GetItemDisplayData(itemLink, function(data)
+    PGV.GetItemDisplayData(itemLink, context.unit, slotID, function(data)
         if context.IsShowingItemLevel() then
             self.ItemLevel:SetText(PGV.ColorText(data.itemLevel, ResolveItemLevelColor(context, data)))
             self.ItemLevel:Show()

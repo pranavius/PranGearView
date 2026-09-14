@@ -1,6 +1,6 @@
 local _, PGV = ...
 
-function PGV.GetItemDisplayData(itemLink, callback)
+function PGV.GetItemDisplayData(itemLink, unit, slotID, callback)
     local item = Item:CreateFromItemLink(itemLink)
     item:ContinueOnItemLoad(function()
         local data = {
@@ -8,13 +8,10 @@ function PGV.GetItemDisplayData(itemLink, callback)
             quality = item:GetItemQuality(),
         }
 
-        local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
+        local tooltipData = C_TooltipInfo.GetInventoryItem(unit, slotID)
         if tooltipData and tooltipData.lines then
             for _, line in ipairs(tooltipData.lines) do
                 if line.type == Enum.TooltipDataLineType.ItemLevel then
-                    -- GetCurrentItemLevel() can return an item's unscaled template level instead of its
-                    -- actual level for auto-granted scaling gear (starter/catch-up/Remix exit rewards);
-                    -- the tooltip's own rendered line is always correct, so prefer it when present.
                     local ilvl = line.leftText and tonumber(line.leftText:match("%d+"))
                     if ilvl then
                         data.itemLevel = ilvl

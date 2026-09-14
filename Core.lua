@@ -50,7 +50,9 @@ function PGV.UnregisterEvent(event)
 end
 
 function PGV.DebugPrint(...)
-    -- TODO: Add debug flag gating this once there's a mechanism to toggle this in-game
+    if not PGV.db or not PGV.db.general.debug then
+        return
+    end
     print(HEIRLOOM_BLUE_COLOR:WrapTextInColorCode("[PGV Debug]"), ...)
 end
 

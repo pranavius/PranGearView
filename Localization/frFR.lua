@@ -46,7 +46,7 @@ L["Decimal Precision"] = "Précision des décimales"
 L["Hide Shirt & Tabard Info"] = "Cacher les informations des chemises et tabards"
 L["Debug Mode"] = "Mode débugage"
 
-L["Choose information to show in the Character Info window"] = "Choisir les informations a voir dans la fenètre du personnage"
+L["Choose information to show in the Character Info window."] = "Choisir les informations a voir dans la fenètre du personnage."
 L["Display item levels for equipped items"] = "Montrer le niveau d'objet pour les objets équipés"
 L["Display upgrade track and progress for equipped items"] = "Montrer le niveau d'amélioration et la progression des objets équipés"
 L["Display gem and socket information for equipped items"] = "Montrer les gemmes et châsses des objets équipés"

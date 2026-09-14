@@ -205,8 +205,9 @@ local function BuildOptions()
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
-    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Choose information to show in the Character Info window"] }))
-    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Open a specific category for additional customization options"] }))
+    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Choose information to show in the Character Info window."].." "..L["Open a specific category for additional customization options."] }))
+
+    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
     local itemLevelCategory = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Item Level"])
     local itemLevelIsShown = function() return PGV.db.itemLevel.show end
@@ -382,6 +383,63 @@ local function BuildOptions()
     for _, initializer in ipairs({ inspectShowILvlInit, inspectShowUpgradeTrackInit, inspectShowGemsInit, inspectShowEnchantsInit, inspectShowEmbellishmentsInit, inspectShowAvgILvlInit }) do
         initializer:SetParentInitializer(inspectSubShow, inspectIsShown)
     end
+
+    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+
+    local characterStatsCategory, characterStatsLayout = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Character Stats"])
+    local showDecimalStatsInit = MakeToggle(characterStatsCategory, "showDecimalStats", L["Show Decimals for Stats"], L["Show your character's stats with decimal places"],
+        function() return PGV.db.characterStats.showDecimals end,
+        function(value)
+            PGV.db.characterStats.showDecimals = value
+            PaperDollFrame_UpdateStats()
+        end)
+    local decimalStatsPlacesInit = MakeSlider(characterStatsCategory, "decimalStatsPlaces", L["Decimal Precision"], L["Number of decimal places to show for character's stats"], 1, 3, 1,
+        function() return PGV.db.characterStats.decimalPlaces end,
+        function(value)
+            PGV.db.characterStats.decimalPlaces = value
+            PaperDollFrame_UpdateStats()
+        end)
+    decimalStatsPlacesInit:SetParentInitializer(showDecimalStatsInit, function() return PGV.db.characterStats.showDecimals end)
+
+    characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Customize secondary & tertiary stat order in the Character Info window by specialization"] }))
+
+    local specSetting = Settings.RegisterProxySetting(characterStatsCategory, "characterStatsSpec", Settings.VarType.Number, L["Specialization"], select(1, PGV.GetCharacterCurrentSpecIDAndRole()) or 0,
+        function() return select(1, PGV.GetSpecAndRoleForSelectedCharacterStatsOption()) end,
+        function(value)
+            PGV.db.characterStats.lastSelectedSpecID = value
+            PGV.RefreshStatOrderList()
+        end)
+    
+    local function GetSpecOptions()
+        local container = Settings.CreateControlTextContainer()
+        for classID = 1, 20 do
+            local classInfo = C_CreatureInfo.GetClassInfo(classID)
+            if classInfo then
+                for specIndex = 1, C_SpecializationInfo.GetNumSpecializationsForClassID(classID) do
+                    local specID, specName = C_SpecializationInfo.GetSpecializationInfo(specIndex, false, false, nil, nil, nil, classID)
+                    if specID and specName then
+                        -- Cant show spec icons anymore in Settings API dropdown button, so gotta add each class name to the end of spec name instead
+                        container:Add(specID, specName.." "..classInfo.className)
+                    end
+                end
+            end
+        end
+        return container:GetData()
+    end
+    local specDropdownInit = Settings.CreateDropdown(characterStatsCategory, specSetting, GetSpecOptions, L["Specialization"])
+
+    characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVStatOrderListTemplate", {}))
+    local resetOrderInit = CreateSettingsButtonInitializer("", L["Reset"], function(button)
+        local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
+        PGV.InitializeCustomSpecStatOrderDB(specID, true)
+        PGV.RefreshStatOrderList()
+        button:GetParent():EvaluateState()
+    end, nil, false)
+    resetOrderInit:SetParentInitializer(specDropdownInit, function()
+        local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
+        return not PGV.IsStatOrderAtDefault(specID)
+    end)
+    characterStatsLayout:AddInitializer(resetOrderInit)
 end
 
 PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)

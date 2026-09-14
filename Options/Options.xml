@@ -7,12 +7,12 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Bliz
         <Size y="25"/>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString parentKey="Text" inherits="GameFontHighlightSmall" justifyH="LEFT" justifyV="TOP">
+                <FontString parentKey="Text" inherits="GameFontHighlight" justifyH="LEFT" justifyV="TOP">
                     <Anchors>
                         <Anchor point="TOPLEFT" x="7" y="-8"/>
                         <Anchor point="TOPRIGHT" x="-7" y="-8"/>
                     </Anchors>
-                    <Color color="DARKYELLOW_FONT_COLOR"/>
+                    <Color color="WHITE_FONT_COLOR"/>
                 </FontString>
             </Layer>
         </Layers>

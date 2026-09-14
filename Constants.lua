@@ -335,64 +335,10 @@ PGV.ExpansionInfo = {
 
 PGV.CurrentExpac = PGV.ExpansionInfo.Midnight
 
-PGV.SpecOptionKeys = {
-    [250] = L["Blood"],
-    [251] = L["Frost"],
-    [252] = L["Unholy"],
-    [577] = L["Havoc"],
-    [581] = L["Vengeance"],
-    [1480] = L["Devourer"],
-    [102] = L["Balance"],
-    [103] = L["Feral"],
-    [104] = L["Guardian"],
-    [105] = L["Restoration"],
-    [1467] = L["Devastation"],
-    [1468] = L["Preservation"],
-    [1473] = L["Augmentation"],
-    [253] = L["Beast Mastery"],
-    [254] = L["Marksmanship"],
-    [255] = L["Survival"],
-    [62] = L["Arcane"],
-    [63] = L["Fire"],
-    [64] = L["Frost"],
-    [268] = L["Brewmaster"],
-    [270] = L["Mistweaver"],
-    [269] = L["Windwalker"],
-    [65] = L["Holy"],
-    [66] = L["Protection"],
-    [70] = L["Retribution"],
-    [256] = L["Discipline"],
-    [257] = L["Holy"],
-    [258] = L["Shadow"],
-    [259] = L["Assassination"],
-    [260] = L["Outlaw"],
-    [261] = L["Subtlety"],
-    [262] = L["Elemental"],
-    [263] = L["Enhancement"],
-    [264] = L["Restoration"],
-    [265] = L["Affliction"],
-    [266] = L["Demonology"],
-    [267] = L["Destruction"],
-    [71] = L["Arms"],
-    [72] = L["Fury"],
-    [73] = L["Protection"],
-}
 
-PGV.DefaultStatOrder = {
-    ["Critical Strike"] = 1,
-    ["Haste"] = 2,
-    ["Mastery"] = 3,
-    ["Versatility"] = 4,
-    ["Leech"] = 5,
-    ["Avoidance"] = 6,
-    ["Speed"] = 7
-}
+PGV.DefaultStatOrder = { "Critical Strike", "Haste", "Mastery", "Versatility", "Leech", "Avoidance", "Speed" }
 
-PGV.DefaultTankStatOrder = {
-    ["Dodge"] = 8,
-    ["Parry"] = 9,
-    ["Block"] = 10
-}
+PGV.DefaultTankStatOrder = { "Dodge", "Parry", "Block" }
 
 PGV.OutlineOptions = {
     { key = "None", value = "" },
