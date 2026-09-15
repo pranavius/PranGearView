@@ -70,6 +70,40 @@ hooksecurefunc("PaperDollFrame_UpdateStats", function()
     end
 end)
 
+function PGV.UpdateEnchantToggleButtonVisibility()
+    if not PGV.EnchantToggleButton then
+        return
+    end
+    PGV.EnchantToggleButton:SetShown(PGV.db.enchants.show and PGV.db.enchants.showTextButton and not PGV.IsTimerunningCharacter())
+end
+
+local function CreateEnchantToggleButton()
+    local button = CreateFrame("Button", "PGVToggleEnchantButton", CharacterFrame.TitleContainer)
+    local buttonDim = CharacterFrame.TitleContainer:GetHeight() - 1
+    button:SetSize(buttonDim, buttonDim)
+    button:SetFrameStrata("TOOLTIP")
+    button:SetPoint("RIGHT", CharacterFrame.TitleContainer, "RIGHT")
+    button:SetNormalTexture(237018)
+    button:SetPushedTexture(237018)
+    button:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
+
+    local function UpdateTooltip()
+        GameTooltip:SetOwner(button, "ANCHOR_TOPRIGHT")
+        GameTooltip:SetText(PGV.db.enchants.collapse and L["Show Enchant Text"] or L["Hide Enchant Text"])
+        GameTooltip:Show()
+    end
+    button:SetScript("OnEnter", UpdateTooltip)
+    button:SetScript("OnLeave", GameTooltip_Hide)
+    button:SetScript("OnClick", function()
+        PGV.db.enchants.collapse = not PGV.db.enchants.collapse
+        PGV.UpdateAllSlots()
+        UpdateTooltip()
+    end)
+
+    PGV.EnchantToggleButton = button
+    PGV.UpdateEnchantToggleButtonVisibility()
+end
+
 PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)
     if loadedAddon ~= addonName then return end
 
@@ -80,9 +114,11 @@ PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)
         text = addonName,
         icon = "Interface/AddOns/PranGearView/Media/PranGearViewIcon",
         OnClick = function()
-            if not PGV.IsAddOnCurrentlyRestricted() then
-                Settings.OpenToCategory(PGV.categoryID)
+            if PGV.IsAddOnCurrentlyRestricted() then
+                print(addonName..": "..L["Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."])
+                return
             end
+            Settings.OpenToCategory(PGV.categoryID)
         end,
         OnTooltipShow = function(tt)
             tt:AddLine(addonName)
@@ -90,4 +126,6 @@ PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)
         end,
     })
     LDBIcon:Register(addonName, broker, PGV.db.general.minimap)
+
+    CreateEnchantToggleButton()
 end)

@@ -27,9 +27,6 @@ local function UpdateInspectSlotOverlay(slotName)
 
     local overlay = slot.PGVSlotOverlay
     if not overlay then
-        if InCombatLockdown() or PGV.IsAddOnCurrentlyRestricted() then
-            return
-        end
         overlay = CreateFrame("Frame", nil, slot, "PGVSlotOverlayTemplate")
         overlay.context = setmetatable({
             category = GetInspectSlotCategory(slotName),

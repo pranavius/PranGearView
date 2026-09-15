@@ -4,6 +4,9 @@ local L = PGV.L
 PGVOptionsDescriptionMixin = {}
 function PGVOptionsDescriptionMixin:Init(initializer)
     self.Text:SetText(initializer:GetName())
+    if initializer:GetData().large then
+        self.Text:SetFontObject(GameFontNormalLarge)
+    end
 end
 
 local function RefreshSlots()
@@ -12,6 +15,9 @@ local function RefreshSlots()
     end
     if PGV.UpdateInspectedGearInfo and InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
         PGV.UpdateInspectedGearInfo(PGV.inspectedUnitGUID, true)
+    end
+    if PGV.UpdateEnchantToggleButtonVisibility then
+        PGV.UpdateEnchantToggleButtonVisibility()
     end
 end
 
@@ -155,6 +161,108 @@ local function LinkToShowToggle(rootShowInit, subShowInit, rootInit, subInit, is
             rootInit:AddShownPredicate(shownPredicate)
         end
     end
+end
+
+local RaceIcons = {
+    Human = { Male = "RaceIcon128-Human-Male", Female = "RaceIcon128-Human-Female" },
+    Dwarf = { Male = "RaceIcon128-Dwarf-Male", Female = "RaceIcon128-Dwarf-Female" },
+    NightElf = { Male = "RaceIcon128-NightElf-Male", Female = "RaceIcon128-NightElf-Female" },
+    Gnome = { Male = "RaceIcon128-Gnome-Male", Female = "RaceIcon128-Gnome-Female" },
+    Draenei = { Male = "RaceIcon128-Draenei-Male", Female = "RaceIcon128-Draenei-Female" },
+    Worgen = { Male = "RaceIcon128-Worgen-Male", Female = "RaceIcon128-Worgen-Female" },
+    VoidElf = { Male = "RaceIcon128-VoidElf-Male", Female = "RaceIcon128-VoidElf-Female" },
+    LightforgedDraenei = { Male = "RaceIcon128-Lightforged-Male", Female = "RaceIcon128-Lightforged-Female" },
+    DarkIronDwarf = { Male = "RaceIcon128-DarkIronDwarf-Male", Female = "RaceIcon128-DarkIronDwarf-Female" },
+    KulTiran = { Male = "RaceIcon128-KulTiran-Male", Female = "RaceIcon128-KulTiran-Female" },
+    Mechagnome = { Male = "RaceIcon128-Mechagnome-Male", Female = "RaceIcon128-Mechagnome-Female" },
+    Orc = { Male = "RaceIcon128-Orc-Male", Female = "RaceIcon128-Orc-Female" },
+    Undead = { Male = "RaceIcon128-Undead-Male", Female = "RaceIcon128-Undead-Female" },
+    Tauren = { Male = "RaceIcon128-Tauren-Male", Female = "RaceIcon128-Tauren-Female" },
+    Troll = { Male = "RaceIcon128-Troll-Male", Female = "RaceIcon128-Troll-Female" },
+    BloodElf = { Male = "RaceIcon128-BloodElf-Male", Female = "RaceIcon128-BloodElf-Female" },
+    Goblin = { Male = "RaceIcon128-Goblin-Male", Female = "RaceIcon128-Goblin-Female" },
+    Nightborne = { Male = "RaceIcon128-Nightborne-Male", Female = "RaceIcon128-Nightborne-Female" },
+    HighmountainTauren = { Male = "RaceIcon128-Highmountain-Male", Female = "RaceIcon128-Highmountain-Female" },
+    MagharOrc = { Male = "RaceIcon128-MagharOrc-Male", Female = "RaceIcon128-MagharOrc-Female" },
+    ZandalariTroll = { Male = "RaceIcon128-Zandalari-Male", Female = "RaceIcon128-Zandalari-Female" },
+    Vulpera = { Male = "RaceIcon128-Vulpera-Male", Female = "RaceIcon128-Vulpera-Female" },
+    Pandaren = { Male = "RaceIcon128-Pandaren-Male", Female = "RaceIcon128-Pandaren-Female" },
+    Dracthyr = { Male = "RaceIcon128-Dracthyr-Male", Female = "RaceIcon128-Dracthyr-Female" },
+    Earthen = { Male = "RaceIcon128-Earthen-Male", Female = "RaceIcon128-Earthen-Female" },
+    Haranir = { Male = "RaceIcon128-Haranir-Male", Female = "RaceIcon128-Haranir-Female" },
+}
+
+local ClassIcons = {
+    DeathKnight = "ClassIcon-DeathKnight",
+    DemonHunter = "ClassIcon-DemonHunter",
+    Druid = "ClassIcon-Druid",
+    Evoker = "ClassIcon-Evoker",
+    Hunter = "ClassIcon-Hunter",
+    Mage = "ClassIcon-Mage",
+    Monk = "ClassIcon-Monk",
+    Paladin = "ClassIcon-Paladin",
+    Priest = "ClassIcon-Priest",
+    Rogue = "ClassIcon-Rogue",
+    Shaman = "ClassIcon-Shaman",
+    Warlock = "ClassIcon-Warlock",
+    Warrior = "ClassIcon-Warrior",
+}
+
+local CONTRIBUTORS = {
+    { name = "Tusk", race = RaceIcons.Pandaren.Male, class = ClassIcons.Monk, color = "Monk" },
+    { name = "Numynum", race = RaceIcons.BloodElf.Female, class = ClassIcons.DemonHunter, color = "DemonHunter" },
+    { name = "ZamestoTV", race = RaceIcons.NightElf.Male, class = ClassIcons.Druid, color = "Druid" },
+    { name = "Lirfdam", color = "Priest" },
+    { name = "BlueNightSky", color = "Priest" },
+    { name = "Azaran", color = "Priest" },
+    { name = "StummerKater", color = "Priest" },
+    { name = "Rubyurek", color = "Priest" },
+}
+
+local SPECIAL_THANKS = {
+    { name = "Beo", race = RaceIcons.Pandaren.Female, class = ClassIcons.DemonHunter, color = "DemonHunter" },
+    { name = "Knifermonkey", race = RaceIcons.Undead.Male, class = ClassIcons.Warlock, color = "Warlock" },
+    { name = "Jery", race = RaceIcons.BloodElf.Male, class = ClassIcons.Mage, color = "Mage" },
+    { name = "Emraliya", race = RaceIcons.HighmountainTauren.Female, class = ClassIcons.DeathKnight, color = "DeathKnight" },
+    { name = "Aliakin", race = RaceIcons.Human.Male, class = ClassIcons.Mage, color = "Mage" },
+    { name = "Grok", race = RaceIcons.Orc.Male, class = ClassIcons.Warrior, color = "Warrior" },
+}
+
+local function AddCreditRow(layout, text, large)
+    layout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = text, large = large }))
+end
+
+local function AddCreditPerson(layout, person)
+    local icons = (person.race and CreateAtlasMarkup(person.race, 20, 20) or "")..(person.class and CreateAtlasMarkup(person.class, 20, 20) or "")
+    AddCreditRow(layout, icons..(icons ~= "" and " " or "")..PGV.ColorText(person.name, person.color))
+end
+
+local function BuildCreditsCategory(rootCategory)
+    local _, creditsLayout = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Credits"])
+
+    AddCreditRow(creditsLayout, PGV.ColorText(addonName.." "..L["Credits"], "Info"), true)
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+    AddCreditRow(creditsLayout, PGV.ColorText("Created by "..CreateAtlasMarkup(RaceIcons.BloodElf.Male, 20, 20)..CreateAtlasMarkup(ClassIcons.Monk, 20, 20).." Pranavius", "Heirloom"))
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+
+    creditsLayout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Contributors"]))
+    for _, contributor in ipairs(CONTRIBUTORS) do
+        AddCreditPerson(creditsLayout, contributor)
+    end
+
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+    AddCreditRow(creditsLayout, L["If you would like to contribute to development, you can find the repository on GitHub."].."\n"..L["Please follow the development guidelines outlined in the README document."])
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+
+    creditsLayout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Special Thanks"]))
+    for _, person in ipairs(SPECIAL_THANKS) do
+        AddCreditPerson(creditsLayout, person)
+    end
+
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+    creditsLayout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Connect"]))
+    AddCreditRow(creditsLayout, CreateSimpleTextureMarkup("Interface/AddOns/PranGearView/Media/X-logo", 20, 20, 0, -5)..PGV.ColorText("@PranaviusWoW", "Legendary"))
+    AddCreditRow(creditsLayout, CreateSimpleTextureMarkup("Interface/AddOns/PranGearView/Media/Github-logo", 20, 20, 0, -5)..PGV.ColorText("Pranavius", "Legendary"))
 end
 
 local function BuildOptions()
@@ -306,6 +414,9 @@ local function BuildOptions()
     local enchantsMaxLevelOnlyInit = MakeToggle(enchantsCategory, "enchantsMaxLevelOnly", L["Only Show for Max Level"], L["Hide missing enchant info for characters under the level cap"],
         function() return PGV.db.enchants.missingMaxLevelOnly end,
         function(value) PGV.db.enchants.missingMaxLevelOnly = value end)
+    local enchantsShowTextButtonInit = MakeToggle(enchantsCategory, "enchantsShowTextButton", L["Enchant Text Button"], L["Display a button to show or hide enchant text in the Character Info window"],
+        function() return PGV.db.enchants.showTextButton end,
+        function(value) PGV.db.enchants.showTextButton = value end)
     local enchantsRootUseCustomColor, enchantsSubUseCustomColor = MakeSharedToggle(rootCategory, enchantsCategory, "enchantsUseCustomColor", L["Text Color"], L["Customize enchant text color"],
         function() return PGV.db.enchants.useCustomColor end,
         function(value) PGV.db.enchants.useCustomColor = value end)
@@ -314,7 +425,7 @@ local function BuildOptions()
 
     LinkToShowToggle(enchantsRootShow, enchantsSubShow, enchantsRootScale, enchantsSubScale, enchantsIsShown, notTimerunning)
     LinkToShowToggle(enchantsRootShow, enchantsSubShow, enchantsRootUseCustomColor, enchantsSubUseCustomColor, enchantsIsShown, notTimerunning)
-    for _, initializer in ipairs({ enchantsOutlineInit, enchantsShowMissingInit }) do
+    for _, initializer in ipairs({ enchantsOutlineInit, enchantsShowMissingInit, enchantsShowTextButtonInit }) do
         initializer:SetParentInitializer(enchantsSubShow, enchantsIsShown)
         initializer:AddShownPredicate(notTimerunning)
     end
@@ -440,6 +551,8 @@ local function BuildOptions()
         return not PGV.IsStatOrderAtDefault(specID)
     end)
     characterStatsLayout:AddInitializer(resetOrderInit)
+
+    BuildCreditsCategory(rootCategory)
 end
 
 PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)

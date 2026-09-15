@@ -258,11 +258,18 @@ local function ResolveEnchantText(rawText)
 
     local atlas = text:match("|A:(.-):")
     if atlas then
-        text = text:gsub(" |A:.-|a", CreateAtlasMarkup(atlas, 15, 15))
-    else
-        text = text.." "..CreateSimpleTextureMarkup(DK_ENCH_ABBR_TEXTURES[text] or 628564, 15, 15)
+        local icon = CreateAtlasMarkup(atlas, 15, 15)
+        if PGV.db.enchants.collapse then
+            return icon
+        end
+        return text:gsub(" |A:.-|a", icon)
     end
-    return text
+
+    local icon = CreateSimpleTextureMarkup(DK_ENCH_ABBR_TEXTURES[text] or 628564, 15, 15)
+    if PGV.db.enchants.collapse then
+        return icon
+    end
+    return text.." "..icon
 end
 
 function PGVSlotOverlayMixin:UpdateSlotInfo()
@@ -330,9 +337,13 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                 local isMaxLevel = UnitLevel(context.unit) == PGV.CurrentExpac.LevelCap
                 if PGV.db.enchants.showMissing and PGV.IsEnchantableSlot(slot) and (isMaxLevel or not PGV.db.enchants.missingMaxLevelOnly) then
                     local icon = CreateSimpleTextureMarkup(523826, 15, 15)
-                    local label = PGV.ColorText(PGV.L["Enchant"], "Druid")
-                    local isLabelFirst = context.category == "left" or (context.category == "bottom" and context.isMainHand)
-                    self.Enchant:SetText(isLabelFirst and (label..icon) or (icon..label))
+                    if PGV.db.enchants.collapse then
+                        self.Enchant:SetText(icon)
+                    else
+                        local label = PGV.ColorText(PGV.L["Enchant"], "Druid")
+                        local isLabelFirst = context.category == "left" or (context.category == "bottom" and context.isMainHand)
+                        self.Enchant:SetText(isLabelFirst and (label..icon) or (icon..label))
+                    end
                     self.Enchant:Show()
                 end
             end
@@ -386,9 +397,6 @@ end
 local function UpdateSlotOverlay(slot)
     local overlay = slot.PGVSlotOverlay
     if not overlay then
-        if InCombatLockdown() or PGV.IsAddOnCurrentlyRestricted() then
-            return
-        end
         overlay = CreateFrame("Frame", nil, slot, "PGVSlotOverlayTemplate")
         overlay.context = setmetatable({
             category = GetSlotCategory(slot),

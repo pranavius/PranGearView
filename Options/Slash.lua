@@ -25,9 +25,11 @@ local function HandleSlashCmd(input)
     input = input:trim():lower()
 
     if input == "" then
-        if not PGV.IsAddOnCurrentlyRestricted() then
-            Settings.OpenToCategory(PGV.categoryID)
+        if PGV.IsAddOnCurrentlyRestricted() then
+            print(addonName..": "..L["Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."])
+            return
         end
+        Settings.OpenToCategory(PGV.categoryID)
         return
     end
 
@@ -46,8 +48,8 @@ local function HandleSlashCmd(input)
     if input == "ench" then
         PGV.db.enchants.show = not PGV.db.enchants.show
         PGV.UpdateAllSlots()
-        if PGV.EnchantToggleButton then
-            PGV.EnchantToggleButton:SetShown(PGV.db.enchants.show)
+        if PGV.UpdateEnchantToggleButtonVisibility then
+            PGV.UpdateEnchantToggleButtonVisibility()
         end
         return
     end

@@ -114,6 +114,7 @@ L["You should never need to enable this"] = "You should never need to enable thi
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Open the AddOn options window"
+L["Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."] = "Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."
 L["List all available slash commands for the AddOn"] = "List all available slash commands for the AddOn"
 L["Toggle showing item level"] = "Toggle showing item level"
 L["Toggle showing upgrade track"] = "Toggle showing upgrade track"
