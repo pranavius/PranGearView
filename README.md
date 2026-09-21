@@ -15,7 +15,7 @@ Feedback on this AddOn or any others that I develop/maintain is always welcome. 
 - Allows for a wide range of text customization (size, color, outline, and more to come!)
 - Lets you know when items are missing sockets, gems, and enchants
 - Can show gear information when inspecting players
-- Provides an interface for customizing the order of secondary and tertiary stats under the *Enchancements* category based on class and specialization
+- Provides an interface for customizing the order of secondary and tertiary stats under the *Enhancements* category based on class and specialization
 - Shows abbreviated names for item enchants to reduce visual clutter
 - Allows quick showing/hiding of enchant text if you are only concerned with the quality of the enchant (Dragonflight enchants and onward)
 - Indicates when equipped items have embellishments
@@ -40,20 +40,21 @@ You can use the options window to modify all available options. To open the opti
 
 ### Options Window
 - **Item Level**: Display item levels for equipped items
-- **Upgrade Track**: Display upgrade tracks for eqipped items
+- **Upgrade Track**: Display upgrade tracks for equipped items
 - **Gems**: Display gem and socket information for equipped items
 - **Enchants**: Display enchant information for equipped items
 - **Durability**: Display durability percentages for equipped items
 
 #### Customization Options
 - **Item Level**: Change text size, outline, and color
+  - Option to place item levels on top of equipment icons
 - **Upgrade Track**: Change text size, outline, and color
 - **Gems**: Change icon size, show missing gems and sockets, only show missing gems and sockets for max level characters
 - **Enchants**: Change text size, text outline, show missing enchants, only show missing enchants for max level characters, show or hide button to display enchant text, change text color
-- **Durability**: Change text size
-- **Inspect Window**: Choose which information (if any) to display when inspecting other players
-- **Character Stats**: Set stat order based on class and specialization
-- **Other Options**: Show minimap icon, Increase the size of the Character Info window, place item levels on equipment, show embellishments, hide shirt & tabard info, show debugging messages (you should never need to enable this)
+- **Durability**: Change text size, show as bar, change colors used for durability thresholds
+- **Inspect Window**: Choose which information to display when inspecting other players
+- **Character Stats**: Set stat order based on class and specialization, show stats with decimal places
+- **Main options page**: Show minimap icon, increase the size of the Character Info window, show embellishments, show decimals for equipped item level, hide shirt & tabard info, show debugging messages (you should never need to enable this)
 
 ### Slash Commands
 All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Examples listed here use `/pgv` for brevity.
@@ -73,11 +74,11 @@ All slash commands can be invoked using the prefix `/prangearview` or `/pgv`. Ex
 - `/pgv etext`: Toggle showing enchant text in the Character Info window
   - This is the same as clicking the **Show Enchant Text** or **Hide Enchant Text** button in the Character Info window
 - `/pgv inspect`: Toggle showing gear info when inspecting another player
-  - This is the same as clicking the **Show Gear Info on Inspect** checkbox under the **Inspect Window** section of the Options window
+  - This is the same as clicking the **Inspect Window** checkbox under the **Inspect Window** category of the Options window
 - `/pgv expand`: Toggle using a larger Character Info window to view gear info
-  - This is the same as clicking the **Larger Character Info Window** checkbox under the **Other Options** section of the Options window
+  - This is the same as clicking the **Larger Character Info Window** checkbox on the main options page
 - `/pgv minimap`: Show/hide the minimap icon
-  - This is the same as clicking the **Show Minimap Icon** checkbox under the **Other Options** section of the Options window
+  - This is the same as clicking the **Show Minimap Icon** checkbox on the main options page
 
 ## Planned Updates
 The goal of this AddOn is to provide maximum customization capabilities on the default Blizzard UI. There is much more work to be done to help achieve this, including some of the items listed below. Suggestions and feedback on customization features are always welcome.

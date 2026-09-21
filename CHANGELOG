@@ -1,3 +1,12 @@
+**3.0.0**
+- **IMPORTANT NOTE:** This version of the AddOn is a ground-up rewrite of the project. Changes have been thoroughly tested and validated in-game, but some functionality may have slipped through the cracks. If any such issues are found, please report them via Discord.
+
+- Redesigned options window with dedicated pages for each section using native Blizzard options APIs
+  - Settings from previous versions should automatically be carried over
+- Stat ordering is now done via drag-and-drop
+- Added the `/pgv help` slash command to list all available commands
+- Added translations for new options text in all supported languages
+
 **2.1.1**
 - *Bug Fix:* Resolved an issue when viewing decimal stat values due to unintended storage of secret values in the AddOn's database
 
