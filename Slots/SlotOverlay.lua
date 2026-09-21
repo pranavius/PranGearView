@@ -360,7 +360,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                 if PGV.db.durability.showAsBar then
                     self.DurabilityBar:SetMinMaxValues(0, 1)
                     self.DurabilityBar:SetValue(percent)
-                    self.DurabilityBar:SetStatusBarColor(CreateColorFromHexString("FF"..ResolveDurabilityColor(percent)):GetRGB())
+                    self.DurabilityBar:SetStatusBarColor(CreateColorFromHexString("FF"..resolveDurabilityColor(percent)):GetRGB())
                     self.DurabilityBar:Show()
                 else
                     local percentText = math.floor(percent * 100).."%"
