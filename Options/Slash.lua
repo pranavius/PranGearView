@@ -10,7 +10,7 @@ local ToggleMap = {
     inspect = { help = L["Toggle showing gear info when inspecting another player"], dbTable = "inspect", dbKey = "show" },
 }
 
-local function PrintHelp()
+local function printHelp()
     print(addonName..": /pgv <command>")
     print("  help - "..L["List all available slash commands for the AddOn"])
     for cmd, entry in pairs(ToggleMap) do
@@ -21,7 +21,7 @@ local function PrintHelp()
     print("  minimap - "..L["Show/hide the minimap icon"])
 end
 
-local function HandleSlashCmd(input)
+local function handleSlashCmd(input)
     input = input:trim():lower()
 
     if input == "" then
@@ -34,29 +34,27 @@ local function HandleSlashCmd(input)
     end
 
     if input == "help" then
-        PrintHelp()
+        printHelp()
         return
     end
 
     local toggle = ToggleMap[input]
     if toggle then
         PGV.db[toggle.dbTable][toggle.dbKey] = not PGV.db[toggle.dbTable][toggle.dbKey]
-        PGV.UpdateAllSlots()
+        PGV.RefreshSlots()
         return
     end
 
     if input == "ench" then
         PGV.db.enchants.show = not PGV.db.enchants.show
-        PGV.UpdateAllSlots()
-        if PGV.UpdateEnchantToggleButtonVisibility then
-            PGV.UpdateEnchantToggleButtonVisibility()
-        end
+        PGV.RefreshSlots()
         return
     end
 
     if input == "expand" then
         PGV.db.general.increaseCharacterInfoSize = not PGV.db.general.increaseCharacterInfoSize
         PGV.AdjustCharacterInfoWindowSize()
+        PGV.RefreshSlots()
         return
     end
 
@@ -68,12 +66,13 @@ local function HandleSlashCmd(input)
         else
             LDBIcon:Show(addonName)
         end
+        PGV.RefreshSlots()
         return
     end
 
-    PrintHelp()
+    printHelp()
 end
 
-SLASH_PRANGEARVIEW_NEW1 = "/prangearvieww"
-SLASH_PRANGEARVIEW_NEW2 = "/pgv2"
-SlashCmdList["PRANGEARVIEW_NEW"] = HandleSlashCmd
+SLASH_PRANGEARVIEW1 = "/prangearview"
+SLASH_PRANGEARVIEW2 = "/pgv"
+SlashCmdList["PRANGEARVIEW"] = handleSlashCmd

@@ -5,7 +5,7 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Bliz
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="Background" setAllPoints="true">
-                    <Color color="white" a="0.05"/>
+                    <Color color="WHITE_FONT_COLOR" a="0"/>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
@@ -17,7 +17,7 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Bliz
             </Layer>
         </Layers>
         <HighlightTexture setAllPoints="true">
-            <Color color="white" a="0.1"/>
+            <Color color="WHITE_FONT_COLOR" a="0.1"/>
         </HighlightTexture>
     </Button>
 
@@ -26,7 +26,7 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Bliz
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture setAllPoints="true">
-                    <Color color="black" a="0.15"/>
+                    <Color color="BLACK_FONT_COLOR" a="0.5"/>
                 </Texture>
             </Layer>
         </Layers>

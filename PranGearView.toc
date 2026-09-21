@@ -1,10 +1,10 @@
 ## Interface: 120105, 120100
-## Title: PranGearView (rework)
+## Title: PranGearView
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
 ## Author: @project-author@
 ## Version: @project-version@
-## SavedVariables: PranGearView_NewDB
+## SavedVariables: PranGearViewDB
 ## Category: User Interface
 ## X-Flavor: retail
 ## X-Additional-Categories: Class, Unit Frames, Combat, Buffs & Debuffs

@@ -181,7 +181,7 @@ function PGVSlotOverlayMixin:PositionElements()
     self:PositionEmbellishment()
 end
 
-local function ResolveItemLevelColor(context, data)
+local function resolveItemLevelColor(context, data)
     local opts = PGV.db.itemLevel
     if opts.useCustomColor then
         return opts.customColor
@@ -202,7 +202,7 @@ local function ResolveItemLevelColor(context, data)
     return "FFFFFF"
 end
 
-local function ResolveUpgradeTrackColor(data, rawColor)
+local function resolveUpgradeTrackColor(data, rawColor)
     if rawColor and rawColor:lower() == PGV.HexColorPresets.PrevSeasonGear:lower() then
         return rawColor
     end
@@ -229,7 +229,7 @@ local function ResolveUpgradeTrackColor(data, rawColor)
     return CreateColor(r, g, b):GenerateHexColorNoAlpha()
 end
 
-local function ResolveEnchantColor()
+local function resolveEnchantColor()
     local opts = PGV.db.enchants
     if opts.useCustomColor then
         return opts.customColor
@@ -237,7 +237,7 @@ local function ResolveEnchantColor()
     return "Uncommon"
 end
 
-local function ResolveDurabilityColor(percent)
+local function resolveDurabilityColor(percent)
     local opts = PGV.db.durability
     if percent > 0.5 then
         return opts.colorHigh
@@ -247,7 +247,7 @@ local function ResolveDurabilityColor(percent)
     return opts.colorLow
 end
 
-local function ResolveEnchantText(rawText)
+local function resolveEnchantText(rawText)
     local text = PGV.AbbreviateText(rawText, PGV.EnchantTextReplacements)
     if GetLocale() == "ptBR" then
         text = PGV.AbbreviateText(text, PGV.ptbrEnchantTextReplacements)
@@ -288,13 +288,13 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
 
     PGV.GetItemDisplayData(itemLink, context.unit, slotID, function(data)
         if context.IsShowingItemLevel() then
-            self.ItemLevel:SetText(PGV.ColorText(data.itemLevel, ResolveItemLevelColor(context, data)))
+            self.ItemLevel:SetText(PGV.ColorText(data.itemLevel, resolveItemLevelColor(context, data)))
             self.ItemLevel:Show()
         end
 
         if context.IsShowingUpgradeTrack() and data.upgradeTrack then
             local upgradeText = PGV.AbbreviateText(data.upgradeTrack.text, PGV.UpgradeTextReplacements)
-            self.UpgradeTrack:SetText(PGV.ColorText(upgradeText, ResolveUpgradeTrackColor(data, data.upgradeTrack.color)))
+            self.UpgradeTrack:SetText(PGV.ColorText(upgradeText, resolveUpgradeTrackColor(data, data.upgradeTrack.color)))
             self.UpgradeTrack:Show()
         end
 
@@ -331,7 +331,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
 
         if context.IsShowingEnchants() then
             if data.enchant then
-                self.Enchant:SetText(PGV.ColorText(ResolveEnchantText(data.enchant.text), ResolveEnchantColor()))
+                self.Enchant:SetText(PGV.ColorText(resolveEnchantText(data.enchant.text), resolveEnchantColor()))
                 self.Enchant:Show()
             else
                 local isMaxLevel = UnitLevel(context.unit) == PGV.CurrentExpac.LevelCap
@@ -364,7 +364,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                     self.DurabilityBar:Show()
                 else
                     local percentText = math.floor(percent * 100).."%"
-                    self.Durability:SetText(PGV.ColorText(percentText, ResolveDurabilityColor(percent)))
+                    self.Durability:SetText(PGV.ColorText(percentText, resolveDurabilityColor(percent)))
                     self.Durability:Show()
                 end
             end
@@ -385,7 +385,7 @@ local characterContext = {
     IsShowingEmbellishments = function() return PGV.AreEmbellishmentsShownForCharacter() end,
 }
 
-local function GetSlotCategory(slot)
+local function getSlotCategory(slot)
     if slot == CharacterMainHandSlot or slot == CharacterSecondaryHandSlot then
         return "bottom"
     elseif slot.IsLeftSide then
@@ -394,12 +394,12 @@ local function GetSlotCategory(slot)
     return "right"
 end
 
-local function UpdateSlotOverlay(slot)
+local function updateSlotOverlay(slot)
     local overlay = slot.PGVSlotOverlay
     if not overlay then
         overlay = CreateFrame("Frame", nil, slot, "PGVSlotOverlayTemplate")
         overlay.context = setmetatable({
-            category = GetSlotCategory(slot),
+            category = getSlotCategory(slot),
             isMainHand = (slot == CharacterMainHandSlot),
         }, { __index = characterContext })
         slot.PGVSlotOverlay = overlay
@@ -408,20 +408,20 @@ local function UpdateSlotOverlay(slot)
     overlay:UpdateSlotInfo()
 end
 
-local function UpdateAllSlots()
+local function updateAllSlots()
     for _, slot in ipairs(PGV.GearSlots) do
-        UpdateSlotOverlay(slot)
+        updateSlotOverlay(slot)
     end
 end
 
-PGV.UpdateAllSlots = UpdateAllSlots
+PGV.UpdateAllSlots = updateAllSlots
 
-PGV.RegisterEvent("PLAYER_EQUIPMENT_CHANGED", UpdateAllSlots)
-PGV.RegisterEvent("UPDATE_INVENTORY_DURABILITY", UpdateAllSlots)
-PGV.RegisterEvent("SOCKET_INFO_ACCEPT", UpdateAllSlots)
+PGV.RegisterEvent("PLAYER_EQUIPMENT_CHANGED", updateAllSlots)
+PGV.RegisterEvent("UPDATE_INVENTORY_DURABILITY", updateAllSlots)
+PGV.RegisterEvent("SOCKET_INFO_ACCEPT", updateAllSlots)
 
 hooksecurefunc(CharacterFrame, "ShowSubFrame", function(_, subFrame)
     if subFrame == "PaperDollFrame" then
-        UpdateAllSlots()
+        updateAllSlots()
     end
 end)

@@ -1,7 +1,7 @@
 local addonName, PGV = ...
 local L = PGV.L
 
-local function AdjustCharacterInfoWindowSize()
+local function adjustCharacterInfoWindowSize()
     if not PaperDollFrame:IsVisible() then
         return
     end
@@ -50,9 +50,9 @@ local function AdjustCharacterInfoWindowSize()
     end
 end
 
-PGV.AdjustCharacterInfoWindowSize = AdjustCharacterInfoWindowSize
+PGV.AdjustCharacterInfoWindowSize = adjustCharacterInfoWindowSize
 
-hooksecurefunc(CharacterFrame, "RefreshDisplay", AdjustCharacterInfoWindowSize)
+hooksecurefunc(CharacterFrame, "RefreshDisplay", adjustCharacterInfoWindowSize)
 
 hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
     if sceneID == 595 and PaperDollFrame:IsVisible() and PGV.db.general.increaseCharacterInfoSize then
@@ -77,7 +77,7 @@ function PGV.UpdateEnchantToggleButtonVisibility()
     PGV.EnchantToggleButton:SetShown(PGV.db.enchants.show and PGV.db.enchants.showTextButton and not PGV.IsTimerunningCharacter())
 end
 
-local function CreateEnchantToggleButton()
+local function createEnchantToggleButton()
     local button = CreateFrame("Button", "PGVToggleEnchantButton", CharacterFrame.TitleContainer)
     local buttonDim = CharacterFrame.TitleContainer:GetHeight() - 1
     button:SetSize(buttonDim, buttonDim)
@@ -87,17 +87,17 @@ local function CreateEnchantToggleButton()
     button:SetPushedTexture(237018)
     button:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
 
-    local function UpdateTooltip()
+    local function updateTooltip()
         GameTooltip:SetOwner(button, "ANCHOR_TOPRIGHT")
         GameTooltip:SetText(PGV.db.enchants.collapse and L["Show Enchant Text"] or L["Hide Enchant Text"])
         GameTooltip:Show()
     end
-    button:SetScript("OnEnter", UpdateTooltip)
+    button:SetScript("OnEnter", updateTooltip)
     button:SetScript("OnLeave", GameTooltip_Hide)
     button:SetScript("OnClick", function()
         PGV.db.enchants.collapse = not PGV.db.enchants.collapse
         PGV.UpdateAllSlots()
-        UpdateTooltip()
+        updateTooltip()
     end)
 
     PGV.EnchantToggleButton = button
@@ -127,5 +127,5 @@ PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)
     })
     LDBIcon:Register(addonName, broker, PGV.db.general.minimap)
 
-    CreateEnchantToggleButton()
+    createEnchantToggleButton()
 end)

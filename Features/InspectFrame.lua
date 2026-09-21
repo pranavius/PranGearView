@@ -10,7 +10,7 @@ local inspectContext = {
     IsShowingEmbellishments = function() return PGV.db.inspect.showEmbellishments end,
 }
 
-local function GetInspectSlotCategory(slotName)
+local function getInspectSlotCategory(slotName)
     if slotName == "InspectMainHandSlot" or slotName == "InspectSecondaryHandSlot" then
         return "bottom"
     elseif tContains(PGV.InspectInfo.leftSideSlots, slotName) then
@@ -19,7 +19,7 @@ local function GetInspectSlotCategory(slotName)
     return "right"
 end
 
-local function UpdateInspectSlotOverlay(slotName)
+local function updateInspectSlotOverlay(slotName)
     local slot = _G[slotName]
     if not slot then
         return
@@ -29,7 +29,7 @@ local function UpdateInspectSlotOverlay(slotName)
     if not overlay then
         overlay = CreateFrame("Frame", nil, slot, "PGVSlotOverlayTemplate")
         overlay.context = setmetatable({
-            category = GetInspectSlotCategory(slotName),
+            category = getInspectSlotCategory(slotName),
             isMainHand = (slotName == "InspectMainHandSlot"),
         }, { __index = inspectContext })
         slot.PGVSlotOverlay = overlay
@@ -38,7 +38,7 @@ local function UpdateInspectSlotOverlay(slotName)
     overlay:UpdateSlotInfo()
 end
 
-local function UpdateAverageItemLevel(unitToken, unitGUID)
+local function updateAverageItemLevel(unitToken, unitGUID)
     if not InspectPaperDollItemsFrame then
         return
     end
@@ -101,21 +101,21 @@ function PGV.UpdateInspectedGearInfo(unitGUID, forceUpdate)
     inspectContext.unit = unitToken
 
     for _, slotName in ipairs(PGV.InspectInfo.slots) do
-        UpdateInspectSlotOverlay(slotName)
+        updateInspectSlotOverlay(slotName)
     end
 
-    UpdateAverageItemLevel(unitToken, unitGUID)
+    updateAverageItemLevel(unitToken, unitGUID)
 end
 
-local function RefreshIfInspecting()
+local function refreshIfInspecting()
     if InspectPaperDollFrame and InspectPaperDollFrame:IsVisible() then
         PGV.UpdateInspectedGearInfo(PGV.inspectedUnitGUID, true)
     end
 end
 
-PGV.RegisterEvent("PLAYER_EQUIPMENT_CHANGED", RefreshIfInspecting)
-PGV.RegisterEvent("UPDATE_INVENTORY_DURABILITY", RefreshIfInspecting)
-PGV.RegisterEvent("SOCKET_INFO_ACCEPT", RefreshIfInspecting)
+PGV.RegisterEvent("PLAYER_EQUIPMENT_CHANGED", refreshIfInspecting)
+PGV.RegisterEvent("UPDATE_INVENTORY_DURABILITY", refreshIfInspecting)
+PGV.RegisterEvent("SOCKET_INFO_ACCEPT", refreshIfInspecting)
 
 PGV.RegisterEvent("INSPECT_READY", function(unitGUID)
     if not InspectFrame or not InspectFrame.unit then

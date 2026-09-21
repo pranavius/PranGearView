@@ -91,7 +91,7 @@ function PGV.AreEmbellishmentsShownForCharacter()
     return PGV.db.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
 end
 
-local function IsSlotInList(slot, list)
+local function isSlotInList(slot, list)
     for _, entry in ipairs(list) do
         if slot == entry or (type(entry) == "string" and slot == _G[entry]) then
             return true
@@ -101,7 +101,7 @@ local function IsSlotInList(slot, list)
 end
 
 function PGV.IsSocketableSlot(slot)
-    return IsSlotInList(slot, PGV.CurrentExpac.SocketableSlots) or IsSlotInList(slot, PGV.CurrentExpac.AuxSocketableSlots)
+    return isSlotInList(slot, PGV.CurrentExpac.SocketableSlots) or isSlotInList(slot, PGV.CurrentExpac.AuxSocketableSlots)
 end
 
 function PGV.IsEnchantableSlot(slot)
@@ -113,7 +113,7 @@ function PGV.IsEnchantableSlot(slot)
             return PGV.CurrentExpac.OffhandEnchantAvailable
         end
     end
-    return IsSlotInList(slot, PGV.CurrentExpac.EnchantableSlots)
+    return isSlotInList(slot, PGV.CurrentExpac.EnchantableSlots)
 end
 
 function PGV.AbbreviateText(text, replacements)

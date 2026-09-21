@@ -85,28 +85,20 @@ local function mergeDefaults(target, defaults)
     return target
 end
 
-local function migrateFromAceDB(source, target)
-    if target.migratedFromAceDB then
-        PGV.DebugPrint("Migration already ran, skipping")
-        return
-    end
-
-    if not source or not source.profiles then
-        PGV.DebugPrint("No AceDB profile data found to migrate")
-        return
+-- AceDB stored settings under profiles[profileKey]; the current format is flat.
+-- The presence of `profiles` marks a legacy DB, which is replaced by the active profile's data.
+local function migrateFromAceDB(db)
+    if not db.profiles then
+        return db
     end
 
     local charKey = UnitName("player").." - "..GetRealmName()
-    local profileKey = source.profileKeys and source.profileKeys[charKey] or "Default"
-    local profileData = source.profiles[profileKey] or source.profiles.Default or {}
+    local profileKey = db.profileKeys and db.profileKeys[charKey] or "Default"
+    local profileData = db.profiles[profileKey] or db.profiles.Default or {}
 
     PGV.DebugPrint("Migrating AceDB profile", profileKey, "for", charKey)
 
-    for key, value in pairs(profileData) do
-        target[key] = type(value) == "table" and CopyTable(value) or value
-    end
-
-    target.migratedFromAceDB = true
+    return CopyTable(profileData)
 end
 
 PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)
@@ -114,11 +106,10 @@ PGV.RegisterEvent("ADDON_LOADED", function(loadedAddon)
 
     PGV.DebugPrint("ADDON_LOADED:", addonName)
 
-    PranGearView_NewDB = PranGearView_NewDB or {}
-    migrateFromAceDB(PranGearViewDB, PranGearView_NewDB)
-    mergeDefaults(PranGearView_NewDB, PGV.DatabaseDefaults)
+    PranGearViewDB = migrateFromAceDB(PranGearViewDB or {})
+    mergeDefaults(PranGearViewDB, PGV.DatabaseDefaults)
 
-    PGV.db = PranGearView_NewDB
+    PGV.db = PranGearViewDB
     PGV.DebugPrint("Database ready")
 
     PGV.UnregisterEvent("ADDON_LOADED")

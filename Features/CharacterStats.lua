@@ -17,7 +17,7 @@ function PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
     return PGV.GetCharacterCurrentSpecIDAndRole()
 end
 
-local function BuildDefaultStatOrder(role)
+local function buildDefaultStatOrder(role)
     local order = CopyTable(PGV.DefaultStatOrder)
     if role == "TANK" then
         for _, stat in ipairs(PGV.DefaultTankStatOrder) do
@@ -33,7 +33,7 @@ function PGV.IsStatOrderAtDefault(specID)
         return true
     end
     local role = select(5, GetSpecializationInfoByID(specID))
-    local defaultOrder = BuildDefaultStatOrder(role)
+    local defaultOrder = buildDefaultStatOrder(role)
     if #order ~= #defaultOrder then
         return false
     end
@@ -58,7 +58,7 @@ function PGV.InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     end
     local order = PGV.db.characterStats.customSpecStatOrders[specID]
     if not order or #order == 0 or reset then
-        PGV.db.characterStats.customSpecStatOrders[specID] = BuildDefaultStatOrder(role)
+        PGV.db.characterStats.customSpecStatOrders[specID] = buildDefaultStatOrder(role)
     end
 end
 
