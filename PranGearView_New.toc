@@ -1,14 +1,14 @@
-## Interface: 120100
-## Title: PranGearView
+## Interface: 120105, 120100
+## Title: PranGearView (rework)
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
 ## Author: @project-author@
 ## Version: @project-version@
-## SavedVariables: PranGearViewDB
+## SavedVariables: PranGearView_NewDB
 ## Category: User Interface
 ## X-Flavor: retail
 ## X-Additional-Categories: Class, Unit Frames, Combat, Buffs & Debuffs
-## X-Localizations: enUS, deDE, ptBR, ruRU, zhTW
+## X-Localizations: enUS, deDE, frFR, ptBR, ruRU, zhTW
 ## X-Source: https://github.com/pranavius/PranGearView
 ## X-Bug-Tracker: https://github.com/pranavius/PranGearView/issues
 ## X-Curse-Project-ID: 1249452
@@ -18,6 +18,8 @@
 
 embeds.xml
 
+Core.lua
+
 Localization\enUS.lua
 Localization\frFR.lua
 Localization\ptBR.lua
@@ -26,20 +28,18 @@ Localization\zhTW.lua
 Localization\deDE.lua
 
 Constants.lua
-Utils.lua
-Configs.lua
-Modules\ToggleEnchantButton.lua
-Modules\CharacterStats.lua
-Modules\InspectFrame.lua
-Modules\Credits.lua
+Database.lua
+ItemData.lua
 
-Templates\PGVSlotMixinBase.lua
-Templates\PGVCharSlotMixin.lua
-Templates\PGVCharSlotTemplate.xml
-Templates\PGVInspectSlotMixin.lua
-Templates\PGVInspectSlotTemplate.xml
+Slots\SlotOverlay.lua
+Slots\SlotOverlay.xml
 
-Options\OptionsTable.lua
-Options\SlashOptions.lua
+Features\InspectFrame.lua
+Features\CharacterStats.lua
+Features\UIEnhance.lua
 
-PranGearView.lua
+Options\StatOrder.lua
+Options\StatOrder.xml
+Options\Options.lua
+Options\Options.xml
+Options\Slash.lua

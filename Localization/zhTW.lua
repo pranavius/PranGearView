@@ -1,5 +1,6 @@
 -- Localization provided by BlueNightSky
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "zhTW")
+local _, PGV = ...
+local L = PGV.NewLocale("zhTW")
 
 if not L then return end
 
@@ -10,6 +11,7 @@ L["Gems"] = "寶石"
 L["Enchants"] = "附魔"
 L["Durability"] = "耐久度"
 L["Embellishments"] = "裝飾"
+L["Embellished"] = "裝飾"
 L["Reset"] = "重置"
 L["Font Scale"] = "文字縮放"
 L["Outline"] = "外框"
@@ -42,7 +44,7 @@ L["Decimal Precision"] = "小數點位數"
 L["Hide Shirt & Tabard Info"] = "隱藏襯衣與外袍資訊"
 L["Debug Mode"] = "偵錯模式"
 
-L["Choose information to show in the Character Info window"] = "Choose information to show in the Character Info window"
+L["Choose information to show in the Character Info window."] = "Choose information to show in the Character Info window."
 L["Display item levels for equipped items"] = "Display item levels for equipped items"
 L["Display upgrade track and progress for equipped items"] = "Display upgrade track and progress for equipped items"
 L["Display gem and socket information for equipped items"] = "Display gem and socket information for equipped items"

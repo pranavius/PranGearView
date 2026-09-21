@@ -1,0 +1,51 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+    <Button name="PGVStatOrderRowTemplate" mixin="PGVStatOrderRowMixin" virtual="true">
+        <Size y="20"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Background" setAllPoints="true">
+                    <Color color="white" a="0.05"/>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="LEFT" x="8" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture setAllPoints="true">
+            <Color color="white" a="0.1"/>
+        </HighlightTexture>
+    </Button>
+
+    <Frame name="PGVStatOrderListTemplate" mixin="PGVStatOrderListMixin" virtual="true">
+        <Size y="204"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture setAllPoints="true">
+                    <Color color="black" a="0.15"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="2" y="-2"/>
+                    <Anchor point="BOTTOMRIGHT" x="-18" y="2"/>
+                </Anchors>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-2" y="-2"/>
+                    <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+                </Anchors>
+            </EventFrame>
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+</Ui>

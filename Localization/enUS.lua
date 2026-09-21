@@ -1,4 +1,5 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "enUS", true, true)
+local _, PGV = ...
+local L = PGV.NewLocale("enUS")
 
 if not L then return end
 
@@ -9,6 +10,7 @@ L["Gems"] = "Gems"
 L["Enchants"] = "Enchants"
 L["Durability"] = "Durability"
 L["Embellishments"] = "Embellishments"
+L["Embellished"] = "Embellished"
 L["Reset"] = "Reset"
 L["Font Scale"] = "Font Scale"
 L["Outline"] = "Outline"
@@ -43,7 +45,8 @@ L["Decimal Precision"] = "Decimal Precision"
 L["Hide Shirt & Tabard Info"] = "Hide Shirt & Tabard Info"
 L["Debug Mode"] = "Debug Mode"
 
-L["Choose information to show in the Character Info window"] = "Choose information to show in the Character Info window"
+L["Choose information to show in the Character Info window."] = "Choose information to show in the Character Info window."
+L["Open a specific category for additional customization options."] = "Open a specific category for additional customization options."
 L["Display item levels for equipped items"] = "Display item levels for equipped items"
 L["Display upgrade track and progress for equipped items"] = "Display upgrade track and progress for equipped items"
 L["Display gem and socket information for equipped items"] = "Display gem and socket information for equipped items"
@@ -111,6 +114,8 @@ L["You should never need to enable this"] = "You should never need to enable thi
 
 ------------ Slash Commands ------------
 L["Open the AddOn options window"] = "Open the AddOn options window"
+L["Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."] = "Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."
+L["List all available slash commands for the AddOn"] = "List all available slash commands for the AddOn"
 L["Toggle showing item level"] = "Toggle showing item level"
 L["Toggle showing upgrade track"] = "Toggle showing upgrade track"
 L["Toggle showing gem info"] = "Toggle showing gem info"

@@ -1,5 +1,6 @@
 -- Localization provided by ZamestoTV
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "ruRU")
+local _, PGV = ...
+local L = PGV.NewLocale("ruRU")
 
 if not L then return end
 -- Первод ZamestoTV
@@ -10,6 +11,7 @@ L["Gems"] = "Самоцветы"
 L["Enchants"] = "Чары"
 L["Durability"] = "Прочность"
 L["Embellishments"] = "Украшения"
+L["Embellished"] = "Украшения"
 L["Reset"] = "Сброс"
 L["Font Scale"] = "Масштаб шрифта"
 L["Outline"] = "Обрисовывать"
@@ -38,7 +40,7 @@ L["Show Embellishments"] = "Показывать украшения"
 L["Hide Shirt & Tabard Info"] = "Скрыть информацию о рубашке и накидке"
 L["Debug Mode"] = "Режим отладки"
 
-L["Choose information to show in the Character Info window"] = "Выберите информацию для отображения в окне информации о персонаже"
+L["Choose information to show in the Character Info window."] = "Выберите информацию для отображения в окне информации о персонаже."
 L["Display item levels for equipped items"] = "Отображать уровни предметов для экипированных предметов"
 L["Display upgrade track and progress for equipped items"] = "Отображать путь улучшения и прогресс для экипированных предметов"
 L["Display gem and socket information for equipped items"] = "Отображать информацию о самоцветах и гнездах для экипированных предметов"

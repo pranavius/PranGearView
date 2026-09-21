@@ -1,5 +1,6 @@
 -- Localization provided by StummerKater and Rubyurek
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "deDE")
+local _, PGV = ...
+local L = PGV.NewLocale("deDE")
 
 if not L then return end
 
@@ -10,6 +11,7 @@ L["Gems"] = "Sockel & Edelsteine"
 L["Enchants"] = "Verzauberungen"
 L["Durability"] = "Haltbarkeit"
 L["Embellishments"] = "Verzierungen"
+L["Embellished"] = "Verzierungen"
 L["Reset"] = "Zurücksetzen"
 L["Font Scale"] = "Schriftgröße"
 L["Outline"] = "Kontur"
@@ -43,7 +45,7 @@ L["Show Decimals for Equipped Item Level"] = "Dezimalwerte für angelegte Gegens
 L["Decimal Precision"] = "Dezimalpräzision"
 L["Hide Shirt & Tabard Info"] = "Hemd & Wappenrock Info ausblenden"
 L["Debug Mode"] = "Debug Modus"
-L["Choose information to show in the Character Info window"] = "Choose information to show in the Character Info window"
+L["Choose information to show in the Character Info window."] = "Choose information to show in the Character Info window."
 L["Display item levels for equipped items"] = "Display item levels for equipped items"
 L["Display upgrade track and progress for equipped items"] = "Display upgrade track and progress for equipped items"
 L["Display gem and socket information for equipped items"] = "Display gem and socket information for equipped items"

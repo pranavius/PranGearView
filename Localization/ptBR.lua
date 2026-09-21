@@ -1,5 +1,6 @@
 -- Localization provided by Lirfdam
-local L = LibStub("AceLocale-3.0"):NewLocale("PranGearView", "ptBR")
+local _, PGV = ...
+local L = PGV.NewLocale("ptBR")
 
 if not L then return end
 
@@ -10,6 +11,7 @@ L["Gems"] = "Gemas"
 L["Enchants"] = "Encantamentos"
 L["Durability"] = "Durabilidade"
 L["Embellishments"] = "Embelezamentos"
+L["Embellished"] = "Embelezamentos"
 L["Reset"] = "Resetar"
 L["Font Scale"] = "Tamanho da fonte"
 L["Outline"] = "Esboço"
@@ -44,7 +46,7 @@ L["Decimal Precision"] = "Precisão decimal"
 L["Hide Shirt & Tabard Info"] = "Esconder informações de camisa & tabardo"
 L["Debug Mode"] = "Modo de depuração"
 
-L["Choose information to show in the Character Info window"] = "Escolha a informação para mostrar na janela de informação do personagem"
+L["Choose information to show in the Character Info window."] = "Escolha a informação para mostrar na janela de informação do personagem."
 L["Display item levels for equipped items"] = "Mostrar nível do item para itens equipados"
 L["Display upgrade track and progress for equipped items"] = "Mostrar linha de evolução e progresso para itens equipados"
 L["Display gem and socket information for equipped items"] = "Mostrar informações de gemas e soquetes para itens equipados"

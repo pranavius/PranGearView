@@ -1,10 +1,7 @@
-local addonName, AddOn = ...
----@class PranGearView
-AddOn = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceConsole-3.0", "AceEvent-3.0")
-local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
+local _, PGV = ...
+local L = PGV.L
 
----@type DKEnchantAbbr
-AddOn.DKEnchantAbbr = {
+PGV.DKEnchantAbbr = {
     Razorice = L["Razorice"],
     Sanguination = L["Sang"],
     Spellwarding = L["Spellward"],
@@ -14,11 +11,10 @@ AddOn.DKEnchantAbbr = {
     UnendingThirst = L["Unend Thirst"]
 }
 
----@type TextReplacement[]
-AddOn.EnchantTextReplacements = {
-    { original = "%+", replacement = "" }, -- Removes the '+' that usually prefixes enchantment text
+PGV.EnchantTextReplacements = {
+    { original = "%+", replacement = "", isPattern = true },
     { original = L["Enchanted: "], replacement = "" },
-    { original = L["Enchant"].." %a+ %- ", replacement = "" },
+    { original = L["Enchant"].." %a+ %- ", replacement = "", isPattern = true },
     -- TWW Enchants
     { original = L["Radiant Critical Strike"], replacement = L["Rad Crit"] },
     { original = L["Radiant Haste"], replacement = L["Rad Hst"] },
@@ -105,13 +101,13 @@ AddOn.EnchantTextReplacements = {
     { original = L["Worldsoul Tenacity"], replacement = L["World Ten"] },
     { original = L["Thalassian Haste"], replacement = L["Thal Hst"] },
     -- General Enchant Text
-    { original = L["Rune of the Fallen Crusader"], replacement = AddOn.DKEnchantAbbr.FallenCrusader },
-    { original = L["Rune of Razorice"], replacement = AddOn.DKEnchantAbbr.Razorice },
-    { original = L["Rune of Sanguination"], replacement = AddOn.DKEnchantAbbr.Sanguination },
-    { original = L["Rune of Spellwarding"], replacement = AddOn.DKEnchantAbbr.Spellwarding },
-    { original = L["Rune of the Apocalypse"], replacement = AddOn.DKEnchantAbbr.Apocalypse },
-    { original = L["Rune of the Stoneskin Gargoyle"], replacement = AddOn.DKEnchantAbbr.StoneskinGargoyle },
-    { original = L["Rune of Unending Thirst"], replacement = AddOn.DKEnchantAbbr.UnendingThirst },
+    { original = L["Rune of the Fallen Crusader"], replacement = PGV.DKEnchantAbbr.FallenCrusader },
+    { original = L["Rune of Razorice"], replacement = PGV.DKEnchantAbbr.Razorice },
+    { original = L["Rune of Sanguination"], replacement = PGV.DKEnchantAbbr.Sanguination },
+    { original = L["Rune of Spellwarding"], replacement = PGV.DKEnchantAbbr.Spellwarding },
+    { original = L["Rune of the Apocalypse"], replacement = PGV.DKEnchantAbbr.Apocalypse },
+    { original = L["Rune of the Stoneskin Gargoyle"], replacement = PGV.DKEnchantAbbr.StoneskinGargoyle },
+    { original = L["Rune of Unending Thirst"], replacement = PGV.DKEnchantAbbr.UnendingThirst },
     { original = L["Stamina"], replacement = L["Stam"] },
     { original = L["Intellect"], replacement = L["Int"] },
     { original = L["Strength"], replacement = L["Str"] },
@@ -132,27 +128,22 @@ AddOn.EnchantTextReplacements = {
     { original = L["Absorption"], replacement = L["Absorb"] },
 }
 
----A list of tables containing text replacement patterns for enchants that are specific to the ptBR locale.
----Intended for replacement after language-agnostic replacements are completed
----@type TextReplacement[]
-AddOn.ptbrEnchantTextReplacements = {
+-- Applied after PGV.EnchantTextReplacements, ptBR-specific
+PGV.ptbrEnchantTextReplacements = {
     { original = "Evasão", replacement = L["Avoid"] },
     { original = "de ", replacement = "" },
     { original = "da ", replacement = "" },
     { original = "do ", replacement = "" },
 }
 
----A list of tables containing text replacement patterns for enchants that are specific to the frFR locale.
----Intended for replacement after language-agnostic replacements are completed
----@type TextReplacement[]
-AddOn.frfrEnchantTextReplacements = {
+-- Applied after PGV.EnchantTextReplacements, frFR-specific
+PGV.frfrEnchantTextReplacements = {
     { original = "à la ", replacement = "" },
     { original = "à l’", replacement = "" },
     { original = "au score de ", replacement = "" },
 }
 
----@type TextReplacement[]
-AddOn.UpgradeTextReplacements = {
+PGV.UpgradeTextReplacements = {
     { original = L["Upgrade Level: "], replacement = "" },
     { original = L["Explorer "], replacement = "E" },
     { original = L["Adventurer "], replacement = "A" },
@@ -162,8 +153,7 @@ AddOn.UpgradeTextReplacements = {
     { original = L["Myth "], replacement = "M" }
 }
 
----@type HexColorPresets
-AddOn.HexColorPresets = {
+PGV.HexColorPresets = {
     Poor = "9D9D9D",
     Uncommon = "1EFF00",
     Rare = "0070DD",
@@ -189,8 +179,7 @@ AddOn.HexColorPresets = {
     Warrior = "C69B6D"
 }
 
----@type CharacterSlot[]
-AddOn.GearSlots = {
+PGV.GearSlots = {
     CharacterHeadSlot,
     CharacterNeckSlot,
     CharacterShoulderSlot,
@@ -211,8 +200,7 @@ AddOn.GearSlots = {
     CharacterSecondaryHandSlot
 }
 
----@type InspectInfo
-AddOn.InspectInfo = {
+PGV.InspectInfo = {
     slots = {
         "InspectHeadSlot",
         "InspectNeckSlot",
@@ -249,8 +237,7 @@ AddOn.InspectInfo = {
     }
 }
 
----@type table<string, ExpansionDetails>
-AddOn.ExpansionInfo = {
+PGV.ExpansionInfo = {
     Midnight = {
         NameAbbr = "MIDNIGHT",
         LevelCap = 90,
@@ -346,201 +333,14 @@ AddOn.ExpansionInfo = {
     }
 }
 
----@type table<number, string>
-AddOn.SpecOptionKeys = {
-    [250] = L["Blood"],
-    [251] = L["Frost"],
-    [252] = L["Unholy"],
-    [577] = L["Havoc"],
-    [581] = L["Vengeance"],
-    [1480] = L["Devourer"],
-    [102] = L["Balance"],
-    [103] = L["Feral"],
-    [104] = L["Guardian"],
-    [105] = L["Restoration"],
-    [1467] = L["Devastation"],
-    [1468] = L["Preservation"],
-    [1473] = L["Augmentation"],
-    [253] = L["Beast Mastery"],
-    [254] = L["Marksmanship"],
-    [255] = L["Survival"],
-    [62] = L["Arcane"],
-    [63] = L["Fire"],
-    [64] = L["Frost"],
-    [268] = L["Brewmaster"],
-    [270] = L["Mistweaver"],
-    [269] = L["Windwalker"],
-    [65] = L["Holy"],
-    [66] = L["Protection"],
-    [70] = L["Retribution"],
-    [256] = L["Discipline"],
-    [257] = L["Holy"],
-    [258] = L["Shadow"],
-    [259] = L["Assassination"],
-    [260] = L["Outlaw"],
-    [261] = L["Subtlety"],
-    [262] = L["Elemental"],
-    [263] = L["Enhancement"],
-    [264] = L["Restoration"],
-    [265] = L["Affliction"],
-    [266] = L["Demonology"],
-    [267] = L["Destruction"],
-    [71] = L["Arms"],
-    [72] = L["Fury"],
-    [73] = L["Protection"],
-}
+PGV.CurrentExpac = PGV.ExpansionInfo.Midnight
 
----@enum DefaultStatOrder
-AddOn.DefaultStatOrder = {
-    ["Critical Strike"] = 1,
-    ["Haste"] = 2,
-    ["Mastery"] = 3,
-    ["Versatility"] = 4,
-    ["Leech"] = 5,
-    ["Avoidance"] = 6,
-    ["Speed"] = 7
-}
 
----@enum DefaultTankStatOrder
-AddOn.DefaultTankStatOrder = {
-    ["Dodge"] = 8,
-    ["Parry"] = 9,
-    ["Block"] = 10
-}
+PGV.DefaultStatOrder = { "Critical Strike", "Haste", "Mastery", "Versatility", "Leech", "Avoidance", "Speed" }
 
----@enum PGVTooltipDataType
-AddOn.TooltipDataType = {
-    UpgradeTrack = 32,
-    Gem = 3,
-    Enchant = 15,
-}
+PGV.DefaultTankStatOrder = { "Dodge", "Parry", "Block" }
 
----@type RaceIcons
-AddOn.RaceIcons = {
-    Human = {
-        Male = "RaceIcon128-Human-Male",
-        Female = "RaceIcon128-Human-Female"
-    },
-    Dwarf = {
-        Male = "RaceIcon128-Dwarf-Male",
-        Female = "RaceIcon128-Dwarf-Female"
-    },
-    NightElf = {
-        Male = "RaceIcon128-NightElf-Male",
-        Female = "RaceIcon128-NightElf-Female"
-    },
-    Gnome = {
-        Male = "RaceIcon128-Gnome-Male",
-        Female = "RaceIcon128-Gnome-Female"
-    },
-    Draenei = {
-        Male = "RaceIcon128-Draenei-Male",
-        Female = "RaceIcon128-Draenei-Female"
-    },
-    Worgen = {
-        Male = "RaceIcon128-Worgen-Male",
-        Female = "RaceIcon128-Worgen-Female"
-    },
-    VoidElf = {
-        Male = "RaceIcon128-VoidElf-Male",
-        Female = "RaceIcon128-VoidElf-Female"
-    },
-    LightforgedDraenei = {
-        Male = "RaceIcon128-Lightforged-Male",
-        Female = "RaceIcon128-Lightforged-Female"
-    },
-    DarkIronDwarf = {
-        Male = "RaceIcon128-DarkIronDwarf-Male",
-        Female = "RaceIcon128-DarkIronDwarf-Female"
-    },
-    KulTiran = {
-        Male = "RaceIcon128-KulTiran-Male",
-        Female = "RaceIcon128-KulTiran-Female"
-    },
-    Mechagnome = {
-        Male = "RaceIcon128-Mechagnome-Male",
-        Female = "RaceIcon128-Mechagnome-Female"
-    },
-    Orc = {
-        Male = "RaceIcon128-Orc-Male",
-        Female = "RaceIcon128-Orc-Female"
-    },
-    Undead = {
-        Male = "RaceIcon128-Undead-Male",
-        Female = "RaceIcon128-Undead-Female"
-    },
-    Tauren = {
-        Male = "RaceIcon128-Tauren-Male",
-        Female = "RaceIcon128-Tauren-Female"
-    },
-    Troll = {
-        Male = "RaceIcon128-Troll-Male",
-        Female = "RaceIcon128-Troll-Female"
-    },
-    BloodElf = {
-        Male = "RaceIcon128-BloodElf-Male",
-        Female = "RaceIcon128-BloodElf-Female"
-    },
-    Goblin = {
-        Male = "RaceIcon128-Goblin-Male",
-        Female = "RaceIcon128-Goblin-Female"
-    },
-    Nightborne = {
-        Male = "RaceIcon128-Nightborne-Male",
-        Female = "RaceIcon128-Nightborne-Female"
-    },
-    HighmountainTauren = {
-        Male = "RaceIcon128-Highmountain-Male",
-        Female = "RaceIcon128-Highmountain-Female"
-    },
-    MagharOrc = {
-        Male = "RaceIcon128-MagharOrc-Male",
-        Female = "RaceIcon128-MagharOrc-Female"
-    },
-    ZandalariTroll = {
-        Male = "RaceIcon128-Zandalari-Male",
-        Female = "RaceIcon128-Zandalari-Female"
-    },
-    Vulpera = {
-        Male = "RaceIcon128-Vulpera-Male",
-        Female = "RaceIcon128-Vulpera-Female"
-    },
-    Pandaren = {
-        Male = "RaceIcon128-Pandaren-Male",
-        Female = "RaceIcon128-Pandaren-Female"
-    },
-    Dracthyr = {
-        Male = "RaceIcon128-Dracthyr-Male",
-        Female = "RaceIcon128-Dracthyr-Female"
-    },
-    Earthen = {
-        Male = "RaceIcon128-Earthen-Male",
-        Female = "RaceIcon128-Earthen-Female"
-    },
-    Haranir = {
-        Male = "RaceIcon128-Haranir-Male",
-        Female = "RaceIcon128-Haranir-Female"
-    }
-}
-
-AddOn.ClassIcons = {
-    DeathKnight = "ClassIcon-DeathKnight",
-    DemonHunter = "ClassIcon-DemonHunter",
-    Druid = "ClassIcon-Druid",
-    Evoker = "ClassIcon-Evoker",
-    Hunter = "ClassIcon-Hunter",
-    Mage = "ClassIcon-Mage",
-    Monk = "ClassIcon-Monk",
-    Paladin = "ClassIcon-Paladin",
-    Priest = "ClassIcon-Priest",
-    Rogue = "ClassIcon-Rogue",
-    Shaman = "ClassIcon-Shaman",
-    Warlock = "ClassIcon-Warlock",
-    Warrior = "ClassIcon-Warrior"
-}
-
----@type OutlineOption[]
-AddOn.OutlineOptions = {
+PGV.OutlineOptions = {
     { key = "None", value = "" },
     { key = "Monochrome", value = "MONOCHROME" },
     { key = "Regular", value = "OUTLINE" },
