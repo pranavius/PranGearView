@@ -4,6 +4,9 @@ local currentLocale = GetLocale()
 local defaultLocale = {}
 local activeLocaleTable = defaultLocale
 
+local interfaceNumber = tostring(select(4, GetBuildInfo()))
+PGV.isCamelot = interfaceNumber:match("16.+") ~= nil
+
 function PGV.NewLocale(locale)
     if locale == "enUS" then
         -- Ensures enUS localization is always available as a fallback when a localized translation doesn't exist

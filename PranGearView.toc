@@ -1,4 +1,4 @@
-## Interface: 120105, 120100
+## Interface: 16001, 120105, 120100
 ## Title: PranGearView
 ## Notes: Displays useful information about equipped gear in the Character Info window
 ## IconTexture: Interface/AddOns/PranGearView/Media/PranGearViewIcon
@@ -6,7 +6,7 @@
 ## Version: @project-version@
 ## SavedVariables: PranGearViewDB
 ## Category: User Interface
-## X-Flavor: retail
+## X-Flavor: retail, camelot
 ## X-Additional-Categories: Class, Unit Frames, Combat, Buffs & Debuffs
 ## X-Localizations: enUS, deDE, frFR, ptBR, ruRU, zhTW
 ## X-Source: https://github.com/pranavius/PranGearView

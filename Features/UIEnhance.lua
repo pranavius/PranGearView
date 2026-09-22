@@ -52,23 +52,31 @@ end
 
 PGV.AdjustCharacterInfoWindowSize = adjustCharacterInfoWindowSize
 
-hooksecurefunc(CharacterFrame, "RefreshDisplay", adjustCharacterInfoWindowSize)
+if PGV.isCamelot then
+    print("I am using the WoW Forever port of PGV")
 
-hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
-    if sceneID == 595 and PaperDollFrame:IsVisible() and PGV.db.general.increaseCharacterInfoSize then
-        local actor = cms:GetPlayerActor()
-        actor:SetRequestedScale(actor:GetRequestedScale() * 0.8)
-        actor:UpdateScale()
-        local posX, posY, posZ = actor:GetPosition()
-        actor:SetPosition(posX, posY, posZ + 0.25)
-    end
-end)
+    -- Required for hiding slot overlays when the equipment manager is toggled in Forever (see the actual function for deets)
+    hooksecurefunc("PaperDollFrame_SetSidebar", PGV.UpdateAllSlots)
+else
+    hooksecurefunc(CharacterFrame, "RefreshDisplay", adjustCharacterInfoWindowSize)
+    
+    hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
+        if sceneID == 595 and PaperDollFrame:IsVisible() and PGV.db.general.increaseCharacterInfoSize then
+            local actor = cms:GetPlayerActor()
+            actor:SetRequestedScale(actor:GetRequestedScale() * 0.8)
+            actor:UpdateScale()
+            local posX, posY, posZ = actor:GetPosition()
+            actor:SetPosition(posX, posY, posZ + 0.25)
+        end
+    end)
+    
+    hooksecurefunc("PaperDollFrame_UpdateStats", function()
+        if CharacterStatsPane and PGV.db.general.showCharacteriLvlDecimal then
+            CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..PGV.db.general.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
+        end
+    end)
+end
 
-hooksecurefunc("PaperDollFrame_UpdateStats", function()
-    if CharacterStatsPane and PGV.db.general.showCharacteriLvlDecimal then
-        CharacterStatsPane.ItemLevelFrame.Value:SetFormattedText("%."..PGV.db.general.decimalPlacesForCharacteriLvl.."f", select(2, GetAverageItemLevel()))
-    end
-end)
 
 function PGV.UpdateEnchantToggleButtonVisibility()
     if not PGV.EnchantToggleButton then

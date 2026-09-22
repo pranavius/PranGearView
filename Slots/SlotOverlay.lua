@@ -409,6 +409,15 @@ local function updateSlotOverlay(slot)
 end
 
 local function updateAllSlots()
+    if PGV.isCamelot and PaperDollFrame.EquipmentManagerPane:IsShown() then
+        for _, slot in ipairs(PGV.GearSlots) do
+            if slot.PGVSlotOverlay then
+                slot.PGVSlotOverlay:HideAllElements()
+            end
+        end
+        return
+    end
+
     for _, slot in ipairs(PGV.GearSlots) do
         updateSlotOverlay(slot)
     end
