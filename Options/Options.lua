@@ -255,29 +255,31 @@ local function buildOptions()
                 LDBIcon:Hide(addonName)
             end
         end)
-    makeToggle(rootCategory, "increaseCharacterInfoSize", L["Larger Character Info Window"], L["Increase the size of the Character Info window"].."\n\n"..L["This can help reduce text overlap with the character model and make reading text easier."],
-        function() return PGV.db.general.increaseCharacterInfoSize end,
-        function(value)
-            PGV.db.general.increaseCharacterInfoSize = value
-            PGV.AdjustCharacterInfoWindowSize()
-        end)
-    makeToggle(rootCategory, "showEmbellishments", L["Show Embellishments"], L["Show a green star in the top-left corner of embellished equipment"],
-        function() return PGV.db.general.showEmbellishments end,
-        function(value) PGV.db.general.showEmbellishments = value end)
-    local showCharILvlDecimalInit = makeToggle(rootCategory, "showCharacteriLvlDecimal", L["Show Decimals for Equipped Item Level"], L["Show your character's average equipped item level with decimal places"],
-        function() return PGV.db.general.showCharacteriLvlDecimal end,
-        function(value)
-            PGV.db.general.showCharacteriLvlDecimal = value
-            PaperDollFrame_UpdateStats()
-        end)
-    local decimalPlacesInit = makeSlider(rootCategory, "decimalPlacesForCharacteriLvl", L["Decimal Precision"], L["Number of decimal places to show for character's equipped item level"], 1, 3, 1,
-        function() return PGV.db.general.decimalPlacesForCharacteriLvl end,
-        function(value)
-            PGV.db.general.decimalPlacesForCharacteriLvl = value
-            PaperDollFrame_UpdateStats()
-        end)
-    decimalPlacesInit:SetParentInitializer(showCharILvlDecimalInit, function() return PGV.db.general.showCharacteriLvlDecimal end)
-    decimalPlacesInit:AddShownPredicate(function() return PGV.db.general.showCharacteriLvlDecimal end)
+    if not PGV.isCamelot then
+        makeToggle(rootCategory, "increaseCharacterInfoSize", L["Larger Character Info Window"], L["Increase the size of the Character Info window"].."\n\n"..L["This can help reduce text overlap with the character model and make reading text easier."],
+            function() return PGV.db.general.increaseCharacterInfoSize end,
+            function(value)
+                PGV.db.general.increaseCharacterInfoSize = value
+                PGV.AdjustCharacterInfoWindowSize()
+            end)
+        makeToggle(rootCategory, "showEmbellishments", L["Show Embellishments"], L["Show a green star in the top-left corner of embellished equipment"],
+            function() return PGV.db.general.showEmbellishments end,
+            function(value) PGV.db.general.showEmbellishments = value end)
+        local showCharILvlDecimalInit = makeToggle(rootCategory, "showCharacteriLvlDecimal", L["Show Decimals for Equipped Item Level"], L["Show your character's average equipped item level with decimal places"],
+            function() return PGV.db.general.showCharacteriLvlDecimal end,
+            function(value)
+                PGV.db.general.showCharacteriLvlDecimal = value
+                PaperDollFrame_UpdateStats()
+            end)
+        local decimalPlacesInit = makeSlider(rootCategory, "decimalPlacesForCharacteriLvl", L["Decimal Precision"], L["Number of decimal places to show for character's equipped item level"], 1, 3, 1,
+            function() return PGV.db.general.decimalPlacesForCharacteriLvl end,
+            function(value)
+                PGV.db.general.decimalPlacesForCharacteriLvl = value
+                PaperDollFrame_UpdateStats()
+            end)
+        decimalPlacesInit:SetParentInitializer(showCharILvlDecimalInit, function() return PGV.db.general.showCharacteriLvlDecimal end)
+        decimalPlacesInit:AddShownPredicate(function() return PGV.db.general.showCharacteriLvlDecimal end)
+    end
     makeToggle(rootCategory, "hideShirtTabardInfo", L["Hide Shirt & Tabard Info"], L["Hide information for equipped shirt & tabard"],
         function() return PGV.db.general.hideShirtTabardInfo end,
         function(value) PGV.db.general.hideShirtTabardInfo = value end)
@@ -320,34 +322,37 @@ local function buildOptions()
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
-    local upgradeTrackCategory = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Upgrade Track"])
-    local upgradeTrackIsShown = function() return PGV.db.upgradeTrack.show end
     local notTimerunning = function() return not PGV.IsTimerunningCharacter() end
-    local upgradeTrackRootShow, upgradeTrackSubShow = makeSharedToggle(rootCategory, upgradeTrackCategory, "upgradeTrackShow", L["Upgrade Track"], L["Display upgrade track and progress for equipped items"],
-        upgradeTrackIsShown, function(value) PGV.db.upgradeTrack.show = value end)
-    upgradeTrackRootShow:AddShownPredicate(notTimerunning)
-    upgradeTrackSubShow:AddShownPredicate(notTimerunning)
 
-    local upgradeTrackRootScale, upgradeTrackSubScale = makeSharedScaleSlider(rootCategory, upgradeTrackCategory, "upgradeTrackScale", L["Font Scale"], L["Scale upgrade track text size relative to the default"], PGV.db.upgradeTrack)
-    local upgradeTrackOutlineInit = makeOutlineDropdown(upgradeTrackCategory, "upgradeTrackOutline", L["Outline"], L["The outline style to add to upgrade track text"], PGV.db.upgradeTrack)
+    if not PGV.isCamelot then
+        local upgradeTrackCategory = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Upgrade Track"])
+        local upgradeTrackIsShown = function() return PGV.db.upgradeTrack.show end
+        local upgradeTrackRootShow, upgradeTrackSubShow = makeSharedToggle(rootCategory, upgradeTrackCategory, "upgradeTrackShow", L["Upgrade Track"], L["Display upgrade track and progress for equipped items"],
+            upgradeTrackIsShown, function(value) PGV.db.upgradeTrack.show = value end)
+        upgradeTrackRootShow:AddShownPredicate(notTimerunning)
+        upgradeTrackSubShow:AddShownPredicate(notTimerunning)
 
-    local UPGRADE_TRACK_COLOR_MODES = {
-        { value = "quality", label = L["Use Item Quality Color"] },
-        { value = "qualityScale", label = L["Use Quality Color Scale"], dbKey = "useQualityScaleColors" },
-        { value = "custom", label = L["Use Custom Color"], dbKey = "useCustomColor" },
-    }
-    local upgradeTrackRootColorMode, upgradeTrackSubColorMode = makeSharedColorModeDropdown(rootCategory, upgradeTrackCategory, "upgradeTrackColorMode", L["Text Color"], L["Customize upgrade track color for current season items"], PGV.db.upgradeTrack, UPGRADE_TRACK_COLOR_MODES)
-    local upgradeTrackColorInit = makeColorSwatch(upgradeTrackCategory, "upgradeTrackColor", L["Choose a Color"], L["Customize upgrade track color for current season items"], PGV.db.upgradeTrack, "customColor")
-    upgradeTrackColorInit:AddShownPredicate(function() return PGV.db.upgradeTrack.useCustomColor end)
+        local upgradeTrackRootScale, upgradeTrackSubScale = makeSharedScaleSlider(rootCategory, upgradeTrackCategory, "upgradeTrackScale", L["Font Scale"], L["Scale upgrade track text size relative to the default"], PGV.db.upgradeTrack)
+        local upgradeTrackOutlineInit = makeOutlineDropdown(upgradeTrackCategory, "upgradeTrackOutline", L["Outline"], L["The outline style to add to upgrade track text"], PGV.db.upgradeTrack)
 
-    linkToShowToggle(upgradeTrackRootShow, upgradeTrackSubShow, upgradeTrackRootScale, upgradeTrackSubScale, upgradeTrackIsShown, notTimerunning)
-    linkToShowToggle(upgradeTrackRootShow, upgradeTrackSubShow, upgradeTrackRootColorMode, upgradeTrackSubColorMode, upgradeTrackIsShown, notTimerunning)
-    for _, initializer in ipairs({ upgradeTrackOutlineInit, upgradeTrackColorInit }) do
-        initializer:SetParentInitializer(upgradeTrackSubShow, upgradeTrackIsShown)
-        initializer:AddShownPredicate(notTimerunning)
+        local UPGRADE_TRACK_COLOR_MODES = {
+            { value = "quality", label = L["Use Item Quality Color"] },
+            { value = "qualityScale", label = L["Use Quality Color Scale"], dbKey = "useQualityScaleColors" },
+            { value = "custom", label = L["Use Custom Color"], dbKey = "useCustomColor" },
+        }
+        local upgradeTrackRootColorMode, upgradeTrackSubColorMode = makeSharedColorModeDropdown(rootCategory, upgradeTrackCategory, "upgradeTrackColorMode", L["Text Color"], L["Customize upgrade track color for current season items"], PGV.db.upgradeTrack, UPGRADE_TRACK_COLOR_MODES)
+        local upgradeTrackColorInit = makeColorSwatch(upgradeTrackCategory, "upgradeTrackColor", L["Choose a Color"], L["Customize upgrade track color for current season items"], PGV.db.upgradeTrack, "customColor")
+        upgradeTrackColorInit:AddShownPredicate(function() return PGV.db.upgradeTrack.useCustomColor end)
+
+        linkToShowToggle(upgradeTrackRootShow, upgradeTrackSubShow, upgradeTrackRootScale, upgradeTrackSubScale, upgradeTrackIsShown, notTimerunning)
+        linkToShowToggle(upgradeTrackRootShow, upgradeTrackSubShow, upgradeTrackRootColorMode, upgradeTrackSubColorMode, upgradeTrackIsShown, notTimerunning)
+        for _, initializer in ipairs({ upgradeTrackOutlineInit, upgradeTrackColorInit }) do
+            initializer:SetParentInitializer(upgradeTrackSubShow, upgradeTrackIsShown)
+            initializer:AddShownPredicate(notTimerunning)
+        end
+
+        rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
     end
-
-    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
     local gemsCategory = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Gems"])
     local gemsIsShown = function() return PGV.db.gems.show end
@@ -443,18 +448,24 @@ local function buildOptions()
     local inspectShowILvlInit = makeToggle(inspectCategory, "inspectShowILvl", L["Item Level"], L["Display item levels for equipped items"],
         function() return PGV.db.inspect.showILvl end,
         function(value) PGV.db.inspect.showILvl = value end)
-    local inspectShowUpgradeTrackInit = makeToggle(inspectCategory, "inspectShowUpgradeTrack", L["Upgrade Track"], L["Display upgrade track and progress for equipped items"],
-        function() return PGV.db.inspect.showUpgradeTrack end,
-        function(value) PGV.db.inspect.showUpgradeTrack = value end)
+    local inspectShowUpgradeTrackInit
+    if not PGV.isCamelot then
+        inspectShowUpgradeTrackInit = makeToggle(inspectCategory, "inspectShowUpgradeTrack", L["Upgrade Track"], L["Display upgrade track and progress for equipped items"],
+            function() return PGV.db.inspect.showUpgradeTrack end,
+            function(value) PGV.db.inspect.showUpgradeTrack = value end)
+    end
     local inspectShowGemsInit = makeToggle(inspectCategory, "inspectShowGems", L["Gems"], L["Display gem and socket information for equipped items"],
         function() return PGV.db.inspect.showGems end,
         function(value) PGV.db.inspect.showGems = value end)
     local inspectShowEnchantsInit = makeToggle(inspectCategory, "inspectShowEnchants", L["Enchants"], L["Display enchant information for equipped items"],
         function() return PGV.db.inspect.showEnchants end,
         function(value) PGV.db.inspect.showEnchants = value end)
-    local inspectShowEmbellishmentsInit = makeToggle(inspectCategory, "inspectShowEmbellishments", L["Show Embellishments"], L["Show a green star in the top-left corner of embellished equipment"],
-        function() return PGV.db.inspect.showEmbellishments end,
-        function(value) PGV.db.inspect.showEmbellishments = value end)
+    local inspectShowEmbellishmentsInit
+    if not PGV.isCamelot then
+        inspectShowEmbellishmentsInit = makeToggle(inspectCategory, "inspectShowEmbellishments", L["Show Embellishments"], L["Show a green star in the top-left corner of embellished equipment"],
+            function() return PGV.db.inspect.showEmbellishments end,
+            function(value) PGV.db.inspect.showEmbellishments = value end)
+    end
 
     inspectLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
@@ -466,67 +477,69 @@ local function buildOptions()
         function(value) PGV.db.inspect.includeAvgLabel = value end)
     inspectIncludeAvgLabelInit:SetParentInitializer(inspectShowAvgILvlInit, function() return PGV.db.inspect.show and PGV.db.inspect.showAvgILvl end)
 
-    for _, initializer in ipairs({ inspectShowILvlInit, inspectShowUpgradeTrackInit, inspectShowGemsInit, inspectShowEnchantsInit, inspectShowEmbellishmentsInit, inspectShowAvgILvlInit }) do
+    for _, initializer in pairs({ inspectShowILvlInit, inspectShowUpgradeTrackInit, inspectShowGemsInit, inspectShowEnchantsInit, inspectShowEmbellishmentsInit, inspectShowAvgILvlInit }) do
         initializer:SetParentInitializer(inspectSubShow, inspectIsShown)
     end
 
-    rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+    if not PGV.isCamelot then
+        rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
-    local characterStatsCategory, characterStatsLayout = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Character Stats"])
-    local showDecimalStatsInit = makeToggle(characterStatsCategory, "showDecimalStats", L["Show Decimals for Stats"], L["Show your character's stats with decimal places"],
-        function() return PGV.db.characterStats.showDecimals end,
-        function(value)
-            PGV.db.characterStats.showDecimals = value
-            PaperDollFrame_UpdateStats()
-        end)
-    local decimalStatsPlacesInit = makeSlider(characterStatsCategory, "decimalStatsPlaces", L["Decimal Precision"], L["Number of decimal places to show for character's stats"], 1, 3, 1,
-        function() return PGV.db.characterStats.decimalPlaces end,
-        function(value)
-            PGV.db.characterStats.decimalPlaces = value
-            PaperDollFrame_UpdateStats()
-        end)
-    decimalStatsPlacesInit:SetParentInitializer(showDecimalStatsInit, function() return PGV.db.characterStats.showDecimals end)
+        local characterStatsCategory, characterStatsLayout = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Character Stats"])
+        local showDecimalStatsInit = makeToggle(characterStatsCategory, "showDecimalStats", L["Show Decimals for Stats"], L["Show your character's stats with decimal places"],
+            function() return PGV.db.characterStats.showDecimals end,
+            function(value)
+                PGV.db.characterStats.showDecimals = value
+                PaperDollFrame_UpdateStats()
+            end)
+        local decimalStatsPlacesInit = makeSlider(characterStatsCategory, "decimalStatsPlaces", L["Decimal Precision"], L["Number of decimal places to show for character's stats"], 1, 3, 1,
+            function() return PGV.db.characterStats.decimalPlaces end,
+            function(value)
+                PGV.db.characterStats.decimalPlaces = value
+                PaperDollFrame_UpdateStats()
+            end)
+        decimalStatsPlacesInit:SetParentInitializer(showDecimalStatsInit, function() return PGV.db.characterStats.showDecimals end)
 
-    characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Customize secondary & tertiary stat order in the Character Info window by specialization"] }))
-    characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+        characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Customize secondary & tertiary stat order in the Character Info window by specialization"] }))
+        characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
-    local specSetting = Settings.RegisterProxySetting(characterStatsCategory, "characterStatsSpec", Settings.VarType.Number, L["Specialization"], select(1, PGV.GetCharacterCurrentSpecIDAndRole()) or 0,
-        function() return select(1, PGV.GetSpecAndRoleForSelectedCharacterStatsOption()) end,
-        function(value)
-            PGV.db.characterStats.lastSelectedSpecID = value
-            PGV.RefreshStatOrderList()
-        end)
-    
-    local function getSpecOptions()
-        local container = Settings.CreateControlTextContainer()
-        for classID = 1, 20 do
-            local classInfo = C_CreatureInfo.GetClassInfo(classID)
-            if classInfo then
-                for specIndex = 1, C_SpecializationInfo.GetNumSpecializationsForClassID(classID) do
-                    local specID, specName = C_SpecializationInfo.GetSpecializationInfo(specIndex, false, false, nil, nil, nil, classID)
-                    if specID and specName then
-                        -- Cant show spec icons anymore in Settings API dropdown button, so gotta add each class name to the end of spec name instead
-                        container:Add(specID, specName.." "..classInfo.className)
+        local specSetting = Settings.RegisterProxySetting(characterStatsCategory, "characterStatsSpec", Settings.VarType.Number, L["Specialization"], select(1, PGV.GetCharacterCurrentSpecIDAndRole()) or 0,
+            function() return select(1, PGV.GetSpecAndRoleForSelectedCharacterStatsOption()) end,
+            function(value)
+                PGV.db.characterStats.lastSelectedSpecID = value
+                PGV.RefreshStatOrderList()
+            end)
+
+        local function getSpecOptions()
+            local container = Settings.CreateControlTextContainer()
+            for classID = 1, 20 do
+                local classInfo = C_CreatureInfo.GetClassInfo(classID)
+                if classInfo then
+                    for specIndex = 1, C_SpecializationInfo.GetNumSpecializationsForClassID(classID) do
+                        local specID, specName = C_SpecializationInfo.GetSpecializationInfo(specIndex, false, false, nil, nil, nil, classID)
+                        if specID and specName then
+                            -- Cant show spec icons anymore in Settings API dropdown button, so gotta add each class name to the end of spec name instead
+                            container:Add(specID, specName.." "..classInfo.className)
+                        end
                     end
                 end
             end
+            return container:GetData()
         end
-        return container:GetData()
-    end
-    local specDropdownInit = Settings.CreateDropdown(characterStatsCategory, specSetting, getSpecOptions, L["Specialization"])
+        local specDropdownInit = Settings.CreateDropdown(characterStatsCategory, specSetting, getSpecOptions, L["Specialization"])
 
-    characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVStatOrderListTemplate", {}))
-    local resetOrderInit = CreateSettingsButtonInitializer("", L["Reset"], function(button)
-        local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
-        PGV.InitializeCustomSpecStatOrderDB(specID, true)
-        PGV.RefreshStatOrderList()
-        button:GetParent():EvaluateState()
-    end, nil, false)
-    resetOrderInit:SetParentInitializer(specDropdownInit, function()
-        local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
-        return not PGV.IsStatOrderAtDefault(specID)
-    end)
-    characterStatsLayout:AddInitializer(resetOrderInit)
+        characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVStatOrderListTemplate", {}))
+        local resetOrderInit = CreateSettingsButtonInitializer("", L["Reset"], function(button)
+            local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
+            PGV.InitializeCustomSpecStatOrderDB(specID, true)
+            PGV.RefreshStatOrderList()
+            button:GetParent():EvaluateState()
+        end, nil, false)
+        resetOrderInit:SetParentInitializer(specDropdownInit, function()
+            local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
+            return not PGV.IsStatOrderAtDefault(specID)
+        end)
+        characterStatsLayout:AddInitializer(resetOrderInit)
+    end
 
     buildCreditsCategory(rootCategory)
 end

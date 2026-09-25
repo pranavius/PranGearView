@@ -4,10 +4,10 @@ local L = PGV.L
 local inspectContext = {
     showDurability = false,
     IsShowingItemLevel = function() return PGV.db.inspect.showILvl end,
-    IsShowingUpgradeTrack = function() return PGV.db.inspect.showUpgradeTrack end,
+    IsShowingUpgradeTrack = function() return not PGV.isCamelot and PGV.db.inspect.showUpgradeTrack end,
     IsShowingGems = function() return PGV.db.inspect.showGems end,
     IsShowingEnchants = function() return PGV.db.inspect.showEnchants end,
-    IsShowingEmbellishments = function() return PGV.db.inspect.showEmbellishments end,
+    IsShowingEmbellishments = function() return not PGV.isCamelot and PGV.db.inspect.showEmbellishments end,
 }
 
 local function getInspectSlotCategory(slotName)

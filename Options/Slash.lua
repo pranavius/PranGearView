@@ -3,12 +3,14 @@ local L = PGV.L
 
 local ToggleMap = {
     ilvl = { help = L["Toggle showing item level"], dbTable = "itemLevel", dbKey = "show" },
-    track = { help = L["Toggle showing upgrade track"], dbTable = "upgradeTrack", dbKey = "show" },
     gems = { help = L["Toggle showing gem info"], dbTable = "gems", dbKey = "show" },
     dur = { help = L["Toggle showing durability percentages"], dbTable = "durability", dbKey = "show" },
     etext = { help = L["Toggle showing enchant text in the Character Info window"], dbTable = "enchants", dbKey = "collapse" },
     inspect = { help = L["Toggle showing gear info when inspecting another player"], dbTable = "inspect", dbKey = "show" },
 }
+if not PGV.isCamelot then
+    ToggleMap.track = { help = L["Toggle showing upgrade track"], dbTable = "upgradeTrack", dbKey = "show" }
+end
 
 local function printHelp()
     print(addonName..": /pgv <command>")
@@ -17,7 +19,9 @@ local function printHelp()
         print("  "..cmd.." - "..entry.help)
     end
     print("  ench - "..L["Toggle showing enchant info"])
-    print("  expand - "..L["Toggle using the larger Character Info window"])
+    if not PGV.isCamelot then
+        print("  expand - "..L["Toggle using the larger Character Info window"])
+    end
     print("  minimap - "..L["Show/hide the minimap icon"])
 end
 
@@ -51,7 +55,7 @@ local function handleSlashCmd(input)
         return
     end
 
-    if input == "expand" then
+    if input == "expand" and not PGV.isCamelot then
         PGV.db.general.increaseCharacterInfoSize = not PGV.db.general.increaseCharacterInfoSize
         PGV.AdjustCharacterInfoWindowSize()
         PGV.RefreshSlots()

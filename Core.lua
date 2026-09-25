@@ -79,7 +79,7 @@ function PGV.IsTimerunningCharacter()
 end
 
 function PGV.AreUpgradeTracksShownForCharacter()
-    return PGV.db.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
+    return not PGV.isCamelot and PGV.db.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
 end
 
 function PGV.AreGemsShownForCharacter()
@@ -91,7 +91,7 @@ function PGV.AreEnchantsShownForCharacter()
 end
 
 function PGV.AreEmbellishmentsShownForCharacter()
-    return PGV.db.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
+    return not PGV.isCamelot and PGV.db.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
 end
 
 local function isSlotInList(slot, list)
