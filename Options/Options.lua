@@ -265,20 +265,43 @@ local function buildOptions()
         makeToggle(rootCategory, "showEmbellishments", L["Show Embellishments"], L["Show a green star in the top-left corner of embellished equipment"],
             function() return PGV.db.general.showEmbellishments end,
             function(value) PGV.db.general.showEmbellishments = value end)
-        local showCharILvlDecimalInit = makeToggle(rootCategory, "showCharacteriLvlDecimal", L["Show Decimals for Equipped Item Level"], L["Show your character's average equipped item level with decimal places"],
-            function() return PGV.db.general.showCharacteriLvlDecimal end,
+    end
+    -- Character item level settings apply to both retail display and PGV's Forever replacement
+    local showCharILvlDecimalInit = makeToggle(rootCategory, "showCharacteriLvlDecimal", L["Show Decimals for Equipped Item Level"], L["Show your character's average equipped item level with decimal places"],
+        function() return PGV.db.general.showCharacteriLvlDecimal end,
+        function(value)
+            PGV.db.general.showCharacteriLvlDecimal = value
+            PaperDollFrame_UpdateStats()
+            if PGV.UpdateCharacterAvgItemLevelLabel then
+                PGV.UpdateCharacterAvgItemLevelLabel()
+            end
+        end)
+    local decimalPlacesInit = makeSlider(rootCategory, "decimalPlacesForCharacteriLvl", L["Decimal Precision"], L["Number of decimal places to show for character's equipped item level"], 1, 3, 1,
+        function() return PGV.db.general.decimalPlacesForCharacteriLvl end,
+        function(value)
+            PGV.db.general.decimalPlacesForCharacteriLvl = value
+            PaperDollFrame_UpdateStats()
+            if PGV.UpdateCharacterAvgItemLevelLabel then
+                PGV.UpdateCharacterAvgItemLevelLabel()
+            end
+        end)
+    decimalPlacesInit:SetParentInitializer(showCharILvlDecimalInit, function() return PGV.db.general.showCharacteriLvlDecimal end)
+    decimalPlacesInit:AddShownPredicate(function() return PGV.db.general.showCharacteriLvlDecimal end)
+
+    if PGV.isCamelot then
+        local showAvgILvlInit = makeToggle(rootCategory, "forever_ShowAvgILvlOnCharacter", L["Average Item Level"], L["Display average item level in the character's class color"],
+            function() return PGV.db.general.forever_ShowAvgILvlOnCharacter end,
             function(value)
-                PGV.db.general.showCharacteriLvlDecimal = value
-                PaperDollFrame_UpdateStats()
+                PGV.db.general.forever_ShowAvgILvlOnCharacter = value
+                PGV.UpdateCharacterAvgItemLevelLabel()
             end)
-        local decimalPlacesInit = makeSlider(rootCategory, "decimalPlacesForCharacteriLvl", L["Decimal Precision"], L["Number of decimal places to show for character's equipped item level"], 1, 3, 1,
-            function() return PGV.db.general.decimalPlacesForCharacteriLvl end,
+        local includeAvgLabelInit = makeToggle(rootCategory, "forever_IncludeAvgLabelOnCharacter", L["Include \"Avg\" Label"], L["Adds the text \"Avg: \" before the average item level."].."\n\n"..L["This can help easily identify the average item level when there is a lot of information shown in the Character Info window."],
+            function() return PGV.db.general.forever_IncludeAvgLabelOnCharacter end,
             function(value)
-                PGV.db.general.decimalPlacesForCharacteriLvl = value
-                PaperDollFrame_UpdateStats()
+                PGV.db.general.forever_IncludeAvgLabelOnCharacter = value
+                PGV.UpdateCharacterAvgItemLevelLabel()
             end)
-        decimalPlacesInit:SetParentInitializer(showCharILvlDecimalInit, function() return PGV.db.general.showCharacteriLvlDecimal end)
-        decimalPlacesInit:AddShownPredicate(function() return PGV.db.general.showCharacteriLvlDecimal end)
+        includeAvgLabelInit:SetParentInitializer(showAvgILvlInit, function() return PGV.db.general.forever_ShowAvgILvlOnCharacter end)
     end
     makeToggle(rootCategory, "hideShirtTabardInfo", L["Hide Shirt & Tabard Info"], L["Hide information for equipped shirt & tabard"],
         function() return PGV.db.general.hideShirtTabardInfo end,

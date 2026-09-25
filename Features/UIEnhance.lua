@@ -55,8 +55,47 @@ PGV.AdjustCharacterInfoWindowSize = adjustCharacterInfoWindowSize
 if PGV.isCamelot then
     print("I am using the WoW Forever port of PGV")
 
+    -- Adds average item level display to character info window for Forever (same as Inspect window).
+    -- Making it a child of CharacterFrame taints stuff so this is what we've got
+    local avgItemLevelHost = CreateFrame("Frame", "PGV_AgvIlvlHost", UIParent)
+    avgItemLevelHost:SetFrameStrata("HIGH")
+    avgItemLevelHost:SetSize(1, 1)
+    avgItemLevelHost:Hide()
+
+    local avgItemLevelText = avgItemLevelHost:CreateFontString(nil, "OVERLAY", "GameTooltipHeader")
+    avgItemLevelText:SetPoint("BOTTOMLEFT", avgItemLevelHost, "BOTTOMLEFT")
+
+    local function updateCharacterAvgItemLevelLabel()
+        if not PGV.db.general.forever_ShowAvgILvlOnCharacter or not PaperDollFrame:IsVisible() then
+            avgItemLevelHost:Hide()
+            return
+        end
+
+        avgItemLevelHost:ClearAllPoints()
+        avgItemLevelHost:SetPoint("BOTTOMLEFT", PaperDollItemsFrame, "BOTTOMLEFT", 10, 11)
+
+        local decimals = PGV.db.general.showCharacteriLvlDecimal and PGV.db.general.decimalPlacesForCharacteriLvl or 0
+        local itemLevelText = string.format("%."..decimals.."f", select(2, GetAverageItemLevel()))
+        if PGV.db.general.forever_IncludeAvgLabelOnCharacter then
+            itemLevelText = L["Avg"]..": "..itemLevelText
+        end
+        local classFile = select(2, UnitClass("player"))
+        avgItemLevelText:SetText(PGV.ColorText(itemLevelText, GetClassColorObj(classFile):GenerateHexColorNoAlpha()))
+        avgItemLevelHost:Show()
+    end
+
+    PGV.UpdateCharacterAvgItemLevelLabel = updateCharacterAvgItemLevelLabel
+
     -- Required for hiding slot overlays when the equipment manager is toggled in Forever (see the actual function for deets)
     hooksecurefunc("PaperDollFrame_SetSidebar", PGV.UpdateAllSlots)
+
+    hooksecurefunc("PaperDollFrame_SetSidebar", updateCharacterAvgItemLevelLabel)
+    PGV.RegisterEvent("PLAYER_EQUIPMENT_CHANGED", updateCharacterAvgItemLevelLabel)
+
+    -- If only this could just be a child of CharacterFrame... stupid secret values and taint.
+    PaperDollFrame:HookScript("OnHide", function()
+        avgItemLevelHost:Hide()
+    end)
 else
     hooksecurefunc(CharacterFrame, "RefreshDisplay", adjustCharacterInfoWindowSize)
     
