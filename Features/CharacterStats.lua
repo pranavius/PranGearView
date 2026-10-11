@@ -62,15 +62,6 @@ function PGV.InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     end
 end
 
-function PGV.SetStatOrderForEditingSpec(newOrder)
-    local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
-    if not specID then
-        return
-    end
-    PGV.db.characterStats.customSpecStatOrders[specID] = newOrder
-    PGV.ReorderStatFramesBySpec()
-end
-
 function PGV.CachePlayerStatValues()
     if C_Secrets.ShouldUnitStatsBeSecret() then
         return
@@ -82,7 +73,7 @@ function PGV.CachePlayerStatValues()
     end
 end
 
-function PGV.ReorderStatFramesBySpec()
+local function reorderStatFramesBySpec()
     local specID = PGV.GetCharacterCurrentSpecIDAndRole()
     local statOrder = specID and PGV.db.characterStats.customSpecStatOrders[specID]
     if not statOrder then
@@ -119,7 +110,16 @@ function PGV.ReorderStatFramesBySpec()
     end
 end
 
-function PGV.ShowDecimalStatValues()
+function PGV.SetStatOrderForEditingSpec(newOrder)
+    local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
+    if not specID then
+        return
+    end
+    PGV.db.characterStats.customSpecStatOrders[specID] = newOrder
+    reorderStatFramesBySpec()
+end
+
+local function showDecimalStatValues()
     for _, frame in ipairs({ CharacterStatsPane:GetChildren() }) do
         if frame.Label then
             local cleanStatName = frame.Label:GetText() and frame.Label:GetText():gsub(":", "")
@@ -138,9 +138,9 @@ if not PGV.isCamelot then
     CharacterStatsPane:HookScript("OnShow", PGV.CachePlayerStatValues)
 
     hooksecurefunc("PaperDollFrame_UpdateStats", function()
-        PGV.ReorderStatFramesBySpec()
+        reorderStatFramesBySpec()
         if CharacterStatsPane and PGV.db.characterStats.showDecimals then
-            PGV.ShowDecimalStatValues()
+            showDecimalStatValues()
         end
     end)
 

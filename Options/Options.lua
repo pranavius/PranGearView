@@ -375,29 +375,30 @@ local function buildOptions()
         end
 
         rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+
+        local gemsCategory = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Gems"])
+        local gemsIsShown = function() return PGV.db.gems.show end
+        local gemsRootShow, gemsSubShow = makeSharedToggle(rootCategory, gemsCategory, "gemsShow", L["Gems"], L["Display gem and socket information for equipped items"],
+            gemsIsShown, function(value) PGV.db.gems.show = value end)
+        gemsRootShow:AddShownPredicate(notTimerunning)
+        gemsSubShow:AddShownPredicate(notTimerunning)
+    
+        local gemsRootScale, gemsSubScale = makeSharedScaleSlider(rootCategory, gemsCategory, "gemsScale", L["Icon Scale"], L["Scale gem icon size relative to the default"], PGV.db.gems)
+        local gemsShowMissingInit = makeToggle(gemsCategory, "gemsShowMissing", L["Show Missing Gems & Sockets"], L["Show when an item is missing gems or sockets"],
+            function() return PGV.db.gems.showMissing end,
+            function(value) PGV.db.gems.showMissing = value end)
+        local gemsMaxLevelOnlyInit = makeToggle(gemsCategory, "gemsMaxLevelOnly", L["Only Show for Max Level"], L["Hide missing gem & socket info for characters under the level cap"],
+            function() return PGV.db.gems.missingMaxLevelOnly end,
+            function(value) PGV.db.gems.missingMaxLevelOnly = value end)
+    
+        linkToShowToggle(gemsRootShow, gemsSubShow, gemsRootScale, gemsSubScale, gemsIsShown, notTimerunning)
+        for _, initializer in ipairs({ gemsShowMissingInit, gemsMaxLevelOnlyInit }) do
+            initializer:SetParentInitializer(gemsSubShow, gemsIsShown)
+            initializer:AddShownPredicate(notTimerunning)
+        end
+        gemsMaxLevelOnlyInit:SetParentInitializer(gemsShowMissingInit, function() return PGV.db.gems.showMissing end)
     end
 
-    local gemsCategory = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Gems"])
-    local gemsIsShown = function() return PGV.db.gems.show end
-    local gemsRootShow, gemsSubShow = makeSharedToggle(rootCategory, gemsCategory, "gemsShow", L["Gems"], L["Display gem and socket information for equipped items"],
-        gemsIsShown, function(value) PGV.db.gems.show = value end)
-    gemsRootShow:AddShownPredicate(notTimerunning)
-    gemsSubShow:AddShownPredicate(notTimerunning)
-
-    local gemsRootScale, gemsSubScale = makeSharedScaleSlider(rootCategory, gemsCategory, "gemsScale", L["Icon Scale"], L["Scale gem icon size relative to the default"], PGV.db.gems)
-    local gemsShowMissingInit = makeToggle(gemsCategory, "gemsShowMissing", L["Show Missing Gems & Sockets"], L["Show when an item is missing gems or sockets"],
-        function() return PGV.db.gems.showMissing end,
-        function(value) PGV.db.gems.showMissing = value end)
-    local gemsMaxLevelOnlyInit = makeToggle(gemsCategory, "gemsMaxLevelOnly", L["Only Show for Max Level"], L["Hide missing gem & socket info for characters under the level cap"],
-        function() return PGV.db.gems.missingMaxLevelOnly end,
-        function(value) PGV.db.gems.missingMaxLevelOnly = value end)
-
-    linkToShowToggle(gemsRootShow, gemsSubShow, gemsRootScale, gemsSubScale, gemsIsShown, notTimerunning)
-    for _, initializer in ipairs({ gemsShowMissingInit, gemsMaxLevelOnlyInit }) do
-        initializer:SetParentInitializer(gemsSubShow, gemsIsShown)
-        initializer:AddShownPredicate(notTimerunning)
-    end
-    gemsMaxLevelOnlyInit:SetParentInitializer(gemsShowMissingInit, function() return PGV.db.gems.showMissing end)
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 

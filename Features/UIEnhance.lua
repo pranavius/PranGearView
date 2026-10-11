@@ -1,7 +1,7 @@
 local addonName, PGV = ...
 local L = PGV.L
 
-local function adjustCharacterInfoWindowSize()
+function PGV.AdjustCharacterInfoWindowSize()
     if not PaperDollFrame:IsVisible() then
         return
     end
@@ -50,10 +50,8 @@ local function adjustCharacterInfoWindowSize()
     end
 end
 
-PGV.AdjustCharacterInfoWindowSize = adjustCharacterInfoWindowSize
-
 if PGV.isCamelot then
-    print("I am using the WoW Forever port of PGV")
+    print("Thank you for testing the WoW Forever port of", DARKYELLOW_FONT_COLOR:WrapTextInColorCode("PranGearView")..".", "If you encounter any issues or have suggestions to improve the AddOn, please join the Discord and post in the PGV channel there.")
 
     -- Adds average item level display to character info window for Forever (same as Inspect window).
     -- Making it a child of CharacterFrame taints stuff so this is what we've got
@@ -97,7 +95,7 @@ if PGV.isCamelot then
         avgItemLevelHost:Hide()
     end)
 else
-    hooksecurefunc(CharacterFrame, "RefreshDisplay", adjustCharacterInfoWindowSize)
+    hooksecurefunc(CharacterFrame, "RefreshDisplay", PGV.AdjustCharacterInfoWindowSize)
     
     hooksecurefunc(CharacterModelScene, "TransitionToModelSceneID", function(cms, sceneID)
         if sceneID == 595 and PaperDollFrame:IsVisible() and PGV.db.general.increaseCharacterInfoSize then

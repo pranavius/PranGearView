@@ -238,6 +238,35 @@ PGV.InspectInfo = {
 }
 
 PGV.ExpansionInfo = {
+    Forever = {
+        NameAbbr = "FOREVER",
+        LevelCap = 60,
+        SocketableSlots = {},
+        AuxSocketableSlots = {},
+        MaxSocketsPerItem = 0,
+        MaxAuxSocketsPerItem = 0,
+        MaxEmbellishments = 0,
+        EnchantableSlots = {
+            CharacterNeckSlot,
+            CharacterBackSlot,
+            CharacterChestSlot,
+            CharacterWristSlot,
+            CharacterHandsSlot,
+            CharacterFeetSlot,
+            CharacterMainHandSlot,
+            CharacterSecondaryHandSlot,
+            "InspectNeckSlot",
+            "InspectBackSlot",
+            "InspectChestSlot",
+            "InspectWristSlot",
+            "InspectHandsSlot",
+            "InspectFeetSlot",
+            "InspectMainHandSlot",
+            "InspectSecondaryHandSlot",
+        },
+        ShieldEnchantAvailable = true,
+        OffhandEnchantAvailable = false
+    },
     Midnight = {
         NameAbbr = "MIDNIGHT",
         LevelCap = 90,
@@ -333,7 +362,7 @@ PGV.ExpansionInfo = {
     }
 }
 
-PGV.CurrentExpac = PGV.ExpansionInfo.Midnight
+PGV.CurrentExpac = PGV.isCamelot and PGV.ExpansionInfo.Forever or PGV.ExpansionInfo.Midnight
 
 
 PGV.DefaultStatOrder = { "Critical Strike", "Haste", "Mastery", "Versatility", "Leech", "Avoidance", "Speed" }
