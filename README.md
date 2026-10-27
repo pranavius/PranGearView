@@ -7,7 +7,7 @@ Feedback on this AddOn or any others that I develop/maintain is always welcome. 
 [![Discord](https://img.shields.io/badge/join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/rqXW2cenWg)
 [![Linktree](https://img.shields.io/badge/connect-000000?style=for-the-badge&logo=linktree&logoColor=43E55E)](https://discord.gg/rqXW2cenWg)
 [![Patreon](https://img.shields.io/badge/support-F96854?style=for-the-badge&logo=patreon)](https://patreon.com/cw/Pranavius)
-[![Buy Me a Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000)](http://buymeacoffee.com/pranavius)
+[![Buy Me a Coffee](https://img.shields.io/badge/buy_me_a_coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000)](http://buymeacoffee.com/pranavius)
 
 ---
 
