@@ -100,6 +100,12 @@ PGV.EnchantTextReplacements = {
     { original = L["Worldsoul Cradle"], replacement = L["World Crad"] },
     { original = L["Worldsoul Tenacity"], replacement = L["World Ten"] },
     { original = L["Thalassian Haste"], replacement = L["Thal Hst"] },
+    -- 12.1.5 Delve Enchants
+    { original = L["Ancient Hash'ey Battle Art: "], replacement = "" },
+    { original = L["Falco Strikes"], replacement = L["Falco"] },
+    { original = L["Eye of the Lynx"], replacement = L["Eye Lynx"] },
+    { original = L["Heat Wave"], replacement = L["Heat"] },
+    { original = L["Ursine's Ironhide"], replacement = L["Urs Hide"] },
     -- General Enchant Text
     { original = L["Rune of the Fallen Crusader"], replacement = PGV.DKEnchantAbbr.FallenCrusader },
     { original = L["Rune of Razorice"], replacement = PGV.DKEnchantAbbr.Razorice },

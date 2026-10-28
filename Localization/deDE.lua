@@ -291,6 +291,15 @@ L["Worldsoul Cradle"] = "Worldsoul Cradle"
 L["World Crad"] = "World Crad"
 L["Worldsoul Tenacity"] = "Worldsoul Tenacity"
 L["World Ten"] = "World Ten"
+L["Ancient Hash'ey Battle Art: "] = "Uralte Kampfkunst der Hash'ey: "
+L["Falco Strikes"] = "Falkenschläge"
+L["Falco"] = "Falken"
+L["Eye of the Lynx"] = "Luchsauge"
+L["Eye Lynx"] = "Luch"
+L["Heat Wave"] = "Hitzewelle"
+L["Heat"] = "Hitze"
+L["Ursine's Ironhide"] = "Eisenhaut des Bären"
+L["Urs Hide"] = "Bären"
 
 --- Stats ---
 L["Stamina"] = ITEM_MOD_STAMINA_SHORT
