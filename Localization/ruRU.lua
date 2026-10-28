@@ -1,4 +1,4 @@
--- Localization provided by ZamestoTV
+-- Localization provided by ZamestoTV and Mioram
 local _, PGV = ...
 local L = PGV.NewLocale("ruRU")
 
@@ -108,13 +108,10 @@ L["Special Thanks"] = "Особая благодарность"
 L["Connect"] = "Связаться"
 
 ------------ Upgrade Tracks ------------
--- TODO: fill in the exact ruRU Blizzard in-tooltip strings for upgrade level prefix and track names
--- Without these, Russian clients will see the unabbreviated tooltip text on each gear slot
 L["Upgrade Level: "] = "Уровень улучшения: "
-L["Explorer "]   = "Исследователь"
+L["Explorer "] = "Исследователь"
 L["Adventurer "] = "Искатель приключений "
-L["Veteran "]    = "Ветеран "
-L["Champion "]   = "Защитник "
-L["Hero "]       = "Герой "
-L["Myth "]       = "Легенда "
-
+L["Veteran "] = "Ветеран "
+L["Champion "] = "Защитник "
+L["Hero "] = "Герой "
+L["Myth "] = "Легенда "

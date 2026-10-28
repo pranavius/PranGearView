@@ -4,9 +4,14 @@ local L = PGV.L
 PGVOptionsDescriptionMixin = {}
 function PGVOptionsDescriptionMixin:Init(initializer)
     self.Text:SetText(initializer:GetName())
-    if initializer:GetData().large then
-        self.Text:SetFontObject(GameFontNormalLarge)
-    end
+    self.Text:SetFontObject(initializer:GetData().large and GameFontNormalLarge or GameFontHighlight)
+end
+
+PGVOptionsCopyTextMixin = {}
+function PGVOptionsCopyTextMixin:Init(initializer)
+    self.Label:SetText(initializer:GetData().label or "")
+    self.EditBox:SetText(initializer:GetName())
+    self.EditBox:SetCursorPosition(0)
 end
 
 local function refreshSlots()
@@ -183,14 +188,15 @@ local ClassIcons = {
 }
 
 local CONTRIBUTORS = {
-    { name = "Tusk", race = RaceIcons.Pandaren.Male, class = ClassIcons.Monk, color = "Monk" },
-    { name = "Numynum", race = RaceIcons.BloodElf.Female, class = ClassIcons.DemonHunter, color = "DemonHunter" },
-    { name = "ZamestoTV", race = RaceIcons.NightElf.Male, class = ClassIcons.Druid, color = "Druid" },
+    { name = "Tuskyouup", race = RaceIcons.Pandaren.Male, class = ClassIcons.Monk, color = "Monk" },
+    { name = "Numynum", color = "DemonHunter" },
+    { name = "ZamestoTV", color = "Priest" },
     { name = "Lirfdam", color = "Priest" },
     { name = "BlueNightSky", color = "Priest" },
     { name = "Azaran", color = "Priest" },
     { name = "StummerKater", color = "Priest" },
     { name = "Rubyurek", color = "Priest" },
+    { name = "Mioram", color = "Priest" },
 }
 
 local SPECIAL_THANKS = {
@@ -202,41 +208,51 @@ local SPECIAL_THANKS = {
     { name = "Grok", race = RaceIcons.Orc.Male, class = ClassIcons.Warrior, color = "Warrior" },
 }
 
-local function addCreditRow(layout, text, large)
-    layout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = text, large = large }))
+local function addCreditRow(layout, text, large, template)
+    layout:AddInitializer(Settings.CreateElementInitializer(template or "PGVOptionsDescriptionTemplate", { name = text, large = large }))
 end
 
-local function addCreditPerson(layout, person)
+-- The default section header tooltip just repeats the header text; replace it with a no-op for these headers
+local function addCreditHeader(layout, text)
+    local initializer = CreateSettingsListSectionHeaderInitializer(PGV.ColorText(text, "Info"))
+    local initFrame = initializer.InitFrame
+    initializer.InitFrame = function(self, frame)
+        initFrame(self, frame)
+        frame:SetTooltipFunc(function() end)
+    end
+    layout:AddInitializer(initializer)
+end
+
+local function addCreditPerson(layout, person, template)
     local icons = (person.race and CreateAtlasMarkup(person.race, 20, 20) or "")..(person.class and CreateAtlasMarkup(person.class, 20, 20) or "")
-    addCreditRow(layout, icons..(icons ~= "" and " " or "")..PGV.ColorText(person.name, person.color))
+    addCreditRow(layout, icons..(icons ~= "" and " " or "")..PGV.ColorText(person.name, person.color), nil, template)
 end
 
 local function buildCreditsCategory(rootCategory)
     local _, creditsLayout = Settings.RegisterVerticalLayoutSubcategory(rootCategory, L["Credits"])
 
-    addCreditRow(creditsLayout, PGV.ColorText(addonName.." "..L["Credits"], "Info"), true)
-    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
-    addCreditRow(creditsLayout, PGV.ColorText("Created by "..CreateAtlasMarkup(RaceIcons.BloodElf.Male, 20, 20)..CreateAtlasMarkup(ClassIcons.Monk, 20, 20).." Pranavius", "Heirloom"))
-    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
+    addCreditRow(creditsLayout, PGV.ColorText(addonName, "Info"), true)
+    addCreditRow(creditsLayout, PGV.ColorText("Created by Pranavius", "Heirloom"))
 
-    creditsLayout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Contributors"]))
+    addCreditHeader(creditsLayout, L["Connect"])
+    addCreditRow(creditsLayout, CreateSimpleTextureMarkup("Interface/AddOns/PranGearView/Media/X-logo", 20, 20)..PGV.ColorText("   @PranaviusWoW", "Legendary"))
+    addCreditRow(creditsLayout, CreateSimpleTextureMarkup("Interface/AddOns/PranGearView/Media/Github-logo", 20, 20)..PGV.ColorText("   Pranavius", "Legendary"))
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsCopyTextTemplate", { label = PGV.ColorText("Discord", "Legendary"), name = "https://discord.gg/Vj3D5GeQZh" }))
+
+    addCreditHeader(creditsLayout, L["Contributors"])
+    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
     for _, contributor in ipairs(CONTRIBUTORS) do
-        addCreditPerson(creditsLayout, contributor)
+        addCreditPerson(creditsLayout, contributor, "PGVOptionsCompactDescriptionTemplate")
     end
 
     creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
     addCreditRow(creditsLayout, L["If you would like to contribute to development, you can find the repository on GitHub."].."\n"..L["Please follow the development guidelines outlined in the README document."])
-    creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
-    creditsLayout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Special Thanks"]))
+    addCreditHeader(creditsLayout, L["Special Thanks"])
     for _, person in ipairs(SPECIAL_THANKS) do
         addCreditPerson(creditsLayout, person)
     end
-
     creditsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
-    creditsLayout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Connect"]))
-    addCreditRow(creditsLayout, CreateSimpleTextureMarkup("Interface/AddOns/PranGearView/Media/X-logo", 20, 20, 0, 5)..PGV.ColorText("@PranaviusWoW", "Legendary"))
-    addCreditRow(creditsLayout, CreateSimpleTextureMarkup("Interface/AddOns/PranGearView/Media/Github-logo", 20, 20, 0, 5)..PGV.ColorText("Pranavius", "Legendary"))
 end
 
 local function buildOptions()

@@ -4,6 +4,8 @@
   - Option to display character item level in the bottom-left corner of the Character Info window
   - A "checkmark" icon will now only be shown in place of enchant text when it is collapsed/hidden. Otherwise, the enchant text is shown and checkmark icon is completely hidden
   - AddOn options specific to Retail WoW (Upgrade Track, Gems, Embellishments, Enlarged Character Info Window, Character Stat Order, etc.) are hidden when playing WoW: Forever
+- Update `ruRU` localizations (credit: *Mioram*)
+- Update Credits panel to display content with more visual consistency
 - Internal code updates (no functionality changes)
 
 **3.0.1**
