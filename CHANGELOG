@@ -1,5 +1,10 @@
 **3.1.0**
 - Add support for WoW: Forever
+  - Add a chat message when the game is loaded to indicate how users can offer feedback or suggestions to the **WoW: Forever** flavor of the AddOn
+  - Option to display character item level in the bottom-left corner of the Character Info window
+  - A "checkmark" icon will now only be shown in place of enchant text when it is collapsed/hidden. Otherwise, the enchant text is shown and checkmark icon is completely hidden
+  - AddOn options specific to Retail WoW (Upgrade Track, Gems, Embellishments, Enlarged Character Info Window, Character Stat Order, etc.) are hidden when playing WoW: Forever
+- Internal code updates (no functionality changes)
 
 **3.0.1**
 - Add enchant text abbreviations for new Delve enchants (Hands)
