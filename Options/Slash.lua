@@ -3,22 +3,26 @@ local L = PGV.L
 
 local ToggleMap = {
     ilvl = { help = L["Toggle showing item level"], dbTable = "itemLevel", dbKey = "show" },
-    track = { help = L["Toggle showing upgrade track"], dbTable = "upgradeTrack", dbKey = "show" },
-    gems = { help = L["Toggle showing gem info"], dbTable = "gems", dbKey = "show" },
     dur = { help = L["Toggle showing durability percentages"], dbTable = "durability", dbKey = "show" },
     etext = { help = L["Toggle showing enchant text in the Character Info window"], dbTable = "enchants", dbKey = "collapse" },
     inspect = { help = L["Toggle showing gear info when inspecting another player"], dbTable = "inspect", dbKey = "show" },
 }
+if not PGV.isCamelot then
+    ToggleMap.gems = { help = L["Toggle showing gem info"], dbTable = "gems", dbKey = "show" }
+    ToggleMap.track = { help = L["Toggle showing upgrade track"], dbTable = "upgradeTrack", dbKey = "show" }
+end
 
 local function printHelp()
-    print(addonName..": /pgv <command>")
-    print("  help - "..L["List all available slash commands for the AddOn"])
+    print(addonName..":", DARKYELLOW_FONT_COLOR:WrapTextInColorCode("/pgv <command>"))
+    print("  "..DARKYELLOW_FONT_COLOR:WrapTextInColorCode("help").." - "..L["List all available slash commands for the AddOn"])
     for cmd, entry in pairs(ToggleMap) do
-        print("  "..cmd.." - "..entry.help)
+        print("  "..DARKYELLOW_FONT_COLOR:WrapTextInColorCode(cmd).." - "..entry.help)
     end
-    print("  ench - "..L["Toggle showing enchant info"])
-    print("  expand - "..L["Toggle using the larger Character Info window"])
-    print("  minimap - "..L["Show/hide the minimap icon"])
+    print("  "..DARKYELLOW_FONT_COLOR:WrapTextInColorCode("ench").." - "..L["Toggle showing enchant info"])
+    if not PGV.isCamelot then
+        print("  "..DARKYELLOW_FONT_COLOR:WrapTextInColorCode("expand").." - "..L["Toggle using the larger Character Info window"])
+    end
+    print("  "..DARKYELLOW_FONT_COLOR:WrapTextInColorCode("minimap").." - "..L["Show/hide the minimap icon"])
 end
 
 local function handleSlashCmd(input)
@@ -29,7 +33,7 @@ local function handleSlashCmd(input)
             print(addonName..": "..L["Settings cannot be modified while the AddOn is restricted (combat, an encounter, a Mythic+ dungeon, or a PvP match)."])
             return
         end
-        Settings.OpenToCategory(PGV.categoryID)
+        if SettingsPanel:IsShown() then SettingsPanel:Hide() else Settings.OpenToCategory(PGV.categoryID) end
         return
     end
 
@@ -51,7 +55,7 @@ local function handleSlashCmd(input)
         return
     end
 
-    if input == "expand" then
+    if input == "expand" and not PGV.isCamelot then
         PGV.db.general.increaseCharacterInfoSize = not PGV.db.general.increaseCharacterInfoSize
         PGV.AdjustCharacterInfoWindowSize()
         PGV.RefreshSlots()

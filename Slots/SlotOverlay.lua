@@ -265,6 +265,13 @@ local function resolveEnchantText(rawText)
         return text:gsub(" |A:.-|a", icon)
     end
 
+    if PGV.isCamelot then
+        if PGV.db.enchants.collapse then
+            return CreateSimpleTextureMarkup(628564, 15, 15)
+        end
+        return text
+    end
+
     local icon = CreateSimpleTextureMarkup(DK_ENCH_ABBR_TEXTURES[text] or 628564, 15, 15)
     if PGV.db.enchants.collapse then
         return icon
@@ -409,6 +416,15 @@ local function updateSlotOverlay(slot)
 end
 
 local function updateAllSlots()
+    if PGV.isCamelot and PaperDollFrame.EquipmentManagerPane:IsShown() then
+        for _, slot in ipairs(PGV.GearSlots) do
+            if slot.PGVSlotOverlay then
+                slot.PGVSlotOverlay:HideAllElements()
+            end
+        end
+        return
+    end
+
     for _, slot in ipairs(PGV.GearSlots) do
         updateSlotOverlay(slot)
     end
