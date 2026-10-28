@@ -65,6 +65,8 @@ PGV.DatabaseDefaults = {
         showEmbellishments = true,
         showCharacteriLvlDecimal = false,
         decimalPlacesForCharacteriLvl = 2,
+        forever_ShowAvgILvlOnCharacter = true,
+        forever_IncludeAvgLabelOnCharacter = false,
         hideShirtTabardInfo = false,
         increaseCharacterInfoSize = true,
         minimap = { hide = true },

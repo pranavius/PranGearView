@@ -4,6 +4,9 @@ local currentLocale = GetLocale()
 local defaultLocale = {}
 local activeLocaleTable = defaultLocale
 
+local interfaceNumber = tostring(select(4, GetBuildInfo()))
+PGV.isCamelot = interfaceNumber:match("16.+") ~= nil
+
 function PGV.NewLocale(locale)
     if locale == "enUS" then
         -- Ensures enUS localization is always available as a fallback when a localized translation doesn't exist
@@ -76,7 +79,7 @@ function PGV.IsTimerunningCharacter()
 end
 
 function PGV.AreUpgradeTracksShownForCharacter()
-    return PGV.db.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
+    return not PGV.isCamelot and PGV.db.upgradeTrack.show and PlayerGetTimerunningSeasonID() == nil
 end
 
 function PGV.AreGemsShownForCharacter()
@@ -88,7 +91,7 @@ function PGV.AreEnchantsShownForCharacter()
 end
 
 function PGV.AreEmbellishmentsShownForCharacter()
-    return PGV.db.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
+    return not PGV.isCamelot and PGV.db.general.showEmbellishments and PlayerGetTimerunningSeasonID() == nil
 end
 
 local function isSlotInList(slot, list)

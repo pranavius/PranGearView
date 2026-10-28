@@ -62,15 +62,6 @@ function PGV.InitializeCustomSpecStatOrderDB(selectedSpecID, reset)
     end
 end
 
-function PGV.SetStatOrderForEditingSpec(newOrder)
-    local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
-    if not specID then
-        return
-    end
-    PGV.db.characterStats.customSpecStatOrders[specID] = newOrder
-    PGV.ReorderStatFramesBySpec()
-end
-
 function PGV.CachePlayerStatValues()
     if C_Secrets.ShouldUnitStatsBeSecret() then
         return
@@ -82,7 +73,7 @@ function PGV.CachePlayerStatValues()
     end
 end
 
-function PGV.ReorderStatFramesBySpec()
+local function reorderStatFramesBySpec()
     local specID = PGV.GetCharacterCurrentSpecIDAndRole()
     local statOrder = specID and PGV.db.characterStats.customSpecStatOrders[specID]
     if not statOrder then
@@ -119,7 +110,16 @@ function PGV.ReorderStatFramesBySpec()
     end
 end
 
-function PGV.ShowDecimalStatValues()
+function PGV.SetStatOrderForEditingSpec(newOrder)
+    local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
+    if not specID then
+        return
+    end
+    PGV.db.characterStats.customSpecStatOrders[specID] = newOrder
+    reorderStatFramesBySpec()
+end
+
+local function showDecimalStatValues()
     for _, frame in ipairs({ CharacterStatsPane:GetChildren() }) do
         if frame.Label then
             local cleanStatName = frame.Label:GetText() and frame.Label:GetText():gsub(":", "")
@@ -134,26 +134,28 @@ function PGV.ShowDecimalStatValues()
     end
 end
 
-CharacterStatsPane:HookScript("OnShow", PGV.CachePlayerStatValues)
+if not PGV.isCamelot then
+    CharacterStatsPane:HookScript("OnShow", PGV.CachePlayerStatValues)
 
-hooksecurefunc("PaperDollFrame_UpdateStats", function()
-    PGV.ReorderStatFramesBySpec()
-    if CharacterStatsPane and PGV.db.characterStats.showDecimals then
-        PGV.ShowDecimalStatValues()
-    end
-end)
+    hooksecurefunc("PaperDollFrame_UpdateStats", function()
+        reorderStatFramesBySpec()
+        if CharacterStatsPane and PGV.db.characterStats.showDecimals then
+            showDecimalStatValues()
+        end
+    end)
 
-PGV.RegisterEvent("PLAYER_ENTERING_WORLD", function(isInitialLogin, isReloadingUi)
-    if isInitialLogin or isReloadingUi then
+    PGV.RegisterEvent("PLAYER_ENTERING_WORLD", function(isInitialLogin, isReloadingUi)
+        if isInitialLogin or isReloadingUi then
+            PGV.InitializeCustomSpecStatOrderDB()
+        end
+    end)
+
+    PGV.RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED", function()
         PGV.InitializeCustomSpecStatOrderDB()
-    end
-end)
+    end)
 
-PGV.RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED", function()
-    PGV.InitializeCustomSpecStatOrderDB()
-end)
-
-SettingsPanel:HookScript("OnShow", function()
-    PGV.db.characterStats.lastSelectedSpecID = select(1, PGV.GetCharacterCurrentSpecIDAndRole())
-    PGV.RefreshStatOrderList()
-end)
+    SettingsPanel:HookScript("OnShow", function()
+        PGV.db.characterStats.lastSelectedSpecID = select(1, PGV.GetCharacterCurrentSpecIDAndRole())
+        PGV.RefreshStatOrderList()
+    end)
+end
