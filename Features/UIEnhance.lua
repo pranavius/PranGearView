@@ -51,7 +51,7 @@ function PGV.AdjustCharacterInfoWindowSize()
 end
 
 if PGV.isCamelot then
-    print("Thank you for testing the WoW Forever port of", DARKYELLOW_FONT_COLOR:WrapTextInColorCode("PranGearView")..".", "If you encounter any issues or have suggestions to improve the AddOn, please join the Discord and post in the PGV channel there.")
+    print(DARKYELLOW_FONT_COLOR:WrapTextInColorCode("PranGearView:")..".", "If you encounter any issues or have suggestions to improve the AddOn for WoW: Forever, please post them in Discord (Settings > PranGearView > Credits).")
 
     -- Adds average item level display to character info window for Forever (same as Inspect window).
     -- Making it a child of CharacterFrame taints stuff so this is what we've got

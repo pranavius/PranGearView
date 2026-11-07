@@ -119,6 +119,8 @@ L["Stnskn Garg"] = "Stnskn Garg"
 L["Unend Thirst"] = "Unend Thirst"
 --- Enchant Text ---
 L["Enchanted: "] = "附魔: "
+-- TODO: Confirm how zhTW enchant names join two stats before enabling
+-- L[" and "] = ""
 L["Radiant Critical Strike"] = "聖輝致命一擊"
 L["Rad Crit"] = "聖輝致命"
 L["Radiant Haste"] = "聖輝加速"

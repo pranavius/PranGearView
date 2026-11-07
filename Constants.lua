@@ -13,6 +13,7 @@ PGV.DKEnchantAbbr = {
 
 PGV.EnchantTextReplacements = {
     { original = "%+", replacement = "", isPattern = true },
+    { original = L[" and "], replacement = " & " },
     { original = L["Enchanted: "], replacement = "" },
     { original = L["Enchant"].." %a+ %- ", replacement = "", isPattern = true },
     -- TWW Enchants
@@ -242,6 +243,12 @@ PGV.InspectInfo = {
         "InspectSecondaryHandSlot"
     }
 }
+
+if PGV.isCamelot then
+    tinsert(PGV.GearSlots, CharacterRangedSlot)
+    tinsert(PGV.InspectInfo.slots, "InspectRangedSlot")
+    tinsert(PGV.InspectInfo.bottomSlots, "InspectRangedSlot")
+end
 
 PGV.ExpansionInfo = {
     Forever = {

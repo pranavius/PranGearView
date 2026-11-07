@@ -115,3 +115,6 @@ L["Veteran "] = "Ветеран "
 L["Champion "] = "Защитник "
 L["Hero "] = "Герой "
 L["Myth "] = "Легенда "
+
+-- No abbreviation needed, the character/word for "and" appears to be just one character anyway
+-- L[" and "] = ""

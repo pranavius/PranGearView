@@ -124,6 +124,7 @@ L["Stnskn Garg"] = "Gárgula"
 L["Unend Thirst"] = "Sede Infin"
 --- Enchant Text ---
 L["Enchanted: "] = "Encantado: "
+L[" and "] = " e "
 L["Radiant Critical Strike"] = "Acerto Crítico Radiante"
 L["Rad Crit"] = "Crit Rad"
 L["Radiant Haste"] = "Aceleração Radiante"
