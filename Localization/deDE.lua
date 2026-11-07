@@ -112,6 +112,7 @@ L["Show Enchant Text"] = "Verzauberungstext anzeigen"
 L["Hide Enchant Text"] = "Verzauberungstext ausblenden"
 
 L["Enchanted: "] = "Verzaubert: "
+L[" and "] = " und "
 ------------ Text Abbreviations ------------
 
 --- Enchant Text (DK Runes) ---

@@ -114,6 +114,7 @@ L["Hide Enchant Text"] = "Hide Enchant Text"
 
 ------------ Text Abbreviations ------------
 L["Enchanted: "] = "Enchanted: "
+L[" and "] = " and "
 
 --- Enchant Text (DK Runes) ---
 L["Rune of Razorice"] = "Rune of Razorice"
