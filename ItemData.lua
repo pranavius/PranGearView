@@ -2,7 +2,7 @@ local _, PGV = ...
 
 function PGV.GetItemDisplayData(itemLink, unit, slotID, callback)
     local item = Item:CreateFromItemLink(itemLink)
-    item:ContinueOnItemLoad(function()
+    local function buildDisplayData()
         local data = {
             itemLevel = item:GetCurrentItemLevel(),
             quality = item:GetItemQuality(),
@@ -38,5 +38,13 @@ function PGV.GetItemDisplayData(itemLink, unit, slotID, callback)
         end
 
         callback(data)
-    end)
+    end
+
+    -- Found a ton of taint that I had no idea was happening while looking into a Settings issue lol
+    -- Preventative measure to reduce taint where possible
+    if item:IsItemDataCached() then
+        buildDisplayData()
+    else
+        item:ContinueOnItemLoad(buildDisplayData)
+    end
 end
