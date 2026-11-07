@@ -7,6 +7,13 @@ local LAYOUTS = {
     right = { side = "RIGHT", opposite = "LEFT", xOffset = -10, inlineXOffset = -2.5, yOffset = 7.5 },
 }
 
+-- Needed for retail vs. forever differences (ranged slot)
+local BOTTOM_ENCHANT_ANCHORS = {
+    left = { point = "RIGHT", relativePoint = "TOPRIGHT" },
+    center = { point = "CENTER", relativePoint = "TOP" },
+    right = { point = "LEFT", relativePoint = "TOPLEFT" },
+}
+
 local DK_ENCH_ABBR_TEXTURES = {
     [PGV.DKEnchantAbbr.Razorice] = 135842,
     [PGV.DKEnchantAbbr.Sanguination] = 1778226,
@@ -108,8 +115,8 @@ function PGVSlotOverlayMixin:PositionEnchant()
     self.Enchant:ClearAllPoints()
 
     if self.context.category == "bottom" then
-        local isMainHand = self.context.isMainHand
-        self.Enchant:SetPoint(isMainHand and "RIGHT" or "LEFT", self, isMainHand and "TOPRIGHT" or "TOPLEFT", 0, 25)
+        local anchor = BOTTOM_ENCHANT_ANCHORS[self.context.bottomSide]
+        self.Enchant:SetPoint(anchor.point, self, anchor.relativePoint, 0, 25)
         return
     end
 
@@ -342,7 +349,7 @@ function PGVSlotOverlayMixin:UpdateSlotInfo()
                 self.Enchant:Show()
             else
                 local isMaxLevel = UnitLevel(context.unit) == PGV.CurrentExpac.LevelCap
-                if PGV.db.enchants.showMissing and PGV.IsEnchantableSlot(slot) and (isMaxLevel or not PGV.db.enchants.missingMaxLevelOnly) then
+                if PGV.db.enchants.showMissing and PGV.IsEnchantableSlot(slot, itemLink) and (isMaxLevel or not PGV.db.enchants.missingMaxLevelOnly) then
                     local icon = CreateSimpleTextureMarkup(523826, 15, 15)
                     if PGV.db.enchants.collapse then
                         self.Enchant:SetText(icon)
@@ -393,10 +400,20 @@ local characterContext = {
 }
 
 local function getSlotCategory(slot)
-    if slot == CharacterMainHandSlot or slot == CharacterSecondaryHandSlot then
+    if slot == CharacterMainHandSlot or slot == CharacterSecondaryHandSlot or slot == CharacterRangedSlot then
         return "bottom"
     elseif slot.IsLeftSide then
         return "left"
+    end
+    return "right"
+end
+
+local function getBottomSide(slot)
+    if slot == CharacterMainHandSlot then
+        return "left"
+    -- Accounts for ranged slot in WOWF
+    elseif slot == CharacterSecondaryHandSlot and CharacterRangedSlot and CharacterRangedSlot:IsShown() then
+        return "center"
     end
     return "right"
 end
@@ -408,6 +425,7 @@ local function updateSlotOverlay(slot)
         overlay.context = setmetatable({
             category = getSlotCategory(slot),
             isMainHand = (slot == CharacterMainHandSlot),
+            bottomSide = getBottomSide(slot),
         }, { __index = characterContext })
         slot.PGVSlotOverlay = overlay
     end

@@ -80,6 +80,13 @@ local function makeSharedScaleSlider(rootCategory, subCategory, variable, name, 
     return rootInit, subInit
 end
 
+local function createDropdown(category, setting, options, tooltip)
+    local data = Settings.CreateSettingInitializerData(setting, options, tooltip)
+    local initializer = Settings.CreateSettingInitializer("PGVSettingsDropdownControlTemplate", data)
+    Settings.RegisterInitializer(category, initializer)
+    return initializer
+end
+
 local function makeOutlineDropdown(category, variable, name, tooltip, dbTable)
     local setting = Settings.RegisterProxySetting(category, variable, Settings.VarType.String, name, "",
         function() return dbTable.outline end,
@@ -94,7 +101,7 @@ local function makeOutlineDropdown(category, variable, name, tooltip, dbTable)
         end
         return container:GetData()
     end
-    return Settings.CreateDropdown(category, setting, getOptions, tooltip)
+    return createDropdown(category, setting, getOptions, tooltip)
 end
 
 local function makeColorSwatch(category, variable, name, tooltip, dbTable, key)
@@ -131,8 +138,8 @@ local function makeSharedColorModeDropdown(rootCategory, subCategory, variable, 
         end
         return container:GetData()
     end
-    local rootInit = Settings.CreateDropdown(rootCategory, setting, getOptions, tooltip)
-    local subInit = Settings.CreateDropdown(subCategory, setting, getOptions, tooltip)
+    local rootInit = createDropdown(rootCategory, setting, getOptions, tooltip)
+    local subInit = createDropdown(subCategory, setting, getOptions, tooltip)
     return rootInit, subInit
 end
 
@@ -574,7 +581,7 @@ local function buildOptions()
             end
             return container:GetData()
         end
-        Settings.CreateDropdown(characterStatsCategory, specSetting, getSpecOptions, L["Specialization"])
+        createDropdown(characterStatsCategory, specSetting, getSpecOptions, L["Specialization"])
 
         characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVStatOrderListTemplate", {}))
         local resetOrderInit = CreateSettingsButtonInitializer("", L["Reset"], function(button)

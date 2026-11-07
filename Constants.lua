@@ -243,6 +243,12 @@ PGV.InspectInfo = {
     }
 }
 
+if PGV.isCamelot then
+    tinsert(PGV.GearSlots, CharacterRangedSlot)
+    tinsert(PGV.InspectInfo.slots, "InspectRangedSlot")
+    tinsert(PGV.InspectInfo.bottomSlots, "InspectRangedSlot")
+end
+
 PGV.ExpansionInfo = {
     Forever = {
         NameAbbr = "FOREVER",

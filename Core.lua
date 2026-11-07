@@ -107,7 +107,17 @@ function PGV.IsSocketableSlot(slot)
     return isSlotInList(slot, PGV.CurrentExpac.SocketableSlots) or isSlotInList(slot, PGV.CurrentExpac.AuxSocketableSlots)
 end
 
-function PGV.IsEnchantableSlot(slot)
+local ENCHANTABLE_RANGED_WEPS = {
+    [Enum.ItemWeaponSubclass.Bows] = true,
+    [Enum.ItemWeaponSubclass.Guns] = true,
+    [Enum.ItemWeaponSubclass.Crossbow] = true,
+}
+
+function PGV.IsEnchantableSlot(slot, itemLink)
+    if slot == CharacterRangedSlot or slot == InspectRangedSlot then
+        local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(itemLink))
+        return itemClassID == Enum.ItemClass.Weapon and ENCHANTABLE_RANGED_WEPS[itemSubclassID] == true
+    end
     if slot == CharacterSecondaryHandSlot and GetInventoryItemID("player", slot:GetID()) then
         local itemClassID, itemSubclassID = select(6, C_Item.GetItemInfoInstant(GetInventoryItemID("player", slot:GetID())))
         if itemClassID == 4 and itemSubclassID == 6 then

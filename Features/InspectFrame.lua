@@ -11,10 +11,20 @@ local inspectContext = {
 }
 
 local function getInspectSlotCategory(slotName)
-    if slotName == "InspectMainHandSlot" or slotName == "InspectSecondaryHandSlot" then
+    if slotName == "InspectMainHandSlot" or slotName == "InspectSecondaryHandSlot" or slotName == "InspectRangedSlot" then
         return "bottom"
     elseif tContains(PGV.InspectInfo.leftSideSlots, slotName) then
         return "left"
+    end
+    return "right"
+end
+
+local function getInspectBottomSide(slotName)
+    if slotName == "InspectMainHandSlot" then
+        return "left"
+        -- Accounts for ranged slot in WOWF
+    elseif slotName == "InspectSecondaryHandSlot" and InspectRangedSlot and InspectRangedSlot:IsShown() then
+        return "center"
     end
     return "right"
 end
@@ -31,6 +41,7 @@ local function updateInspectSlotOverlay(slotName)
         overlay.context = setmetatable({
             category = getInspectSlotCategory(slotName),
             isMainHand = (slotName == "InspectMainHandSlot"),
+            bottomSide = getInspectBottomSide(slotName),
         }, { __index = inspectContext })
         slot.PGVSlotOverlay = overlay
     end
