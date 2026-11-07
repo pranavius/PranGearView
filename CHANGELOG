@@ -1,3 +1,13 @@
+**3.1.1**
+- **WoW: Forever:**
+  - Added item level, durability, and enchant details for the ranged slot in the Character Info and Inspect windows
+- **Retail WoW:**
+  - *Bug Fix:* Corrected the "Reset" button for Character Stat Order so it enables and disables immediately as stats are reordered (Retail)
+- Updated enchant text for multi-stat enchants to show "&" in place of "and" (all supported languages except Traditional Chinese)
+- Updated dependent options in the AddOn settings to appear disabled, rather than hidden, when the option they rely on is turned off
+- *Bug Fix:* Resolved Lua errors when searching the game's Options window or changing some Blizzard settings
+- *Bug Fix:* Resolved an error when scrolling past Discord settings in the Options window
+
 **3.1.0**
 - Add support for WoW: Forever
   - Add a chat message when the game is loaded to indicate how users can offer feedback or suggestions to the **WoW: Forever** flavor of the AddOn
