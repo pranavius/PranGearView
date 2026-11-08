@@ -73,6 +73,28 @@ function PGV.CachePlayerStatValues()
     end
 end
 
+-- Only reorder frames currently anchored below the Enhancements category;
+-- anything else could create an anchor dependency cycle.
+local function CollectFramesAnchoredBelow(frame)
+    local frames = {}
+    local queue = { frame }
+    while #queue > 0 do
+        local current = table.remove(queue)
+        for _, child in ipairs({ CharacterStatsPane:GetChildren() }) do
+            if child.Label and not frames[child] then
+                for pointIndex = 1, child:GetNumPoints() do
+                    if select(2, child:GetPoint(pointIndex)) == current then
+                        frames[child] = true
+                        table.insert(queue, child)
+                        break
+                    end
+                end
+            end
+        end
+    end
+    return frames
+end
+
 local function reorderStatFramesBySpec()
     local specID = PGV.GetCharacterCurrentSpecIDAndRole()
     local statOrder = specID and PGV.db.characterStats.customSpecStatOrders[specID]
@@ -80,9 +102,10 @@ local function reorderStatFramesBySpec()
         return
     end
 
+    local reorderableFrames = CollectFramesAnchoredBelow(CharacterStatsPane.EnhancementsCategory)
     local frameByStat = {}
     for _, statFrame in ipairs({ CharacterStatsPane:GetChildren() }) do
-        if statFrame.Label then
+        if statFrame.Label and reorderableFrames[statFrame] then
             local localeStatName = statFrame.Label:GetText() and statFrame.Label:GetText():gsub(":", "")
             for _, stat in ipairs(statOrder) do
                 if L[stat] == localeStatName then
