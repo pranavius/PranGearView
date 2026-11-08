@@ -7,6 +7,12 @@ function PGVStatOrderRowMixin:Init(elementData)
     self.Text:SetText(L[elementData.stat])
 end
 
+-- Predicate to find the Reset button for character stat order
+local function isStatOrderResetRow(_, elementData)
+    local data = elementData.GetData and elementData:GetData()
+    return data and data.isStatOrderReset
+end
+
 PGVStatOrderListMixin = {}
 
 function PGVStatOrderListMixin:OnLoad()
@@ -27,6 +33,11 @@ function PGVStatOrderListMixin:OnLoad()
             tinsert(newOrder, elementData.stat)
         end
         PGV.SetStatOrderForEditingSpec(newOrder)
+
+        local resetRow = SettingsPanel:GetSettingsList().ScrollBox:FindFrameByPredicate(isStatOrderResetRow)
+        if resetRow then
+            resetRow:EvaluateState()
+        end
     end)
 end
 

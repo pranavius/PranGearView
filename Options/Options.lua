@@ -26,6 +26,13 @@ local function refreshSlots()
     end
 end
 PGV.RefreshSlots = refreshSlots
+-- Replaces the combined functionality from SetParentInitializer and AddShownPredicate since both were
+-- tainting Settings and causing UI errors completely unrelated to PGV's settings
+local function linkToParent(childInit, parentInit, isParentEnabled)
+    childInit:Indent()
+    childInit:AddModifyPredicate(isParentEnabled)
+    childInit:AddEvaluateStateCVar(parentInit:GetSetting():GetVariable())
+end
 
 local function makeToggle(category, variable, name, tooltip, getValue, setValue)
     local setting = Settings.RegisterProxySetting(category, variable, Settings.VarType.Boolean, name, false, getValue, function(value)
@@ -73,6 +80,13 @@ local function makeSharedScaleSlider(rootCategory, subCategory, variable, name, 
     return rootInit, subInit
 end
 
+local function createDropdown(category, setting, options, tooltip)
+    local data = Settings.CreateSettingInitializerData(setting, options, tooltip)
+    local initializer = Settings.CreateSettingInitializer("PGVSettingsDropdownControlTemplate", data)
+    Settings.RegisterInitializer(category, initializer)
+    return initializer
+end
+
 local function makeOutlineDropdown(category, variable, name, tooltip, dbTable)
     local setting = Settings.RegisterProxySetting(category, variable, Settings.VarType.String, name, "",
         function() return dbTable.outline end,
@@ -87,7 +101,7 @@ local function makeOutlineDropdown(category, variable, name, tooltip, dbTable)
         end
         return container:GetData()
     end
-    return Settings.CreateDropdown(category, setting, getOptions, tooltip)
+    return createDropdown(category, setting, getOptions, tooltip)
 end
 
 local function makeColorSwatch(category, variable, name, tooltip, dbTable, key)
@@ -124,20 +138,20 @@ local function makeSharedColorModeDropdown(rootCategory, subCategory, variable, 
         end
         return container:GetData()
     end
-    local rootInit = Settings.CreateDropdown(rootCategory, setting, getOptions, tooltip)
-    local subInit = Settings.CreateDropdown(subCategory, setting, getOptions, tooltip)
+    local rootInit = createDropdown(rootCategory, setting, getOptions, tooltip)
+    local subInit = createDropdown(subCategory, setting, getOptions, tooltip)
     return rootInit, subInit
 end
 
-local function linkToShowToggle(rootShowInit, subShowInit, rootInit, subInit, isShown, shownPredicate)
-    subInit:SetParentInitializer(subShowInit, isShown)
+local function linkToShowToggle(rootShowInit, subShowInit, rootInit, subInit, isShown, enabledPredicate)
+    linkToParent(subInit, subShowInit, isShown)
     if rootInit then
-        rootInit:SetParentInitializer(rootShowInit, isShown)
+        linkToParent(rootInit, rootShowInit, isShown)
     end
-    if shownPredicate then
-        subInit:AddShownPredicate(shownPredicate)
+    if enabledPredicate then
+        subInit:AddModifyPredicate(enabledPredicate)
         if rootInit then
-            rootInit:AddShownPredicate(shownPredicate)
+            rootInit:AddModifyPredicate(enabledPredicate)
         end
     end
 end
@@ -301,8 +315,7 @@ local function buildOptions()
                 PGV.UpdateCharacterAvgItemLevelLabel()
             end
         end)
-    decimalPlacesInit:SetParentInitializer(showCharILvlDecimalInit, function() return PGV.db.general.showCharacteriLvlDecimal end)
-    decimalPlacesInit:AddShownPredicate(function() return PGV.db.general.showCharacteriLvlDecimal end)
+    linkToParent(decimalPlacesInit, showCharILvlDecimalInit, function() return PGV.db.general.showCharacteriLvlDecimal end)
 
     if PGV.isCamelot then
         local showAvgILvlInit = makeToggle(rootCategory, "forever_ShowAvgILvlOnCharacter", L["Average Item Level"], L["Display average item level in the character's class color"],
@@ -317,7 +330,7 @@ local function buildOptions()
                 PGV.db.general.forever_IncludeAvgLabelOnCharacter = value
                 PGV.UpdateCharacterAvgItemLevelLabel()
             end)
-        includeAvgLabelInit:SetParentInitializer(showAvgILvlInit, function() return PGV.db.general.forever_ShowAvgILvlOnCharacter end)
+        linkToParent(includeAvgLabelInit, showAvgILvlInit, function() return PGV.db.general.forever_ShowAvgILvlOnCharacter end)
     end
     makeToggle(rootCategory, "hideShirtTabardInfo", L["Hide Shirt & Tabard Info"], L["Hide information for equipped shirt & tabard"],
         function() return PGV.db.general.hideShirtTabardInfo end,
@@ -351,12 +364,13 @@ local function buildOptions()
     }
     local itemLevelRootColorMode, itemLevelSubColorMode = makeSharedColorModeDropdown(rootCategory, itemLevelCategory, "itemLevelColorMode", L["Text Color"], L["Customize item level color"], PGV.db.itemLevel, ITEM_LEVEL_COLOR_MODES)
     local itemLevelColorInit = makeColorSwatch(itemLevelCategory, "itemLevelColor", L["Choose a Color"], L["Customize item level color"], PGV.db.itemLevel, "customColor")
-    itemLevelColorInit:AddShownPredicate(function() return PGV.db.itemLevel.useCustomColor end)
+    itemLevelColorInit:AddModifyPredicate(function() return PGV.db.itemLevel.useCustomColor end)
+    itemLevelColorInit:AddEvaluateStateCVar("itemLevelColorMode")
 
     linkToShowToggle(itemLevelRootShow, itemLevelSubShow, itemLevelRootScale, itemLevelSubScale, itemLevelIsShown)
     linkToShowToggle(itemLevelRootShow, itemLevelSubShow, itemLevelRootColorMode, itemLevelSubColorMode, itemLevelIsShown)
     for _, initializer in ipairs({ itemLevelOutlineInit, itemLevelOnItemInit, itemLevelColorInit }) do
-        initializer:SetParentInitializer(itemLevelSubShow, itemLevelIsShown)
+        linkToParent(initializer, itemLevelSubShow, itemLevelIsShown)
     end
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
@@ -368,8 +382,8 @@ local function buildOptions()
         local upgradeTrackIsShown = function() return PGV.db.upgradeTrack.show end
         local upgradeTrackRootShow, upgradeTrackSubShow = makeSharedToggle(rootCategory, upgradeTrackCategory, "upgradeTrackShow", L["Upgrade Track"], L["Display upgrade track and progress for equipped items"],
             upgradeTrackIsShown, function(value) PGV.db.upgradeTrack.show = value end)
-        upgradeTrackRootShow:AddShownPredicate(notTimerunning)
-        upgradeTrackSubShow:AddShownPredicate(notTimerunning)
+        upgradeTrackRootShow:AddModifyPredicate(notTimerunning)
+        upgradeTrackSubShow:AddModifyPredicate(notTimerunning)
 
         local upgradeTrackRootScale, upgradeTrackSubScale = makeSharedScaleSlider(rootCategory, upgradeTrackCategory, "upgradeTrackScale", L["Font Scale"], L["Scale upgrade track text size relative to the default"], PGV.db.upgradeTrack)
         local upgradeTrackOutlineInit = makeOutlineDropdown(upgradeTrackCategory, "upgradeTrackOutline", L["Outline"], L["The outline style to add to upgrade track text"], PGV.db.upgradeTrack)
@@ -381,13 +395,14 @@ local function buildOptions()
         }
         local upgradeTrackRootColorMode, upgradeTrackSubColorMode = makeSharedColorModeDropdown(rootCategory, upgradeTrackCategory, "upgradeTrackColorMode", L["Text Color"], L["Customize upgrade track color for current season items"], PGV.db.upgradeTrack, UPGRADE_TRACK_COLOR_MODES)
         local upgradeTrackColorInit = makeColorSwatch(upgradeTrackCategory, "upgradeTrackColor", L["Choose a Color"], L["Customize upgrade track color for current season items"], PGV.db.upgradeTrack, "customColor")
-        upgradeTrackColorInit:AddShownPredicate(function() return PGV.db.upgradeTrack.useCustomColor end)
+        upgradeTrackColorInit:AddModifyPredicate(function() return PGV.db.upgradeTrack.useCustomColor end)
+        upgradeTrackColorInit:AddEvaluateStateCVar("upgradeTrackColorMode")
 
         linkToShowToggle(upgradeTrackRootShow, upgradeTrackSubShow, upgradeTrackRootScale, upgradeTrackSubScale, upgradeTrackIsShown, notTimerunning)
         linkToShowToggle(upgradeTrackRootShow, upgradeTrackSubShow, upgradeTrackRootColorMode, upgradeTrackSubColorMode, upgradeTrackIsShown, notTimerunning)
         for _, initializer in ipairs({ upgradeTrackOutlineInit, upgradeTrackColorInit }) do
-            initializer:SetParentInitializer(upgradeTrackSubShow, upgradeTrackIsShown)
-            initializer:AddShownPredicate(notTimerunning)
+            linkToParent(initializer, upgradeTrackSubShow, upgradeTrackIsShown)
+            initializer:AddModifyPredicate(notTimerunning)
         end
 
         rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
@@ -396,8 +411,8 @@ local function buildOptions()
         local gemsIsShown = function() return PGV.db.gems.show end
         local gemsRootShow, gemsSubShow = makeSharedToggle(rootCategory, gemsCategory, "gemsShow", L["Gems"], L["Display gem and socket information for equipped items"],
             gemsIsShown, function(value) PGV.db.gems.show = value end)
-        gemsRootShow:AddShownPredicate(notTimerunning)
-        gemsSubShow:AddShownPredicate(notTimerunning)
+        gemsRootShow:AddModifyPredicate(notTimerunning)
+        gemsSubShow:AddModifyPredicate(notTimerunning)
     
         local gemsRootScale, gemsSubScale = makeSharedScaleSlider(rootCategory, gemsCategory, "gemsScale", L["Icon Scale"], L["Scale gem icon size relative to the default"], PGV.db.gems)
         local gemsShowMissingInit = makeToggle(gemsCategory, "gemsShowMissing", L["Show Missing Gems & Sockets"], L["Show when an item is missing gems or sockets"],
@@ -409,10 +424,10 @@ local function buildOptions()
     
         linkToShowToggle(gemsRootShow, gemsSubShow, gemsRootScale, gemsSubScale, gemsIsShown, notTimerunning)
         for _, initializer in ipairs({ gemsShowMissingInit, gemsMaxLevelOnlyInit }) do
-            initializer:SetParentInitializer(gemsSubShow, gemsIsShown)
-            initializer:AddShownPredicate(notTimerunning)
+            linkToParent(initializer, gemsSubShow, gemsIsShown)
+            initializer:AddModifyPredicate(notTimerunning)
         end
-        gemsMaxLevelOnlyInit:SetParentInitializer(gemsShowMissingInit, function() return PGV.db.gems.showMissing end)
+        linkToParent(gemsMaxLevelOnlyInit, gemsShowMissingInit, function() return PGV.db.gems.showMissing end)
     end
 
 
@@ -422,8 +437,8 @@ local function buildOptions()
     local enchantsIsShown = function() return PGV.db.enchants.show end
     local enchantsRootShow, enchantsSubShow = makeSharedToggle(rootCategory, enchantsCategory, "enchantsShow", L["Enchants"], L["Display enchant information for equipped items"],
         enchantsIsShown, function(value) PGV.db.enchants.show = value end)
-    enchantsRootShow:AddShownPredicate(notTimerunning)
-    enchantsSubShow:AddShownPredicate(notTimerunning)
+    enchantsRootShow:AddModifyPredicate(notTimerunning)
+    enchantsSubShow:AddModifyPredicate(notTimerunning)
 
     local enchantsRootScale, enchantsSubScale = makeSharedScaleSlider(rootCategory, enchantsCategory, "enchantsScale", L["Font Scale"], L["Scale enchant text size relative to the default"], PGV.db.enchants)
     local enchantsOutlineInit = makeOutlineDropdown(enchantsCategory, "enchantsOutline", L["Outline"], L["The outline style to add to enchant text"], PGV.db.enchants)
@@ -440,18 +455,19 @@ local function buildOptions()
         function() return PGV.db.enchants.useCustomColor end,
         function(value) PGV.db.enchants.useCustomColor = value end)
     local enchantsColorInit = makeColorSwatch(enchantsCategory, "enchantsColor", L["Choose a Color"], L["Customize enchant text color"], PGV.db.enchants, "customColor")
-    enchantsColorInit:AddShownPredicate(function() return PGV.db.enchants.useCustomColor end)
+    enchantsColorInit:AddModifyPredicate(function() return PGV.db.enchants.useCustomColor end)
+    enchantsColorInit:AddEvaluateStateCVar("enchantsUseCustomColor")
 
     linkToShowToggle(enchantsRootShow, enchantsSubShow, enchantsRootScale, enchantsSubScale, enchantsIsShown, notTimerunning)
     linkToShowToggle(enchantsRootShow, enchantsSubShow, enchantsRootUseCustomColor, enchantsSubUseCustomColor, enchantsIsShown, notTimerunning)
     for _, initializer in ipairs({ enchantsOutlineInit, enchantsShowMissingInit, enchantsShowTextButtonInit }) do
-        initializer:SetParentInitializer(enchantsSubShow, enchantsIsShown)
-        initializer:AddShownPredicate(notTimerunning)
+        linkToParent(initializer, enchantsSubShow, enchantsIsShown)
+        initializer:AddModifyPredicate(notTimerunning)
     end
-    enchantsMaxLevelOnlyInit:SetParentInitializer(enchantsShowMissingInit, function() return PGV.db.enchants.showMissing end)
-    enchantsMaxLevelOnlyInit:AddShownPredicate(notTimerunning)
-    enchantsColorInit:SetParentInitializer(enchantsSubShow, enchantsIsShown)
-    enchantsColorInit:AddShownPredicate(notTimerunning)
+    linkToParent(enchantsMaxLevelOnlyInit, enchantsShowMissingInit, function() return PGV.db.enchants.showMissing end)
+    enchantsMaxLevelOnlyInit:AddModifyPredicate(notTimerunning)
+    linkToParent(enchantsColorInit, enchantsSubShow, enchantsIsShown)
+    enchantsColorInit:AddModifyPredicate(notTimerunning)
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
 
@@ -471,7 +487,7 @@ local function buildOptions()
     linkToShowToggle(durabilityRootShow, durabilitySubShow, durabilityRootScale, durabilitySubScale, durabilityIsShown)
     linkToShowToggle(durabilityRootShow, durabilitySubShow, durabilityRootShowAsBar, durabilitySubShowAsBar, durabilityIsShown)
     for _, initializer in ipairs({ durabilityHighInit, durabilityMediumInit, durabilityLowInit }) do
-        initializer:SetParentInitializer(durabilitySubShow, durabilityIsShown)
+        linkToParent(initializer, durabilitySubShow, durabilityIsShown)
     end
 
     rootLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
@@ -515,10 +531,10 @@ local function buildOptions()
     local inspectIncludeAvgLabelInit = makeToggle(inspectCategory, "inspectIncludeAvgLabel", L["Include \"Avg\" Label"], L["Adds the text \"Avg: \" before the average item level."].."\n\n"..L["This can help easily identify the average item level when there is a lot of information shown in the Inspect window."],
         function() return PGV.db.inspect.includeAvgLabel end,
         function(value) PGV.db.inspect.includeAvgLabel = value end)
-    inspectIncludeAvgLabelInit:SetParentInitializer(inspectShowAvgILvlInit, function() return PGV.db.inspect.show and PGV.db.inspect.showAvgILvl end)
+    linkToParent(inspectIncludeAvgLabelInit, inspectShowAvgILvlInit, function() return PGV.db.inspect.show and PGV.db.inspect.showAvgILvl end)
 
     for _, initializer in pairs({ inspectShowILvlInit, inspectShowUpgradeTrackInit, inspectShowGemsInit, inspectShowEnchantsInit, inspectShowEmbellishmentsInit, inspectShowAvgILvlInit }) do
-        initializer:SetParentInitializer(inspectSubShow, inspectIsShown)
+        linkToParent(initializer, inspectSubShow, inspectIsShown)
     end
 
     if not PGV.isCamelot then
@@ -537,7 +553,7 @@ local function buildOptions()
                 PGV.db.characterStats.decimalPlaces = value
                 PaperDollFrame_UpdateStats()
             end)
-        decimalStatsPlacesInit:SetParentInitializer(showDecimalStatsInit, function() return PGV.db.characterStats.showDecimals end)
+        linkToParent(decimalStatsPlacesInit, showDecimalStatsInit, function() return PGV.db.characterStats.showDecimals end)
 
         characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsDescriptionTemplate", { name = L["Customize secondary & tertiary stat order in the Character Info window by specialization"] }))
         characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVOptionsSpacerTemplate", {}))
@@ -565,7 +581,7 @@ local function buildOptions()
             end
             return container:GetData()
         end
-        local specDropdownInit = Settings.CreateDropdown(characterStatsCategory, specSetting, getSpecOptions, L["Specialization"])
+        createDropdown(characterStatsCategory, specSetting, getSpecOptions, L["Specialization"])
 
         characterStatsLayout:AddInitializer(Settings.CreateElementInitializer("PGVStatOrderListTemplate", {}))
         local resetOrderInit = CreateSettingsButtonInitializer("", L["Reset"], function(button)
@@ -574,10 +590,13 @@ local function buildOptions()
             PGV.RefreshStatOrderList()
             button:GetParent():EvaluateState()
         end, nil, false)
-        resetOrderInit:SetParentInitializer(specDropdownInit, function()
+        resetOrderInit:GetData().isStatOrderReset = true -- Needed to identify the button in StatOrder when stats are dragged/dropped out of the default order
+        resetOrderInit:Indent()
+        resetOrderInit:AddModifyPredicate(function()
             local specID = PGV.GetSpecAndRoleForSelectedCharacterStatsOption()
             return not PGV.IsStatOrderAtDefault(specID)
         end)
+        resetOrderInit:AddEvaluateStateCVar("characterStatsSpec")
         characterStatsLayout:AddInitializer(resetOrderInit)
     end
 
